@@ -22,11 +22,7 @@ services:
     ports:
       - 3000:3000
     environment:
-      - DB_HOST=db
-      - DB_USER=postgres
-      - DB_PASSWORD=postgres
-      - DB_NAME=postgres
-      - DB_PORT=5432
+      - DATABASE_URL=postgres://postgres:postgres@db:5432/postgres 
     stdin_open: true
     tty: true
 
