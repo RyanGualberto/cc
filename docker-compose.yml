@@ -1,4 +1,4 @@
-version: '2.2'
+version: "2.2"
 
 services:
   db:
@@ -22,9 +22,11 @@ services:
     ports:
       - 3000:3000
     environment:
-      - DATABASE_URL=postgres://postgres:postgres@db:5432/postgres 
+      - DATABASE_URL=postgres://postgres:postgres@db:5432/postgres
+    volumes:
+      - ./api:/app
     stdin_open: true
     tty: true
 
-volumes: 
+volumes:
   db-data:

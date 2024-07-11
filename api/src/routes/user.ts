@@ -6,7 +6,7 @@ const userController = new UserController();
 
 router.get("/", userController.get);
 router.get("/me", userController.getMe);
-router.post("/", userController.post.bind(userController));
+router.post("/", userController.post);
 router.put("/", userController.put);
 router.delete("/", userController.delete);
 
