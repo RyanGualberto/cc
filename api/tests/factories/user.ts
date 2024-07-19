@@ -1,8 +1,8 @@
 import prisma from "../../src/clients/prismaClient";
 import { faker } from "@faker-js/faker";
-import { createUser } from "../../src/schemas/user";
+import { UserCreateInput } from "../../src/schemas/user";
 
-export const user = async (data: Partial<createUser>) => {
+export const user = async (data?: Partial<UserCreateInput>) => {
   const user = {
     first_name: faker.person.firstName(),
     last_name: faker.person.lastName(),

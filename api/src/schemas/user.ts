@@ -1,26 +1,55 @@
-import Joi from "joi";
+import { AppError } from "../utils/appError";
 
-export const createUser = Joi.object({
-  first_name: Joi.string().required(),
-  last_name: Joi.string().required(),
-  email: Joi.string().email().required(),
-  password: Joi.string()
-    .required()
-    .pattern(
-      new RegExp("^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])(?=.{6,})")
-    )
-    .message(
-      "Password must have at least 6 characters, one uppercase letter, one lowercase letter, one number and one special character"
-    ),
-  cpf: Joi.string().required().length(11),
-  phone: Joi.string().required(),
-});
-
-export type createUser = {
-  first_name: string;
-  last_name: string;
+export class UserCreateInput {
   email: string;
   password: string;
-  cpf: string;
+  first_name: string;
+  last_name: string;
   phone: string;
-};
+  cpf: string;
+  [key: string]: string;
+
+  constructor(data: UserCreateInput) {
+    this.email = data.email;
+    this.password = data.password;
+    this.first_name = data.first_name;
+    this.last_name = data.last_name;
+    this.phone = data.phone;
+    this.cpf = data.cpf;
+  }
+
+  static validate(data: UserCreateInput) {
+    for (const key in data) {
+      if (data[key] === undefined) {
+        throw new AppError(`Missing required field: ${key}`, 400);
+      }
+    }
+
+    return data;
+  }
+}
+
+export class UserLoginInput {
+  email: string | undefined;
+  phone: string | undefined;
+  cpf: string | undefined;
+  password: string;
+  [key: string]: string | undefined;
+
+  constructor(data: UserLoginInput) {
+    this.email = data.email;
+    this.phone = data.phone;
+    this.cpf = data.cpf;
+    this.password = data.password;
+  }
+
+  static validate(data: UserLoginInput) {
+    for (const key in data) {
+      if (data[key] === undefined) {
+        throw new AppError(`Missing required field: ${key}`, 400);
+      }
+    }
+
+    return data;
+  }
+}
