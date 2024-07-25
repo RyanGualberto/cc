@@ -5,7 +5,7 @@ import { user } from "../factories/user";
 
 describe("Auth Test", () => {
   beforeAll(async () => {
-    await db.setup();
+    await db.updateSchema();
   });
 
   beforeEach(async () => {

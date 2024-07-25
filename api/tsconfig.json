@@ -1,19 +1,27 @@
 {
-  "exclude": ["./coverage", "./build", "__tests__", "jest.config.js"],
-  "ts-node": {
-    "transpileOnly": true,
-    "files": true
-  },
   "compilerOptions": {
-    "forceConsistentCasingInFileNames": true,
-    "module": "commonjs",
-    "esModuleInterop": true,
-    "outDir": "./build",
+    "target": "es2016",
+    "module": "CommonJS",
     "rootDir": "./",
-    "target": "es6",
-    "checkJs": true,
+    "outDir": "./dist",
     "moduleResolution": "node",
+    "forceConsistentCasingInFileNames": true,
+    "strict": true,
     "skipLibCheck": true,
-    "strict": true
+    "esModuleInterop": true,
+    "resolveJsonModule": true,
+    "allowJs": true,
+    "noImplicitAny": true,
+    "strictPropertyInitialization": false,
+    "paths": {
+      "@/*": ["*"]
+    },
+    "baseUrl": "src",
+    "plugins": [
+      {
+        "transform": "@zerollup/ts-transform-paths"
+      }
+    ],
+    "typeRoots": ["./src/@types", "./node_modules/@types"]
   }
 }

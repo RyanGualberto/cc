@@ -6,7 +6,7 @@ import {
 } from "@prisma/client/runtime/library";
 import { handlePrismaError } from "./prismaError";
 
-export function handleError(error: any, res: Response, path: string) {
+export function handleError(error: unknown, res: Response, path: string) {
   if (error instanceof AppError) {
     return res.status(error.statusCode).send({
       status: error.statusCode,

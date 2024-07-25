@@ -1,12 +1,16 @@
 import request from "supertest";
+import { faker } from "@faker-js/faker";
+
 import app from "../../src/app";
 import { db } from "../helpers/db";
+
 import { user } from "../factories/user";
-import { faker } from "@faker-js/faker";
+
+import { generateToken } from "../../src/services/jwt";
 
 describe("User Test", () => {
   beforeAll(async () => {
-    await db.setup();
+    await db.updateSchema();
   });
 
   beforeEach(async () => {
@@ -43,8 +47,6 @@ describe("User Test", () => {
 
   test("should return a bad request error due to duplicated email", async () => {
     const createdUser = await user();
-    console.log(createdUser);
-    
     const response = await request(app)
       .post("/users")
       .send({
@@ -134,5 +136,53 @@ describe("User Test", () => {
     expect(response.status).toBe(400);
     expect(response.body).toHaveProperty("message");
     expect(response.body).toHaveProperty("status", 400);
+  });
+
+  test("should return current user", async () => {
+    const createdUser = await user();
+    const token = generateToken({ userId: createdUser.id });
+    const response = await request(app)
+      .get(`/users/me`)
+      .set("Authorization", `Bearer ${token}`);
+
+    if (response.status !== 200) {
+      console.log(response.body);
+    }
+
+    expect(response.status).toBe(200);
+    expect(response.body).toMatchObject({
+      id: expect.any(String),
+      email: expect.any(String),
+      first_name: expect.any(String),
+      last_name: expect.any(String),
+      phone: expect.any(String),
+      cpf: expect.any(String),
+    });
+  });
+
+  test("should return a unauthorized error due to no has token", async () => {
+    const response = await request(app).get(`/users/me`);
+
+    if (response.status !== 401) {
+      console.log(response.body);
+    }
+
+    expect(response.status).toBe(401);
+    expect(response.body).toHaveProperty("message", "Unauthorized");
+  });
+
+  test("should return a unauthorized error due to has an invalid token", async () => {
+    const createdUser = await user();
+    const token = generateToken({ userId: createdUser.id });
+    const response = await request(app)
+      .get(`/users/me`)
+      .set("Authorization", `Bearer invalid${token}`);
+
+    if (response.status !== 401) {
+      console.log(response.body);
+    }
+
+    expect(response.status).toBe(401);
+    expect(response.body).toHaveProperty("message", "Unauthorized");
   });
 });

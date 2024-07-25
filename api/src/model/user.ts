@@ -1,35 +1,83 @@
 import prisma from "../clients/prismaClient";
 import { AppError } from "../utils/appError";
-import { UserCreateInput, UserLoginInput } from "../schemas/user";
-import { userSerializer } from "../serializers";
+import { userSerializer } from "../serializers/user";
+import { CreateUserSchema, UserLoginSchema } from "../schemas/user";
 
-export class UserModel {
+export interface UserCreateInput {
+  first_name: string;
+  last_name: string;
+  cpf: string;
+  phone: string;
+  email: string;
+  password: string;
+}
+
+export interface UserLoginInput {
+  email?: string;
+  phone?: string;
+  cpf?: string;
+  password: string;
+}
+
+class UserModel {
   constructor() {}
 
   public async create(data: UserCreateInput) {
-    const userPayload = new UserCreateInput(data);
-    UserCreateInput.validate(userPayload);
+    const { value, error } = CreateUserSchema.validate(data);
+
+    if (error) {
+      throw new AppError(error.message, 400);
+    }
 
     const user = await prisma.user.create({
-      data: userPayload,
+      data: value,
+      select: userSerializer,
     });
 
-    return userSerializer(user);
+    return user;
   }
 
   public async login(data: UserLoginInput) {
-    UserLoginInput.validate(data);
+    const { error, value } = UserLoginSchema.validate(data);
+
+    if (error) {
+      throw new AppError(error.message, 400);
+    }
+
     const user = await prisma.user.findFirst({
       where: {
-        OR: [{ email: data.email }, { phone: data.phone }, { cpf: data.cpf }],
-        password: data.password,
+        OR: [
+          { email: value.email },
+          { phone: value.phone },
+          { cpf: value.cpf },
+        ],
+        password: value.password,
       },
+      select: userSerializer,
     });
 
     if (!user) {
       throw new AppError("User not found", 404);
     }
 
-    return userSerializer(user);
+    return user;
+  }
+
+  public async findUnique(id: string) {
+    const user = await prisma.user.findUnique({
+      where: {
+        id,
+      },
+      select: userSerializer,
+    });
+
+    if (!user) {
+      throw new AppError("User not found", 404);
+    }
+
+    return user;
   }
 }
+
+const model = new UserModel();
+export { model as UserModel };

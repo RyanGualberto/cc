@@ -8,9 +8,7 @@ export class Auth {
 
   public async login(req: Request, res: Response) {
     try {
-      const userModel = new UserModel();
-
-      const user = await userModel.login(req.body);
+      const user = await UserModel.login(req.body);
       const token = generateToken({ userId: user.id });
 
       res.setHeader("Authorization", `Bearer ${token}`);

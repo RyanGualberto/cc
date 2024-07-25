@@ -8,16 +8,8 @@ export function generateToken(payload: Record<string, any>) {
   });
 }
 
-function getTokenFromHeader(authorization: string) {
-  return authorization.split(" ")[1];
-}
-
-export function verifyTokenFromHeader(authorization: string) {
-  const token = getTokenFromHeader(authorization);
-  return jwt.verify(token, secret);
-}
-
-export function decodeTokenFromHeader(authorization: string) {
-  const token = getTokenFromHeader(authorization);
-  return jwt.decode(token);
+export function decodeTokenFromHeader<T>(fullToken: string) {
+  const token = fullToken.split(" ")[1];
+  const decoded = jwt.decode(token) as T;
+  return decoded;
 }
