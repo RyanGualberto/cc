@@ -78,9 +78,29 @@ export class Team {
       return handleError(error, res, "Team.acceptInvite");
     }
   }
+
+  public async updateMemberRole(req: Request, res: Response) {
+    try {
+      await TeamModel.updateMemberRole(
+        req.user.id,
+        req.params.teamMemberId,
+        req.params.teamId,
+        req.body.role
+      );
+
+      return res.status(200).send();
+    } catch (error: unknown) {
+      return handleError(error, res, "Team.acceptInvite");
+    }
+  }
+
   public async removeMember(req: Request, res: Response) {
     try {
-      await TeamModel.removeTeamMember(req.user.id, req.params.teamMemberId);
+      await TeamModel.removeTeamMember(
+        req.user.id,
+        req.params.teamMemberId,
+        req.params.teamId
+      );
       return res.status(204).send();
     } catch (error: unknown) {
       return handleError(error, res, "Team.acceptInvite");

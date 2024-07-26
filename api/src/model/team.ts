@@ -57,7 +57,7 @@ class TeamModel {
   }
 
   public async inviteTeamMembers(data: TeamInviteInput) {
-    await this.findTeamAndValidatingUser(data.teamId, data.userId);
+    await this.validateTeamMemberRole(data.teamId, data.userId);
     const invite = await prisma.teamInvite.create({
       data: {
         email: data.email,
@@ -104,7 +104,49 @@ class TeamModel {
     return invite;
   }
 
-  public async removeTeamMember(userId: string, teamMemberId: string) {
+  public async removeTeamMember(
+    userId: string,
+    teamMemberId: string,
+    teamId: string
+  ) {
+    await this.validateTeamMemberRole(teamId, userId);
+
+    const teamMember = await prisma.teamMember.findFirst({
+      where: {
+        id: teamMemberId,
+        teamId,
+      },
+    });
+
+    if (teamMember?.userId === userId) {
+      throw new AppError("You can't remove yourself from the team");
+    }
+
+    if (!teamMember) {
+      throw new AppError("Team member not found", 404);
+    }
+
+    await prisma.teamMember.delete({
+      where: {
+        id: teamMemberId,
+      },
+    });
+
+    return;
+  }
+
+  public async updateMemberRole(
+    userId: string,
+    teamMemberId: string,
+    teamId: string,
+    role: string
+  ) {
+    await this.validateTeamMemberRole(teamId, userId);
+
+    if (!["OWNER", "ADMIN", "MEMBER"].includes(role)) {
+      throw new AppError("Invalid role", 400);
+    }
+
     const teamMember = await prisma.teamMember.findFirst({
       where: {
         id: teamMemberId,
@@ -115,34 +157,16 @@ class TeamModel {
       throw new AppError("Team member not found", 404);
     }
 
-    if (teamMember.userId === userId) {
-      throw new AppError("You can't remove yourself from the team", 400);
-    }
-
-    const myTeamRole = await prisma.teamMember.findFirst({
-      where: {
-        userId,
-        teamId: teamMember.teamId,
-      },
-      select: {
-        role: true,
-      },
-    });
-
-    if (myTeamRole?.role !== "OWNER" && myTeamRole?.role !== "ADMIN") {
-      throw new AppError(
-        "You don't have permission to remove team member",
-        403
-      );
-    }
-
-    await prisma.teamMember.delete({
+    await prisma.teamMember.update({
       where: {
         id: teamMemberId,
       },
+      data: {
+        role,
+      },
     });
 
-    return;
+    return teamMember;
   }
 
   private async findTeamAndValidatingUser(teamId: string, userId: string) {
@@ -163,6 +187,23 @@ class TeamModel {
     }
 
     return team;
+  }
+
+  private async validateTeamMemberRole(teamId: string, userId: string) {
+    const team = await this.findTeamAndValidatingUser(teamId, userId);
+    const currentTeamMember = team.teamMembers.find(
+      (member) => member.userId === userId
+    );
+
+    if (
+      !currentTeamMember ||
+      (currentTeamMember.role !== "OWNER" && currentTeamMember.role !== "ADMIN")
+    ) {
+      throw new AppError(
+        "You don't have permission to invite team members",
+        403
+      );
+    }
   }
 }
 
