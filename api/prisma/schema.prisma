@@ -26,11 +26,14 @@ model User {
 }
 
 model Expense {
-  id            String  @id @default(cuid())
+  id            String    @id @default(cuid())
   title         String
   description   String?
   recurrence    String // monthly, weekly, daily or once
   amountInCents Int
+  date          DateTime
+  until         DateTime?
+  batch         String? // uuid
 
   team   Team   @relation(fields: [teamId], references: [id])
   teamId String

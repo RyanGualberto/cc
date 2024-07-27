@@ -20,11 +20,26 @@ export class Expense {
 
   public async createTeamExpense(req: Request, res: Response) {
     try {
+      req.body.userId = req.user.id;
       const expense = await ExpenseModel.create(req.body);
 
       res.status(201).json(expense);
     } catch (error: unknown) {
-      return handleError(error, res, "User.post");
+      return handleError(error, res, "Expense.createTeamExpense");
+    }
+  }
+
+  public async updateTeamExpense(req: Request, res: Response) {
+    try {
+      const expense = await ExpenseModel.update(
+        req.params.id,
+        req.params.teamId,
+        req.body
+      );
+
+      res.status(200).json(expense);
+    } catch (error: unknown) {
+      return handleError(error, res, "Expense.updateTeamExpense");
     }
   }
 }

@@ -20,6 +20,7 @@ export const expense = async (
     description: data?.description || "Expense Description",
     recurrence: data?.recurrence || "monthly",
     amountInCents: data?.amountInCents || 1000,
+    date: new Date(),
     userId,
     teamId,
   };
