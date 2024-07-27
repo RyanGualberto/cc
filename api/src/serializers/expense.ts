@@ -5,7 +5,6 @@ export const expenseSerializer = {
   title: true,
   description: true,
   amountInCents: true,
-  date: true,
   recurrence: true,
   user: {
     select: userSerializer,

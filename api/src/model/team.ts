@@ -169,7 +169,7 @@ class TeamModel {
     return teamMember;
   }
 
-  private async findTeamAndValidatingUser(teamId: string, userId: string) {
+  public async findTeamAndValidatingUser(teamId: string, userId: string) {
     const team = await prisma.team.findFirst({
       where: {
         id: teamId,
