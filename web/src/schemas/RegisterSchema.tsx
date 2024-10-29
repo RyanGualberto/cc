@@ -8,6 +8,7 @@ export const RegisterSchema = z.object({
   lastName: z.string().min(1, "Sobrenome é obrigatório"),
   email: z.string().email("Email inválido"),
   cpf: z.string().length(14, "CPF inválido").refine(isCPFValid, { message: "CPF inválido" }),
+  phone: z.string().length(15, "Telefone inválido"),
   password: z.string().min(6, INVALID_PASSWORD_MESSAGE).refine(isPasswordValid, { message: INVALID_PASSWORD_MESSAGE }),
   confirmPassword: z.string()
 }).superRefine((data, ctx) => {

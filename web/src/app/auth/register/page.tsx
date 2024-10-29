@@ -1,12 +1,12 @@
-"use client"
+"use client";
 import Image from "next/image";
-import registerBackground from "../../../assets/images/register-background.webp"
+import registerBackground from "../../../assets/images/register-background.webp";
 import { Input } from "~/components/ui/input";
-import { Lock, Mail, User } from "lucide-react";
+import { Lock, Mail, Phone, User } from "lucide-react";
 
-import { zodResolver } from "@hookform/resolvers/zod"
-import { useForm } from "react-hook-form"
-import { type z } from "zod"
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { type z } from "zod";
 
 import { Button } from "~/components/ui/button";
 import {
@@ -16,11 +16,12 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "~/components/ui/form"
+} from "~/components/ui/form";
 import PasswordProgress from "~/components/Register/PasswordProgress";
 import maskCpf from "~/helpers/maskCpf";
 import Link from "next/link";
 import { RegisterSchema } from "~/schemas/RegisterSchema";
+import maskPhone from "~/helpers/maskPhone";
 
 export default function RegisterPage() {
   const form = useForm<z.infer<typeof RegisterSchema>>({
@@ -30,25 +31,34 @@ export default function RegisterPage() {
       lastName: "",
       email: "",
       cpf: "",
+      phone: "",
       password: "",
-      confirmPassword: ""
+      confirmPassword: "",
     },
-  })
+  });
 
   function onSubmit(values: z.infer<typeof RegisterSchema>) {
-    console.log(values)
+    console.log(values);
   }
 
   return (
-    <section className="w-[100vw] h-[100vh] max-w-[100vw] max-h-[100vh] overflow-clip flex ">
-      <figure className="w-full h-full relative ">
-        <Image src={registerBackground} alt="Register background image" fill className="object-cover" />
+    <section className="flex h-[100vh] max-h-fit w-[100vw] max-w-[100vw] overflow-y-scroll md:max-h-[100vh] md:overflow-clip ">
+      <figure className="relative hidden h-full w-full md:block ">
+        <Image
+          src={registerBackground}
+          alt="Register background image"
+          fill
+          className="object-cover"
+        />
       </figure>
-      <main className="w-[550px] h-full flex-shrink-0 flex flex-col justify-center items-center p-6 gap-6 overflow-auto">
-        <h1 className="font-bold text-2xl">Register</h1>
+      <main className="flex h-full w-full flex-shrink-0 flex-col items-center justify-center gap-6 p-6 py-12 md:w-[550px] md:overflow-auto">
+        <h1 className="text-2xl font-bold">Register</h1>
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="w-full space-y-6 ">
-            <span className="w-full flex gap-4">
+          <form
+            onSubmit={form.handleSubmit(onSubmit)}
+            className="h-full w-full space-y-6"
+          >
+            <span className="flex w-full flex-col gap-4 md:flex-row">
               <FormField
                 control={form.control}
                 name="firstName"
@@ -130,6 +140,29 @@ export default function RegisterPage() {
             />
             <FormField
               control={form.control}
+              name="phone"
+              render={({ field }) => (
+                <FormItem className="w-full">
+                  <FormLabel>Telefone</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="text"
+                      maxLength={15}
+                      placeholder="(00) 00000-0000"
+                      error={form.formState.errors.phone?.message}
+                      Icon={Phone}
+                      {...field}
+                      onChange={(e) =>
+                        field.onChange(maskPhone(e.target.value))
+                      }
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
               name="password"
               render={({ field }) => (
                 <FormItem className="w-full">
@@ -168,17 +201,19 @@ export default function RegisterPage() {
                 </FormItem>
               )}
             />
-            <span className="w-full flex justify-between items-center">
-              <Link href="/auth/login">
-                Já possui uma conta? Faça login
+            <Button className="h-12 w-full" type="submit">
+              Criar minha conta
+            </Button>
+            <span className="flex w-full justify-center md:justify-start">
+              w
+              <Link href="/auth/login" className="mb-4 text-white/70">
+                Já possui uma conta?{" "}
+                <span className="text-white/100"> Faça login </span>
               </Link>
-              <Button type="submit">
-                Criar minha conta
-              </Button>
             </span>
           </form>
         </Form>
       </main>
     </section>
-  )
+  );
 }
