@@ -11,13 +11,14 @@ import { Team } from "~/types/team";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import EditSpaceDialog from "./edit-space-dialog";
 import { Button } from "../ui/button";
+import DeleteSpaceDialog from "./delete-space-dialog";
 
 export const SpaceCard: React.FC<{
   team: Team;
 }> = ({ team }) => {
   const [open, setOpen] = useState(false);
   return (
-    <article className="flex h-32 w-full md:w-64 flex-col gap-2 rounded-xl bg-muted p-4 shadow-md duration-150 hover:scale-105 hover:transform">
+    <article className="flex h-32 w-full flex-col gap-2 rounded-xl bg-muted p-4 shadow-md duration-150 hover:scale-105 hover:transform md:w-64">
       <header className="flex items-center justify-between">
         <Link
           href={`/app/${team.id}/dashboard`}
@@ -41,16 +42,27 @@ export const SpaceCard: React.FC<{
               <EditSpaceDialog
                 team={team}
                 trigger={
-                  <Button variant="ghost" className="items-center gap-2 justify-start">
+                  <Button
+                    variant="ghost"
+                    className="items-center justify-start gap-2"
+                  >
                     <EditIcon size={16} />
                     Editar
                   </Button>
                 }
               />
-              <Button variant="ghost" className="items-center gap-2 justify-start">
-                <Trash2 size={16} />
-                Excluir
-              </Button>
+              <DeleteSpaceDialog
+                trigger={
+                  <Button
+                    variant="ghost"
+                    className="items-center justify-start gap-2"
+                  >
+                    <Trash2 size={16} />
+                    Excluir
+                  </Button>
+                }
+                team={team}
+              />
             </ul>
           </PopoverContent>
         </Popover>

@@ -66,8 +66,21 @@ async function updateTeam(team: UpdateTeamRequest): Promise<Team | undefined> {
   }
 }
 
+async function deleteTeam(id: string): Promise<void> {
+  try {
+    const endpoint = "/teams/" + id;
+    const method = "delete";
+    await apiClient[method]<void>(endpoint);
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      throw new Error(error.message);
+    }
+  }
+}
+
 export const teamRequests = {
   createTeam,
   listTeams,
   updateTeam,
+  deleteTeam,
 };
