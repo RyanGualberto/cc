@@ -1,4 +1,5 @@
 import apiClient from "~/config/api-client";
+import { type User } from "~/types/user";
 
 export interface UserCreateRequest {
   first_name: string;
@@ -9,13 +10,7 @@ export interface UserCreateRequest {
   password: string;
 }
 
-export interface UserCreateResponse {
-  id: number;
-  first_name: string;
-  last_name: string;
-  cpf: string;
-  phone: string;
-  email: string;
+export interface UserCreateResponse extends User {
   token: string;
 }
 
@@ -46,6 +41,21 @@ async function createUser(
   }
 }
 
+async function whoami(): Promise<User | undefined> {
+  try {
+    const endpoint = "/users/me";
+    const method = "get";
+
+    const { data: response } = await apiClient[method]<User>(endpoint);
+    return response;
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      throw new Error(error.message);
+    }
+  }
+}
+
 export const userRequest = {
   createUser,
+  whoami,
 };

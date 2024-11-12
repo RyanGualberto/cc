@@ -1,3 +1,4 @@
+"use client";
 import Image from "next/image";
 import Link from "next/link";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
@@ -5,8 +6,10 @@ import Logo from "~/assets/images/logo-with-lateral-text.svg";
 import { BellRing, LogOut, Settings, User } from "lucide-react";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import { type StaticImport } from "next/dist/shared/lib/get-img-props";
+import { useUserContext } from "~/hooks/use-user-context";
 
 const Navbar: React.FC = () => {
+  const { user } = useUserContext();
   return (
     <header className="flex items-center justify-between border-b px-8 py-4">
       <Link href={"/app/dashboard"}>
@@ -34,7 +37,10 @@ const Navbar: React.FC = () => {
                 width={40}
                 height={40}
               />
-              <AvatarFallback>U</AvatarFallback>
+              <AvatarFallback>
+                {user?.first_name[0]}
+                {user?.last_name[0]}
+              </AvatarFallback>
             </Avatar>
           </PopoverTrigger>
           <PopoverContent align="end" className="max-w-48">

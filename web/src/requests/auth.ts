@@ -1,4 +1,5 @@
 import apiClient from "~/config/api-client";
+import { type User } from "~/types/user";
 
 export interface LoginRequest {
   cpf?: string;
@@ -7,13 +8,7 @@ export interface LoginRequest {
   password: string;
 }
 
-export interface LoginResponse {
-  id: number;
-  first_name: string;
-  last_name: string;
-  cpf: string;
-  phone: string;
-  email: string;
+export interface LoginResponse extends User {
   token: string;
 }
 
