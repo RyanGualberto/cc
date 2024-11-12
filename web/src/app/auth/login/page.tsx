@@ -20,14 +20,16 @@ import {
 import maskCpf from "~/helpers/maskCpf";
 import Link from "next/link";
 import { LoginSchema } from "~/schemas/LoginSchema";
+import { useAuth } from "~/hooks/use-auth";
 
 export default function LoginPage() {
+  const { login } = useAuth();
   const form = useForm<z.infer<typeof LoginSchema>>({
     resolver: zodResolver(LoginSchema),
   });
 
-  function onSubmit(values: z.infer<typeof LoginSchema>) {
-    console.log(values);
+  async function onSubmit(values: z.infer<typeof LoginSchema>) {
+    await login(values);
   }
 
   return (
@@ -40,7 +42,7 @@ export default function LoginPage() {
           className="object-cover"
         />
       </figure>
-      <main className="flex h-full w-full md:w-[550px] flex-shrink-0 flex-col items-center justify-center gap-6 overflow-auto p-6">
+      <main className="flex h-full w-full flex-shrink-0 flex-col items-center justify-center gap-6 overflow-auto p-6 md:w-[550px]">
         <h1 className="text-2xl font-bold">Login</h1>
         <Form {...form}>
           <form

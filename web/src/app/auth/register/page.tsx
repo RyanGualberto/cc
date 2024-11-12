@@ -22,8 +22,10 @@ import maskCpf from "~/helpers/maskCpf";
 import Link from "next/link";
 import { RegisterSchema } from "~/schemas/RegisterSchema";
 import maskPhone from "~/helpers/maskPhone";
+import { useAuth } from "~/hooks/use-auth";
 
 export default function RegisterPage() {
+  const { register } = useAuth();
   const form = useForm<z.infer<typeof RegisterSchema>>({
     resolver: zodResolver(RegisterSchema),
     defaultValues: {
@@ -37,8 +39,15 @@ export default function RegisterPage() {
     },
   });
 
-  function onSubmit(values: z.infer<typeof RegisterSchema>) {
-    console.log(values);
+  async function onSubmit(values: z.infer<typeof RegisterSchema>) {
+    await register({
+      first_name: values.firstName,
+      last_name: values.lastName,
+      email: values.email,
+      cpf: values.cpf,
+      phone: values.phone,
+      password: values.password,
+    });
   }
 
   return (

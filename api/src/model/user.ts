@@ -29,6 +29,10 @@ class UserModel {
       throw new AppError(error.message, 400);
     }
 
+    value.cpf = this.sanitizeCPF(value.cpf);
+    value.phone = this.sanitizePhone(value.phone);
+    value.email = this.sanitizeEmail(value.email);
+
     const user = await prisma.user.create({
       data: value,
       select: userSerializer,
@@ -42,6 +46,18 @@ class UserModel {
 
     if (error) {
       throw new AppError(error.message, 400);
+    }
+
+    if (value.cpf) {
+      value.cpf = this.sanitizeCPF(value.cpf);
+    }
+
+    if (value.phone) {
+      value.phone = this.sanitizePhone(value.phone);
+    }
+
+    if (value.email) {
+      value.email = this.sanitizeEmail(value.email);
     }
 
     const user = await prisma.user.findFirst({
@@ -76,6 +92,18 @@ class UserModel {
     }
 
     return user;
+  }
+
+  private sanitizeCPF(cpf: string) {
+    return cpf.replace(/\D/g, "");
+  }
+
+  private sanitizePhone(phone: string) {
+    return phone.replace(/\D/g, "");
+  }
+
+  private sanitizeEmail(email: string) {
+    return email.toLowerCase();
   }
 }
 
