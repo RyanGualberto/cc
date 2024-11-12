@@ -9,10 +9,10 @@ import { useUserContext } from "~/hooks/use-user-context";
 export default function Page() {
   const { teams, loadingTeams } = useUserContext();
   return (
-    <main className="flex h-full flex-1 flex-col gap-2 px-8 py-6">
-      <header className="flex justify-between">
+    <main className="flex h-full flex-1 flex-col gap-6 px-8 py-6">
+      <header className="flex justify-between flex-col md:flex-row gap-3">
         <div>
-          <h2 className="text-2xl font-semibold">Meus espaços financeiros</h2>
+          <h2 className="text-xl md:text-2xl font-semibold">Meus espaços financeiros</h2>
           <p className="font-light opacity-80">
             Veja o resumo de todos os seus espaços financeiros.
           </p>

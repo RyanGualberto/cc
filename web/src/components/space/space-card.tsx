@@ -17,7 +17,7 @@ export const SpaceCard: React.FC<{
 }> = ({ team }) => {
   const [open, setOpen] = useState(false);
   return (
-    <article className="flex h-32 w-64 flex-col gap-2 rounded-xl bg-muted p-4 shadow-md duration-150 hover:scale-105 hover:transform">
+    <article className="flex h-32 w-full md:w-64 flex-col gap-2 rounded-xl bg-muted p-4 shadow-md duration-150 hover:scale-105 hover:transform">
       <header className="flex items-center justify-between">
         <Link
           href={`/app/${team.id}/dashboard`}
