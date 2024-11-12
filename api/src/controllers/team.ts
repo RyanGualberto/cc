@@ -40,6 +40,26 @@ export class Team {
     }
   }
 
+  public async updateTeam(req: Request, res: Response) {
+    try {
+      await TeamModel.updateTeam(req.user.id, req.params.teamId, req.body);
+
+      return res.status(200).send();
+    } catch (error: unknown) {
+      return handleError(error, res, "Team.update");
+    }
+  }
+
+  public async deleteTeam(req: Request, res: Response) {
+    try {
+      await TeamModel.deleteTeam(req.user.id, req.params.teamId);
+
+      return res.status(204).send();
+    } catch (error: unknown) {
+      return handleError(error, res, "Team.delete");
+    }
+  }
+
   public async inviteMember(req: Request, res: Response) {
     try {
       const { email, teamId } = req.body;

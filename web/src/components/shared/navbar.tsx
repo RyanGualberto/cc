@@ -7,14 +7,50 @@ import { BellRing, LogOut, Settings, User } from "lucide-react";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import { type StaticImport } from "next/dist/shared/lib/get-img-props";
 import { useUserContext } from "~/hooks/use-user-context";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "../ui/select";
+import { useRouter } from "next/navigation";
 
 const Navbar: React.FC = () => {
-  const { user } = useUserContext();
+  const { user, selectedTeam, teams } = useUserContext();
+  const { push } = useRouter();
+
   return (
     <header className="flex items-center justify-between border-b px-8 py-4">
-      <Link href={"/app/dashboard"}>
-        <Image src={Logo as StaticImport} alt="Logo" width={130} height={40} />
-      </Link>
+      <div className="flex items-center gap-2">
+        <Link href={"/app/teams"}>
+          <Image
+            src={Logo as StaticImport}
+            alt="Logo"
+            width={130}
+            height={40}
+          />
+        </Link>
+        {selectedTeam && (
+          <Select
+            value={selectedTeam.id}
+            onValueChange={(value) => {
+              push(`/app/${value}/dashboard`);
+            }}
+          >
+            <SelectTrigger>
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {teams.map((team) => (
+                <SelectItem key={team.id} value={team.id}>
+                  {team.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        )}
+      </div>
       <nav className="flex items-center gap-6">
         <Popover>
           <PopoverTrigger>

@@ -6,7 +6,7 @@ import { useCallback } from "react";
 import { authRequest, type LoginRequest } from "~/requests/auth";
 import { type UserCreateRequest, userRequest } from "~/requests/user";
 
-const INITIAL_ROUTE = "/app/dashboard";
+const INITIAL_ROUTE = "/app/teams";
 
 export const useAuth = () => {
   const router = useRouter();

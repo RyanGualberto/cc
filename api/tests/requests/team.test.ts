@@ -637,9 +637,7 @@ describe("Team Test", () => {
   });
 
   test("should return an error due to no has token", async () => {
-    const response = await request(app).put(
-      `/teams/team-id/members/member-id`
-    );
+    const response = await request(app).put(`/teams/team-id/members/member-id`);
 
     if (response.status !== 401) {
       console.log(response.body);
@@ -729,7 +727,6 @@ describe("Team Test", () => {
     expect(response.body).toHaveProperty("message");
   });
 
-
   test("should return an error due to current user not is part from team", async () => {
     const user1 = await user();
     const token = generateToken({
@@ -742,6 +739,237 @@ describe("Team Test", () => {
       .send({
         role: "ADMIN",
       })
+      .set("authorization", `Bearer ${token}`);
+
+    if (response.status !== 404) {
+      console.log(response.body);
+    }
+
+    expect(response.status).toBe(404);
+    expect(response.body).toHaveProperty("message");
+  });
+
+  test("should update a team", async () => {
+    const user1 = await user();
+    const token = generateToken({
+      userId: user1.id,
+    });
+    const team1 = await team({ userId: user1.id });
+
+    const response = await request(app)
+      .put(`/teams/${team1.id}`)
+      .send({
+        name: faker.company.name(),
+      })
+      .set("authorization", `Bearer ${token}`);
+
+    if (response.status !== 200) {
+      console.log(response.body);
+    }
+
+    expect(response.status).toBe(200);
+  });
+
+  test("should return an error due to no has token", async () => {
+    const response = await request(app).put(`/teams/team-id`);
+
+    if (response.status !== 401) {
+      console.log(response.body);
+    }
+
+    expect(response.status).toBe(401);
+    expect(response.body).toHaveProperty("message");
+  });
+
+  test("should return an error due to token is invalid", async () => {
+    const response = await request(app)
+      .put(`/teams/team-id`)
+      .set("authorization", `Bearer invalid-token`);
+
+    if (response.status !== 401) {
+      console.log(response.body);
+    }
+
+    expect(response.status).toBe(401);
+    expect(response.body).toHaveProperty("message");
+  });
+
+  test("should return an error due to no has name on body", async () => {
+    const user1 = await user();
+    const token = generateToken({
+      userId: user1.id,
+    });
+    const team1 = await team({ userId: user1.id });
+
+    const response = await request(app)
+      .put(`/teams/${team1.id}`)
+      .set("authorization", `Bearer ${token}`);
+
+    if (response.status !== 400) {
+      console.log(response.body);
+    }
+
+    expect(response.status).toBe(400);
+    expect(response.body).toHaveProperty("message");
+  });
+
+  test("should return an error due to team not found", async () => {
+    const user1 = await user();
+    const token = generateToken({
+      userId: user1.id,
+    });
+
+    const response = await request(app)
+      .put(`/teams/invalid-team-id`)
+      .send({
+        name: faker.company.name(),
+      })
+      .set("authorization", `Bearer ${token}`);
+
+    if (response.status !== 404) {
+      console.log(response.body);
+    }
+
+    expect(response.status).toBe(404);
+    expect(response.body).toHaveProperty("message");
+  });
+
+  test("should return an error due to user don't have permission to update team", async () => {
+    const user1 = await user();
+    const user2 = await user();
+    const token = generateToken({
+      userId: user2.id,
+    });
+    const team1 = await team({ userId: user1.id });
+    await teamMember({ teamId: team1.id, userId: user2.id, role: "MEMBER" });
+
+    const response = await request(app)
+      .put(`/teams/${team1.id}`)
+      .send({
+        name: faker.company.name() + " updated",
+      })
+      .set("authorization", `Bearer ${token}`);
+
+    if (response.status !== 403) {
+      console.log("ERRO NO TESTE", team1.name, response.body.name);
+    }
+
+    expect(response.status).toBe(403);
+    expect(response.body).toHaveProperty("message");
+  });
+
+  test("should return an error due to current user not is part from team", async () => {
+    const user1 = await user();
+    const token = generateToken({
+      userId: user1.id,
+    });
+    const team1 = await team();
+
+    const response = await request(app)
+      .put(`/teams/${team1.id}`)
+      .send({
+        name: faker.company.name(),
+      })
+      .set("authorization", `Bearer ${token}`);
+
+    if (response.status !== 404) {
+      console.log(response.body);
+    }
+
+    expect(response.status).toBe(404);
+    expect(response.body).toHaveProperty("message");
+  });
+
+  test("should delete a team", async () => {
+    const user1 = await user();
+    const token = generateToken({
+      userId: user1.id,
+    });
+    const team1 = await team({ userId: user1.id });
+
+    const response = await request(app)
+      .delete(`/teams/${team1.id}`)
+      .set("authorization", `Bearer ${token}`);
+
+    if (response.status !== 204) {
+      console.log(response.body);
+    }
+
+    expect(response.status).toBe(204);
+  });
+
+  test("should return an error due to no has token", async () => {
+    const response = await request(app).delete(`/teams/team-id`);
+
+    if (response.status !== 401) {
+      console.log(response.body);
+    }
+
+    expect(response.status).toBe(401);
+    expect(response.body).toHaveProperty("message");
+  });
+
+  test("should return an error due to token is invalid", async () => {
+    const response = await request(app)
+      .delete(`/teams/team-id`)
+      .set("authorization", `Bearer invalid-token`);
+
+    if (response.status !== 401) {
+      console.log(response.body);
+    }
+
+    expect(response.status).toBe(401);
+    expect(response.body).toHaveProperty("message");
+  });
+
+  test("should return an error due to team not found", async () => {
+    const user1 = await user();
+    const token = generateToken({
+      userId: user1.id,
+    });
+
+    const response = await request(app)
+      .delete(`/teams/invalid-team-id`)
+      .set("authorization", `Bearer ${token}`);
+
+    if (response.status !== 404) {
+      console.log(response.body);
+    }
+
+    expect(response.status).toBe(404);
+    expect(response.body).toHaveProperty("message");
+  });
+
+  test("should return an error due to user don't have permission to delete team", async () => {
+    const user1 = await user();
+    const user2 = await user();
+    const token = generateToken({
+      userId: user2.id,
+    });
+    const team1 = await team({ userId: user1.id });
+    await teamMember({ teamId: team1.id, userId: user2.id, role: "MEMBER" });
+
+    const response = await request(app)
+      .delete(`/teams/${team1.id}`)
+      .set("authorization", `Bearer ${token}`);
+
+    if (response.status !== 403) {
+      console.log(response.body);
+    }
+
+    expect(response.status).toBe(403);
+    expect(response.body).toHaveProperty("message");
+  });
+
+  test("should return an error due to current user not is part from team", async () => {
+    const user1 = await user();
+    const token = generateToken({
+      userId: user1.id,
+    });
+    const team1 = await team();
+
+    const response = await request(app)
+      .delete(`/teams/${team1.id}`)
       .set("authorization", `Bearer ${token}`);
 
     if (response.status !== 404) {

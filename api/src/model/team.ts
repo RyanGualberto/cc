@@ -1,6 +1,6 @@
 import prisma from "../clients/prismaClient";
 import { AppError } from "../utils/appError";
-import { CreateTeamSchema } from "../schemas/team";
+import { CreateTeamSchema, UpdateTeamSchema } from "../schemas/team";
 import { teamSerializer } from "../serializers/team";
 
 export interface TeamCreateInput {
@@ -12,6 +12,10 @@ export interface TeamInviteInput {
   email: string;
   teamId: string;
   userId: string;
+}
+
+export interface TeamUpdateInput {
+  name?: string;
 }
 
 class TeamModel {
@@ -187,6 +191,44 @@ class TeamModel {
     }
 
     return team;
+  }
+
+  public async updateTeam(
+    userId: string,
+    teamId: string,
+    data: TeamUpdateInput
+  ) {
+    if (!data.name) {
+      throw new AppError("Name is required", 400);
+    }
+
+    const team = await this.findTeamAndValidatingUser(teamId, userId);
+    await this.validateTeamMemberRole(teamId, userId);
+
+    if (data.name) {
+      await prisma.team.update({
+        where: {
+          id: teamId,
+        },
+        data: {
+          name: data.name,
+        },
+      });
+    }
+
+    return team;
+  }
+
+  public async deleteTeam(userId: string, teamId: string) {
+    await this.validateTeamMemberRole(teamId, userId);
+
+    await prisma.team.delete({
+      where: {
+        id: teamId,
+      },
+    });
+
+    return;
   }
 
   private async validateTeamMemberRole(teamId: string, userId: string) {
