@@ -41,7 +41,33 @@ async function createTeam(team: CreateTeamRequest): Promise<Team | undefined> {
   }
 }
 
+export interface UpdateTeamRequest {
+  name: string;
+  id: string;
+}
+
+export type UpdateTeamResponse = Team;
+
+async function updateTeam(team: UpdateTeamRequest): Promise<Team | undefined> {
+  try {
+    const endpoint = "/teams/" + team.id;
+    const method = "put";
+    const { data: response } = await apiClient[method]<UpdateTeamResponse>(
+      endpoint,
+      {
+        name: team.name,
+      },
+    );
+    return response;
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      throw new Error(error.message);
+    }
+  }
+}
+
 export const teamRequests = {
   createTeam,
   listTeams,
+  updateTeam,
 };
