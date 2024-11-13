@@ -40,6 +40,7 @@ describe("Team Test", () => {
     expect(response.body).toHaveProperty("id");
     expect(response.body).toHaveProperty("name");
     expect(response.body).toHaveProperty("teamMembers");
+    expect(response.body).toHaveProperty("role");
     expect(response.body.teamMembers).toHaveLength(1);
   });
 
@@ -159,6 +160,7 @@ describe("Team Test", () => {
     expect(response.body).toHaveProperty("id");
     expect(response.body).toHaveProperty("name");
     expect(response.body).toHaveProperty("teamMembers");
+    expect(response.body).toHaveProperty("role");
   });
 
   test("should return an error due to no has token", async () => {

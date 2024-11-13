@@ -1,29 +1,29 @@
 "use client";
-import { SquareArrowOutUpRight } from "lucide-react";
-import Link from "next/link";
 import React from "react";
-import AddSpaceDialog from "~/components/space/add-space-dialog";
-import { SpaceCard } from "~/components/space/space-card";
+import AddTeamDialog from "~/components/team/add-team-dialog";
+import { TeamCard } from "~/components/team/team-card";
 import { useUserContext } from "~/hooks/use-user-context";
 
 export default function Page() {
   const { teams, loadingTeams } = useUserContext();
   return (
     <main className="flex h-full flex-1 flex-col gap-6 px-8 py-6">
-      <header className="flex justify-between flex-col md:flex-row gap-3">
+      <header className="flex flex-col justify-between gap-3 md:flex-row">
         <div>
-          <h2 className="text-xl md:text-2xl font-semibold">Meus espaços financeiros</h2>
+          <h2 className="text-xl font-semibold md:text-2xl">
+            Meus espaços financeiros
+          </h2>
           <p className="font-light opacity-80">
             Veja o resumo de todos os seus espaços financeiros.
           </p>
         </div>
-        <AddSpaceDialog />
+        <AddTeamDialog />
       </header>
       <section className="flex h-full w-full flex-1 flex-col">
         {teams.length > 0 && (
           <div className="flex flex-wrap gap-4">
             {teams.map((team) => (
-              <SpaceCard key={team.id} team={team} />
+              <TeamCard key={team.id} team={team} />
             ))}
           </div>
         )}

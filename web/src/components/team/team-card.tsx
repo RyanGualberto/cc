@@ -7,13 +7,13 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import React, { useState } from "react";
-import { Team } from "~/types/team";
+import { type Team } from "~/types/team";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
-import EditSpaceDialog from "./edit-space-dialog";
+import EditTeamDialog from "./edit-team-dialog";
 import { Button } from "../ui/button";
-import DeleteSpaceDialog from "./delete-space-dialog";
+import DeleteTeamDialog from "./delete-team-dialog";
 
-export const SpaceCard: React.FC<{
+export const TeamCard: React.FC<{
   team: Team;
 }> = ({ team }) => {
   const [open, setOpen] = useState(false);
@@ -39,7 +39,7 @@ export const SpaceCard: React.FC<{
           </PopoverTrigger>
           <PopoverContent className="max-w-36">
             <ul className="flex flex-col gap-1">
-              <EditSpaceDialog
+              <EditTeamDialog
                 team={team}
                 trigger={
                   <Button
@@ -51,7 +51,7 @@ export const SpaceCard: React.FC<{
                   </Button>
                 }
               />
-              <DeleteSpaceDialog
+              <DeleteTeamDialog
                 trigger={
                   <Button
                     variant="ghost"

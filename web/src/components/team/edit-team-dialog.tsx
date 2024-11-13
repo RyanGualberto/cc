@@ -1,4 +1,3 @@
-import { Plus } from "lucide-react";
 import { Button } from "../ui/button";
 import {
   Dialog,
@@ -17,7 +16,7 @@ import { useMutation } from "@tanstack/react-query";
 import { teamRequests } from "~/requests/team";
 import { useUserContext } from "~/hooks/use-user-context";
 import React, { useCallback, useState } from "react";
-import { Team } from "~/types/team";
+import { type Team } from "~/types/team";
 
 const EditSpaceDialog: React.FC<{
   team: Team;

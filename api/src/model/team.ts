@@ -52,12 +52,28 @@ class TeamModel {
       select: teamSerializer,
     });
 
-    return teams;
+    const teamsWithCurrentRole = teams.map((team) => {
+      const currentTeamMember = team.teamMembers.find(
+        (member) => member.userId === userId
+      );
+      return {
+        ...team,
+        role: currentTeamMember?.role,
+      };
+    });
+
+    return teamsWithCurrentRole;
   }
 
   public async findTeam(userId: string, teamId: string) {
     const team = await this.findTeamAndValidatingUser(teamId, userId);
-    return team;
+    const currentTeamMember = team.teamMembers.find(
+      (member) => member.userId === userId
+    );
+    return {
+      ...team,
+      role: currentTeamMember?.role,
+    };
   }
 
   public async inviteTeamMembers(data: TeamInviteInput) {
