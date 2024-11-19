@@ -3,7 +3,7 @@ const INVALID_SPACE_NAME_REQUIRED = "Nome do espaço é obrigatório";
 const INVALID_SPACE_NAME_MAX_LENGTH =
   "Nome do espaço deve ter no máximo 255 caracteres";
 
-export const SpaceSchema = z.object({
+export const TeamSchema = z.object({
   name: z
     .string({
       message: INVALID_SPACE_NAME_REQUIRED,

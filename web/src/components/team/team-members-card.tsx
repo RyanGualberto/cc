@@ -10,7 +10,7 @@ import {
   TableRow,
 } from "../ui/table";
 import { Button } from "../ui/button";
-import { Plus, Trash2 } from "lucide-react";
+import { Trash2 } from "lucide-react";
 import {
   Select,
   SelectContent,
@@ -18,16 +18,14 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../ui/select";
+import AddTeamMemberDialog from "./add-team-member-dialog";
 
 const TeamMembersCard: React.FC<{ team: Team }> = ({ team }) => {
   return (
     <Card>
-      <CardHeader className="flex justify-between items-center flex-col md:flex-row gap-4">
+      <CardHeader className="flex flex-col items-center justify-between gap-4 md:flex-row">
         <CardTitle className="w-full">Participantes do time</CardTitle>
-        <Button className="gap-2 w-full md:w-fit">
-          <Plus size={16} />
-          Adicionar Membro
-        </Button>
+        <AddTeamMemberDialog team={team} />
       </CardHeader>
       <CardContent>
         <Table>

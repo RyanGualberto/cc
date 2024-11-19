@@ -10,7 +10,7 @@ import {
 import { Form, FormField, FormItem, FormLabel, FormMessage } from "../ui/form";
 import { useForm } from "react-hook-form";
 import { type z } from "zod";
-import { SpaceSchema } from "~/schemas/space-schema";
+import { TeamSchema } from "~/schemas/team-schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Input } from "../ui/input";
 import { useMutation } from "@tanstack/react-query";
@@ -18,9 +18,9 @@ import { teamRequests } from "~/requests/team";
 import { useUserContext } from "~/hooks/use-user-context";
 import { useCallback, useState } from "react";
 
-const AddSpaceDialog = () => {
-  const form = useForm<z.infer<typeof SpaceSchema>>({
-    resolver: zodResolver(SpaceSchema),
+const AddTeamDialog = () => {
+  const form = useForm<z.infer<typeof TeamSchema>>({
+    resolver: zodResolver(TeamSchema),
   });
   const [open, setOpen] = useState(false);
   const { refetchTeams } = useUserContext();
@@ -36,7 +36,7 @@ const AddSpaceDialog = () => {
   const onSubmit = useCallback(
     async (event: React.FormEvent<HTMLFormElement>) => {
       event.preventDefault();
-      await form.handleSubmit(async (values: z.infer<typeof SpaceSchema>) => {
+      await form.handleSubmit(async (values: z.infer<typeof TeamSchema>) => {
         mutate(values);
       })();
     },
@@ -78,4 +78,4 @@ const AddSpaceDialog = () => {
   );
 };
 
-export default AddSpaceDialog;
+export default AddTeamDialog;

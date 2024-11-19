@@ -78,9 +78,29 @@ async function deleteTeam(id: string): Promise<void> {
   }
 }
 
+export interface TeamMemberInviteRequest {
+  teamId: string;
+  email: string;
+}
+
+async function teamMemberInvite(
+  payload: TeamMemberInviteRequest,
+): Promise<void> {
+  try {
+    const endpoint = `/teams/invites/create`;
+    const method = "post";
+    await apiClient[method]<void>(endpoint, payload);
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      throw new Error(error.message);
+    }
+  }
+}
+
 export const teamRequests = {
   createTeam,
   listTeams,
   updateTeam,
   deleteTeam,
+  teamMemberInvite,
 };
