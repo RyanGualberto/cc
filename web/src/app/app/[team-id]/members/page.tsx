@@ -10,9 +10,5 @@ export default function Page() {
     return null;
   }
 
-  return (
-    <section>
-      <TeamMembersCard team={selectedTeam} />
-    </section>
-  );
+  return <TeamMembersCard team={selectedTeam} />;
 }
