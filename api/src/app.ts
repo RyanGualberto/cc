@@ -1,24 +1,19 @@
 import express from "express";
 import morgan from "morgan";
 import cors from "cors";
-import { userRouter } from "./routes/user";
-import { authRouter } from "./routes/auth";
-import { teamRouter } from "./routes/team";
-import { expenseRouter } from "./routes/expense";
-import { authenticator } from "./middlewares/authenticator";
+import { routes } from "./routes";
 
 const app = express();
 
-app.use(cors({
+app.use(
+  cors({
     exposedHeaders: ["Authorization"],
-}));
+  })
+);
 app.use(morgan("dev"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-app.use("/teams", authenticator, teamRouter);
-app.use("/expenses", authenticator, expenseRouter);
-app.use("/users", userRouter);
-app.use("/auth", authRouter);
+app.use(routes);
 
 export default app;

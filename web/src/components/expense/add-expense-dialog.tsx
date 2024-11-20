@@ -18,7 +18,7 @@ import {
   addExpenseSchema,
   ALLOWED_RECURRENCES,
   ALLOWED_STATUSES,
-} from "~/schemas/add-expense";
+} from "~/schemas/add-expense-schema";
 import { type z } from "zod";
 import { Input } from "../ui/input";
 import {

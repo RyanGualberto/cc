@@ -22,7 +22,7 @@ import AddTeamMemberDialog from "./add-team-member-dialog";
 
 const TeamMembersCard: React.FC<{ team: Team }> = ({ team }) => {
   return (
-    <Card>
+    <Card className="flex-1">
       <CardHeader className="flex flex-col items-center justify-between gap-4 md:flex-row">
         <CardTitle className="w-full">Participantes do time</CardTitle>
         <AddTeamMemberDialog team={team} />

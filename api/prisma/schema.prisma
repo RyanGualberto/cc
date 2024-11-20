@@ -42,8 +42,10 @@ model Expense {
   user   User   @relation(fields: [userId], references: [id])
   userId String
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt  DateTime         @default(now())
+  updatedAt  DateTime         @updatedAt
+  category   ExpenseCategory? @relation(fields: [categoryId], references: [id])
+  categoryId String?
 
   @@map("expenses")
 }
@@ -52,8 +54,9 @@ model Team {
   id   String @id @default(cuid())
   name String
 
-  expenses    Expense[]
-  teamMembers TeamMember[]
+  expenses          Expense[]
+  teamMembers       TeamMember[]
+  expenseCategories ExpenseCategory[]
 
   createdAt  DateTime     @default(now())
   updatedAt  DateTime     @updatedAt
@@ -92,4 +95,20 @@ model TeamInvite {
 
   @@unique([email, teamId])
   @@map("team_invites")
+}
+
+model ExpenseCategory {
+  id   String @id @default(cuid())
+  name String
+
+  expenses Expense[]
+
+  Team   Team   @relation(fields: [teamId], references: [id])
+  teamId String
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+
+  @@map("expense_categories")
 }

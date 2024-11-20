@@ -1,3 +1,4 @@
+import { ExpenseCategory } from "./expense-category";
 import { type User } from "./user";
 
 export type Expense = {
@@ -9,4 +10,5 @@ export type Expense = {
   recurrence: "monthly" | "weekly" | "daily" | "once";
   amountInCents: number;
   status: "pending" | "paid" | "overdue";
+  category: ExpenseCategory;
 };

@@ -93,6 +93,8 @@ class ExpenseModel {
       return expense;
     }
 
+    const batch = uuidv4();
+
     const expenses = await prisma.expense.createMany({
       data: Array.from(
         {
@@ -103,7 +105,7 @@ class ExpenseModel {
         (_, index) => ({
           ...value,
           date: new Date(value.date.getTime() + index * 2628000000),
-          batch: uuidv4(),
+          batch: batch,
         })
       ),
     });

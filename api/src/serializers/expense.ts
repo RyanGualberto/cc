@@ -11,4 +11,5 @@ export const expenseSerializer = {
   user: {
     select: userSerializer,
   },
+  category: true,
 };

@@ -26,6 +26,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "../ui/tooltip";
+import { User } from "~/types/user";
 
 const ExpensesTable: React.FC<{
   short?: boolean;
@@ -40,6 +41,7 @@ const ExpensesTable: React.FC<{
           <TableHead>Data</TableHead>
           <TableHead>Valor</TableHead>
           <TableHead>Status</TableHead>
+          <TableHead>Categoria</TableHead>
           <Show
             component={
               <React.Fragment>
@@ -65,48 +67,17 @@ const ExpensesTable: React.FC<{
               status={expense.status}
               expense={expense}
             />
+            <TableCell>
+              {expense.category ? expense.category.name : "--"}
+            </TableCell>
             <Show
               component={
                 <React.Fragment>
                   <TableCell>
                     {TRANSLATED_RECURRENCES[expense.recurrence]}
                   </TableCell>
-                  <TableCell>
-                    <TooltipProvider>
-                      <Tooltip>
-                        <TooltipTrigger>
-                          <Avatar>
-                            <AvatarImage
-                              src="/images/avatar.png"
-                              alt="Avatar"
-                              width={40}
-                              height={40}
-                            />
-                            <AvatarFallback>
-                              {expense.user.first_name[0]}
-                              {expense.user.last_name[0]}
-                            </AvatarFallback>
-                          </Avatar>
-                        </TooltipTrigger>
-                        <TooltipContent>
-                          <span>
-                            {expense.user.first_name} {expense.user.last_name}
-                          </span>
-                        </TooltipContent>
-                      </Tooltip>
-                    </TooltipProvider>
-                  </TableCell>
-                  <TableCell className="flex items-center justify-center gap-2">
-                    <Button
-                      className="bg-blue-500/10 text-blue-500"
-                      size="icon"
-                    >
-                      <Edit size={16} />
-                    </Button>
-                    <Button className="bg-red-500/10 text-red-500" size="icon">
-                      <Trash2 size={16} />
-                    </Button>
-                  </TableCell>
+                  <UserCell user={expense.user} />
+                  <EditCell id={expense.id} />
                 </React.Fragment>
               }
               when={!short}
@@ -115,6 +86,49 @@ const ExpensesTable: React.FC<{
         ))}
       </TableBody>
     </Table>
+  );
+};
+
+const UserCell: React.FC<{ user: User }> = ({ user }) => {
+  return (
+    <TableCell>
+      <TooltipProvider>
+        <Tooltip>
+          <TooltipTrigger>
+            <Avatar>
+              <AvatarImage
+                src="/images/avatar.png"
+                alt="Avatar"
+                width={40}
+                height={40}
+              />
+              <AvatarFallback>
+                {user.first_name[0]}
+                {user.last_name[0]}
+              </AvatarFallback>
+            </Avatar>
+          </TooltipTrigger>
+          <TooltipContent>
+            <span>
+              {user.first_name} {user.last_name}
+            </span>
+          </TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
+    </TableCell>
+  );
+};
+
+const EditCell: React.FC<{ id: string }> = ({ id }) => {
+  return (
+    <TableCell className="flex items-center justify-center gap-2">
+      <Button className="bg-blue-500/10 text-blue-500" size="icon">
+        <Edit size={16} />
+      </Button>
+      <Button className="bg-red-500/10 text-red-500" size="icon">
+        <Trash2 size={16} />
+      </Button>
+    </TableCell>
   );
 };
 

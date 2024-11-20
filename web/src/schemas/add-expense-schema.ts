@@ -9,8 +9,8 @@ export const ALLOWED_RECURRENCES = [
 ] as const;
 
 export const addExpenseSchema = z.object({
-  title: z.string().min(3),
-  description: z.string().min(3),
+  title: z.string().min(3, "Título deve ter no mínimo 3 caracteres"),
+  description: z.string().optional(),
   date: z.date(),
   amountInCents: z.string(),
   status: z.enum(ALLOWED_STATUSES),

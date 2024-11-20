@@ -3,7 +3,7 @@ import { type Expense } from "~/types/expense";
 
 export interface CreateByTeamRequest {
   teamId: string;
-  description: string;
+  description?: string;
   amountInCents: number;
   date: string;
   recurrence: string;
