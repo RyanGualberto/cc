@@ -2,7 +2,7 @@ import Joi from "joi";
 
 export const CreateExpenseSchema = Joi.object({
   title: Joi.string().required(),
-  description: Joi.string(),
+  description: Joi.string().optional(),
   date: Joi.date().required(),
   // monthly, weekly, daily or once
   recurrence: Joi.string()
@@ -13,11 +13,12 @@ export const CreateExpenseSchema = Joi.object({
   userId: Joi.string().required(),
   teamId: Joi.string().required(),
   status: Joi.string().valid("pending", "paid", "overdue"),
+  categoryId: Joi.string().required(),
 });
 
 export const UpdateExpenseSchema = Joi.object({
   title: Joi.string(),
-  description: Joi.string(),
+  description: Joi.string().optional(),
   date: Joi.date(),
   // monthly, weekly, daily or once
   recurrence: Joi.string().valid("monthly", "weekly", "daily", "once"),
@@ -25,4 +26,5 @@ export const UpdateExpenseSchema = Joi.object({
   until: Joi.date(),
   amountInCents: Joi.number(),
   includeFuture: Joi.boolean(),
+  categoryId: Joi.string(),
 });

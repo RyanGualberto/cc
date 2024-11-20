@@ -16,4 +16,5 @@ export const addExpenseSchema = z.object({
   status: z.enum(ALLOWED_STATUSES),
   recurrence: z.enum(ALLOWED_RECURRENCES),
   until: z.date().optional(),
+  category: z.string().optional(),
 });

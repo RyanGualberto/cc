@@ -5,7 +5,7 @@ export type Expense = {
   user: User;
   id: string;
   title: string;
-  description: string | null;
+  description?: string;
   date: string;
   recurrence: "monthly" | "weekly" | "daily" | "once";
   amountInCents: number;

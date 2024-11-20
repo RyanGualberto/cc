@@ -30,9 +30,10 @@ import {
 } from "../ui/select";
 import { DatePicker } from "../ui/date-picker";
 import maskAmount from "~/helpers/maskAmount";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { expenseRequest } from "~/requests/expense";
 import Show from "../utils/show";
+import { expenseCategoriesRequest } from "~/requests/expense-category";
 
 export const TRANSLATED_RECURRENCES = {
   once: "Uma vez",
@@ -52,6 +53,18 @@ const AddExpenseDialog: React.FC<{
 }> = ({ team }) => {
   const queryClient = useQueryClient();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const {
+    data: expenseCategories,
+    isPending,
+    isError,
+  } = useQuery({
+    queryKey: ["expense-categories", { teamId: team.id }],
+    queryFn: async () =>
+      await expenseCategoriesRequest.listByTeam({
+        teamId: team.id,
+      }),
+  });
+
   const { mutateAsync } = useMutation({
     mutationKey: ["expenses", team.id, "create"],
     mutationFn: async (data: z.infer<typeof addExpenseSchema>) => {
@@ -63,6 +76,8 @@ const AddExpenseDialog: React.FC<{
         ...(data.until && {
           until: new Date(data.until).toISOString(),
         }),
+        description: data.description || undefined,
+        category: data.category || undefined,
       });
     },
   });
@@ -79,6 +94,9 @@ const AddExpenseDialog: React.FC<{
     form.reset();
     void queryClient.invalidateQueries({
       queryKey: ["expenses", { teamId: team.id }],
+    });
+    void queryClient.invalidateQueries({
+      queryKey: ["expense-categories", { teamId: team.id }],
     });
     setIsDialogOpen(false);
   };
@@ -214,6 +232,44 @@ const AddExpenseDialog: React.FC<{
                 when={form.watch("recurrence") !== "once"}
               />
             </div>
+            <FormField
+              control={form.control}
+              name="category"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Categoria</FormLabel>
+                  <Select
+                    value={field.value}
+                    onValueChange={(value) => {
+                      field.onChange(value);
+                    }}
+                  >
+                    <SelectTrigger
+                      disabled={isPending || isError}
+                      className="h-12"
+                    >
+                      <SelectValue
+                        placeholder={
+                          isPending
+                            ? "Carregando..."
+                            : isError
+                              ? "Erro ao carregar"
+                              : "Categoria"
+                        }
+                      />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {expenseCategories?.map((expCategory) => (
+                        <SelectItem key={expCategory.id} value={expCategory.id}>
+                          {expCategory.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
             <FormField
               control={form.control}
               name="status"

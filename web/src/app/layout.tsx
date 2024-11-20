@@ -17,7 +17,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={`${GeistSans.variable}`}>
+    <html lang="pt-BR" className={`${GeistSans.variable}`}>
       <TanstackProvider>
         <ThemeProvider
           attribute="class"

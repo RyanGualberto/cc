@@ -147,6 +147,7 @@ const StatusCell: React.FC<{
           payload: {
             ...expense,
             status: "paid",
+            description: expense.description || undefined,
           },
         })
         .then(() => {
