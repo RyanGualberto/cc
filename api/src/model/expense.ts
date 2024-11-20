@@ -1,3 +1,4 @@
+import QueryString from "qs";
 import prisma from "../clients/prismaClient";
 import { CreateExpenseSchema, UpdateExpenseSchema } from "../schemas/expense";
 import { expenseSerializer } from "../serializers/expense";
@@ -22,6 +23,7 @@ interface UpdateExpenseInput {
   recurrence?: string;
   description?: string;
   until?: Date;
+  status: "pending" | "paid" | "overdue";
   date?: Date;
   teamId: string;
   userId: string;
@@ -31,13 +33,34 @@ interface UpdateExpenseInput {
 class ExpenseModel {
   constructor() {}
 
-  public async listTeamExpenses(userId: string, teamId: string) {
+  public async listTeamExpenses(
+    userId: string,
+    teamId: string,
+    query: QueryString.ParsedQs
+  ) {
     await TeamModel.findTeamAndValidatingUser(teamId, userId);
+    const {
+      date, // MM/YYYY
+    } = query;
+
+    const [month, year] = String(date).split("/");
+    const startDate = new Date(`${year}-${month}-01`);
+    const endDate = new Date(
+      new Date(startDate).setMonth(startDate.getMonth() + 1)
+    );
 
     const expenses = await prisma.expense.findMany({
       where: {
-        teamId,
-        userId,
+        AND: [
+          {
+            teamId,
+            userId,
+            date: {
+              gte: startDate,
+              lte: endDate,
+            },
+          },
+        ],
       },
       select: expenseSerializer,
     });
@@ -98,7 +121,7 @@ class ExpenseModel {
       where: {
         id: expenseId,
         userId,
-        teamId
+        teamId,
       },
       select: expenseSerializer,
     });

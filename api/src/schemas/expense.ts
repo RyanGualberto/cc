@@ -12,6 +12,7 @@ export const CreateExpenseSchema = Joi.object({
   amountInCents: Joi.number().required(),
   userId: Joi.string().required(),
   teamId: Joi.string().required(),
+  status: Joi.string().valid("pending", "paid", "overdue"),
 });
 
 export const UpdateExpenseSchema = Joi.object({
@@ -20,6 +21,7 @@ export const UpdateExpenseSchema = Joi.object({
   date: Joi.date(),
   // monthly, weekly, daily or once
   recurrence: Joi.string().valid("monthly", "weekly", "daily", "once"),
+  status: Joi.string().valid("pending", "paid", "overdue").required(),
   until: Joi.date(),
   amountInCents: Joi.number(),
   includeFuture: Joi.boolean(),

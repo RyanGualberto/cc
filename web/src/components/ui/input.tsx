@@ -31,7 +31,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
       <div className="flex flex-col gap-2 w-full">
         <div
           className={cn(
-            'flex items-center gap-3 h-12 w-full rounded-md border border-black/20 dark:border-white/20 bg-white dark:bg-[#1A1A1A] px-3 py-1 text-sm shadow-sm',
+            'flex items-center gap-3 h-12 w-full rounded-md border bg-white dark:bg-[#1A1A1A] px-3 py-1 text-sm shadow-sm',
             error && 'border-red-500 dark:border-red-400',
             containerClassName,
           )}

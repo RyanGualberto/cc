@@ -13,8 +13,11 @@ export default function Page() {
 
   return (
     <section className="flex flex-col gap-8">
+      <div className="flex gap-4">
+        <ExpensesCard short team={selectedTeam} />
+        <ExpensesCard short team={selectedTeam} />
+      </div>
       <TeamMembersCard team={selectedTeam} />
-      <ExpensesCard team={selectedTeam} />
     </section>
   );
 }

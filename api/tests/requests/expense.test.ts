@@ -374,6 +374,7 @@ describe("Expense Test", () => {
         date: new Date(),
         recurrence: "once",
         amountInCents: 1000,
+        status: "pending",
       })
       .set("Authorization", `Bearer ${token}`);
 
@@ -403,6 +404,7 @@ describe("Expense Test", () => {
         date: new Date(),
         includeFuture: true,
         amountInCents: 1000,
+        status: "pending",
       })
       .set("Authorization", `Bearer ${token}`);
 

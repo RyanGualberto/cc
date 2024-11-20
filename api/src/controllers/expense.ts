@@ -9,7 +9,8 @@ export class Expense {
     try {
       const expenses = await ExpenseModel.listTeamExpenses(
         req.user.id,
-        req.params.teamId
+        req.params.teamId,
+        req.query
       );
 
       res.status(200).json(expenses);

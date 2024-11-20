@@ -1,91 +1,80 @@
-import React, { useCallback } from "react";
+import React, { useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
-import {
-  Table,
-  TableBody,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "../ui/table";
 import { type Team } from "~/types/team";
 import { Button } from "../ui/button";
-import { ChevronLeft, ChevronRight } from "lucide-react";
-import { MonthAndYearPicker } from "../ui/month-and-year-picker";
+import Show from "../utils/show";
+import { HeaderWithMonthPicker } from "../ui/header-with-month-picker";
+import { ExpensesTable } from "./expenses-table";
+import { ExpenseResumeCards } from "./expense-resume-cards";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { expenseRequest } from "~/requests/expense";
+import Link from "next/link";
+import { AddExpenseDialog } from "./add-expense-dialog";
 
 const ExpensesCard: React.FC<{
   team: Team;
-}> = () => {
+  short?: boolean;
+}> = ({ team, short = false }) => {
+  const queryClient = useQueryClient();
   const [date, setDate] = React.useState(
     new Date().toLocaleDateString("en-US", {
       month: "2-digit",
       year: "numeric",
     }),
   );
+  const {
+    data: expenses,
+    isPending,
+    isError,
+  } = useQuery({
+    queryKey: ["expenses", { teamId: team.id }],
+    queryFn: async () =>
+      await expenseRequest.listByTeamAndDate({
+        teamId: team.id,
+        date,
+      }),
+  });
 
-  const nextDate = useCallback((date: string) => {
-    const [month, year] = date.split("/");
-    let nextMonth;
-    let nextYear = year;
-
-    if (month && parseInt(month) === 12) {
-      nextMonth = 1;
-      nextYear = String(
-        year ? parseInt(year) + 1 : new Date().getFullYear() + 1,
-      );
-    } else {
-      nextMonth = month ? parseInt(month) + 1 : 1;
-    }
-    return `${nextMonth}/${nextYear}`;
-  }, []);
-
-  const previousDate = useCallback((date: string) => {
-    const [month, year] = date.split("/");
-    let previousMonth;
-    let previousYear = year;
-
-    if (month && parseInt(month) === 1) {
-      previousMonth = 12;
-      previousYear = String(
-        year ? parseInt(year) - 1 : new Date().getFullYear() - 1,
-      );
-    } else {
-      previousMonth = month ? parseInt(month) - 1 : 12;
-    }
-    return `${previousMonth}/${previousYear}`;
-  }, []);
+  useEffect(() => {
+    void queryClient.invalidateQueries({
+      queryKey: ["expenses", { teamId: team.id }],
+    });
+  }, [date, team.id, queryClient]);
 
   return (
-    <Card>
+    <Card className="flex-1">
       <CardHeader className="flex flex-col items-center justify-between gap-4 md:flex-row">
         <CardTitle className="w-full">Despesas</CardTitle>
+        <AddExpenseDialog team={team} />
       </CardHeader>
-      <CardContent>
-        <div className="flex items-center justify-between gap-4">
-          <Button onClick={() => setDate(previousDate(date))} variant="ghost">
-            <ChevronLeft size={16} />
-          </Button>
-          <MonthAndYearPicker
-            value={date}
-            onChange={(value) => setDate(value)}
-          />
-          <Button variant="ghost" onClick={() => setDate(nextDate(date))}>
-            <ChevronRight size={16} />
-          </Button>
-        </div>
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Nome</TableHead>
-              <TableHead>Data</TableHead>
-              <TableHead>Valor</TableHead>
-              <TableHead>Criado por</TableHead>
-              <TableHead>Recorrência</TableHead>
-              <TableHead className="text-center">#</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody></TableBody>
-        </Table>
-      </CardContent>
+      <Show
+        when={isPending}
+        component={<CardContent>Carregando...</CardContent>}
+      />
+      <Show
+        when={isError}
+        component={<CardContent>Erro ao carregar despesas</CardContent>}
+      />
+      <Show
+        when={Boolean(expenses)}
+        component={
+          <CardContent className="flex flex-col gap-8">
+            <HeaderWithMonthPicker value={date} onChange={setDate} />
+            <ExpenseResumeCards data={expenses!} />
+            <ExpensesTable short={short} data={expenses!} teamId={team.id} />
+            <Show
+              component={
+                <Button className="w-full" variant="ghost" asChild>
+                  <Link href={`/app/${team.id}/expenses`}>
+                    Ver todas as despesas
+                  </Link>
+                </Button>
+              }
+              when={short}
+            />
+          </CardContent>
+        }
+      />
     </Card>
   );
 };

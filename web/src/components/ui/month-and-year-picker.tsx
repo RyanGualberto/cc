@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useCallback, useMemo } from "react";
 import { Button } from "./button";
 import { Popover, PopoverContent, PopoverTrigger } from "./popover";
 
@@ -8,17 +8,35 @@ const MonthAndYearPicker: React.FC<{
 }> = ({ value, onChange }) => {
   const monthContainerRef = React.useRef<HTMLDivElement>(null);
   const yearContainerRef = React.useRef<HTMLDivElement>(null);
+  const monthAndYear = useMemo(() => {
+    const [month, year] = value.split("/");
+    return { month, year };
+  }, [value]);
+
+  const changeMonth = useCallback(
+    (month: number) => {
+      onChange(`${String(month).padStart(2, "0")}/${monthAndYear.year}`);
+    },
+    [monthAndYear.year, onChange],
+  );
+
+  const changeYear = useCallback(
+    (year: number) => {
+      onChange(`${monthAndYear.month}/${year}`);
+    },
+    [monthAndYear.month, onChange],
+  );
 
   return (
     <Popover
       onOpenChange={(isOpen) => {
         if (isOpen) {
           monthContainerRef.current?.scrollTo({
-            top: Number(value.split("/")[0]) * 52,
+            top: Number(monthAndYear.month) * 52,
             behavior: "smooth",
           });
           yearContainerRef.current?.scrollTo({
-            top: 0,
+            top: Number(monthAndYear.year) * 52,
             behavior: "smooth",
           });
         }
@@ -29,13 +47,13 @@ const MonthAndYearPicker: React.FC<{
           {new Intl.DateTimeFormat("pt-BR", {
             month: "long",
             year: "numeric",
-          }).format(new Date(`${value.split("/")[0]}/` + value))}
+          }).format(new Date(`${monthAndYear.month}/` + value))}
         </Button>
       </PopoverTrigger>
       <PopoverContent className="flex w-fit gap-4 pb-0 pt-3">
         <div
           ref={monthContainerRef}
-          className="scrollbar-hide flex max-h-12 flex-col gap-1 overflow-y-scroll"
+          className="scrollbar-hide flex max-h-24 flex-col gap-1 overflow-y-scroll"
         >
           {Array.from({ length: 12 }).map((_, index) => {
             const date = new Date();
@@ -43,16 +61,12 @@ const MonthAndYearPicker: React.FC<{
             return (
               <Button
                 variant={
-                  date.getMonth() + 1 === Number(value.split("/")[0])
+                  date.getMonth() + 1 === Number(monthAndYear.month)
                     ? "secondary"
                     : "ghost"
                 }
                 key={index}
-                onClick={() =>
-                  onChange(
-                    `${String(date.getMonth() + 1).padStart(2, "0")}/${date.getFullYear()}`,
-                  )
-                }
+                onClick={() => changeMonth(date.getMonth() + 1)}
               >
                 {new Intl.DateTimeFormat("pt-BR", {
                   month: "long",
@@ -63,7 +77,7 @@ const MonthAndYearPicker: React.FC<{
         </div>
         <div
           ref={yearContainerRef}
-          className="scrollbar-hide flex max-h-12 flex-col gap-1 overflow-y-scroll"
+          className="scrollbar-hide flex max-h-24 flex-col gap-1 overflow-y-scroll"
         >
           {Array.from({ length: 10 }).map((_, index) => {
             const date = new Date();
@@ -71,16 +85,12 @@ const MonthAndYearPicker: React.FC<{
             return (
               <Button
                 variant={
-                  date.getFullYear() === Number(value.split("/")[1])
+                  date.getFullYear() === Number(monthAndYear.year)
                     ? "secondary"
                     : "ghost"
                 }
                 key={index}
-                onClick={() =>
-                  onChange(
-                    `${String(date.getMonth() + 1).padStart(2, "0")}/${date.getFullYear()}`,
-                  )
-                }
+                onClick={() => changeYear(date.getFullYear())}
               >
                 {date.getFullYear()}
               </Button>
