@@ -1,6 +1,5 @@
 import apiClient from "~/config/api-client";
 import { type Expense } from "~/types/expense";
-import { ExpenseCategory } from "~/types/expense-category";
 
 export interface CreateByTeamRequest {
   teamId: string;
@@ -82,8 +81,48 @@ async function updateByTeamAndId(params: UpdateExpenseRequest) {
   }
 }
 
+async function deleteByTeamAndId({
+  teamId,
+  id,
+}: {
+  teamId: string;
+  id: string;
+}) {
+  try {
+    const endpoint = `/expenses/${teamId}/${id}`;
+    const method = "delete";
+
+    await apiClient[method]<void>(endpoint);
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      throw new Error(error.message);
+    }
+  }
+}
+
+async function deleteByTeamAndBatchId({
+  teamId,
+  batchId,
+}: {
+  teamId: string;
+  batchId: string;
+}) {
+  try {
+    const endpoint = `/expenses/${teamId}/batch/${batchId}`;
+    const method = "delete";
+
+    await apiClient[method]<void>(endpoint);
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      throw new Error(error.message);
+    }
+  }
+}
+
 export const expenseRequest = {
   createByTeam,
   listByTeamAndDate,
   updateByTeamAndId,
+  deleteByTeamAndId,
+  deleteByTeamAndBatchId,
 };

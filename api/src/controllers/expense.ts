@@ -43,4 +43,28 @@ export class Expense {
       return handleError(error, res, "Expense.updateTeamExpense");
     }
   }
+
+  public async deleteTeamExpense(req: Request, res: Response) {
+    try {
+      await ExpenseModel.delete(req.params.id, req.user.id, req.params.teamId);
+
+      res.status(204).end();
+    } catch (error: unknown) {
+      return handleError(error, res, "Expense.deleteTeamExpense");
+    }
+  }
+
+  public async deleteTeamExpensesByBatch(req: Request, res: Response) {
+    try {
+      await ExpenseModel.deleteByBatch(
+        req.params.batchId,
+        req.user.id,
+        req.params.teamId
+      );
+
+      res.status(204).end();
+    } catch (error: unknown) {
+      return handleError(error, res, "Expense.deleteTeamExpensesByBatch");
+    }
+  }
 }

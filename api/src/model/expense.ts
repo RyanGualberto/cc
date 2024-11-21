@@ -165,6 +165,36 @@ class ExpenseModel {
       data: payload,
     });
   }
+
+  public async delete(id: string, userId: string, teamId: string) {
+    await this.findExpenseById(id, userId, teamId);
+
+    return await prisma.expense.delete({
+      where: {
+        id,
+      },
+    });
+  }
+
+  public async deleteByBatch(id: string, userId: string, teamId: string) {
+    await TeamModel.findTeamAndValidatingUser(teamId, userId);
+
+    const expenses = await prisma.expense.findMany({
+      where: {
+        batch: id,
+      },
+    });
+
+    if (!expenses.length) {
+      throw new AppError("Batch not found", 404);
+    }
+
+    return await prisma.expense.deleteMany({
+      where: {
+        batch: id,
+      },
+    });
+  }
 }
 
 const model = new ExpenseModel();

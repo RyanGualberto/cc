@@ -8,6 +8,7 @@ export const expenseSerializer = {
   recurrence: true,
   status: true,
   date: true,
+  batch: true,
   user: {
     select: userSerializer,
   },

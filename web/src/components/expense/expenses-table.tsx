@@ -15,7 +15,7 @@ import {
   TRANSLATED_STATUSES,
 } from "./add-expense-dialog";
 import { Button } from "../ui/button";
-import { Edit, Trash2 } from "lucide-react";
+import { Edit } from "lucide-react";
 import { cn } from "~/lib/utils";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { expenseRequest } from "~/requests/expense";
@@ -26,7 +26,8 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "../ui/tooltip";
-import { User } from "~/types/user";
+import { type User } from "~/types/user";
+import { DeleteExpenseDialog } from "./delete-expense-dialog";
 
 const ExpensesTable: React.FC<{
   short?: boolean;
@@ -77,7 +78,7 @@ const ExpensesTable: React.FC<{
                     {TRANSLATED_RECURRENCES[expense.recurrence]}
                   </TableCell>
                   <UserCell user={expense.user} />
-                  <EditCell id={expense.id} />
+                  <EditCell expense={expense} />
                 </React.Fragment>
               }
               when={!short}
@@ -119,15 +120,13 @@ const UserCell: React.FC<{ user: User }> = ({ user }) => {
   );
 };
 
-const EditCell: React.FC<{ id: string }> = ({ id }) => {
+const EditCell: React.FC<{ expense: Expense }> = ({ expense }) => {
   return (
     <TableCell className="flex items-center justify-center gap-2">
       <Button className="bg-blue-500/10 text-blue-500" size="icon">
         <Edit size={16} />
       </Button>
-      <Button className="bg-red-500/10 text-red-500" size="icon">
-        <Trash2 size={16} />
-      </Button>
+      <DeleteExpenseDialog expense={expense} />
     </TableCell>
   );
 };
@@ -147,7 +146,7 @@ const StatusCell: React.FC<{
           payload: {
             ...expense,
             status: "paid",
-            description: expense.description || undefined,
+            description: expense.description ?? undefined,
           },
         })
         .then(() => {
