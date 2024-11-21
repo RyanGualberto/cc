@@ -28,7 +28,7 @@ const ExpenseResumeCards: React.FC<{
 
   return (
     <div className="flex flex-wrap gap-4">
-      <Card className="w-48 bg-blue-950">
+      <Card className="w-48 bg-blue-400 text-white dark:bg-blue-950">
         <CardHeader className="pb-0">
           <CardTitle className="text-2xl">
             R$ {maskAmount(String(organizedData.total))}
@@ -36,7 +36,7 @@ const ExpenseResumeCards: React.FC<{
         </CardHeader>
         <CardFooter>Total</CardFooter>
       </Card>
-      <Card className="w-48 bg-yellow-900">
+      <Card className="w-48 bg-yellow-400 text-white dark:bg-yellow-900">
         <CardHeader className="pb-0">
           <CardTitle className="text-2xl">
             R$ {maskAmount(String(organizedData.pending))}
@@ -44,7 +44,7 @@ const ExpenseResumeCards: React.FC<{
         </CardHeader>
         <CardFooter>Pendente</CardFooter>
       </Card>
-      <Card className="w-48 bg-green-900">
+      <Card className="w-48 bg-green-400 text-white dark:bg-green-900">
         <CardHeader className="pb-0">
           <CardTitle className="text-2xl">
             R$ {maskAmount(String(organizedData.paid))}
@@ -52,7 +52,7 @@ const ExpenseResumeCards: React.FC<{
         </CardHeader>
         <CardFooter>Pagos</CardFooter>
       </Card>
-      <Card className="w-48 bg-red-900">
+      <Card className="w-48 bg-red-400 text-white dark:bg-red-900">
         <CardHeader className="pb-0">
           <CardTitle className="text-2xl">
             R$ {maskAmount(String(organizedData.overdue))}

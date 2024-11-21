@@ -21,7 +21,6 @@ export default function RootLayout({
       <TanstackProvider>
         <ThemeProvider
           attribute="class"
-          defaultTheme="dark"
           themes={["light", "dark", "system"]}
           enableSystem
           disableTransitionOnChange
