@@ -9,11 +9,14 @@ import {
   TableRow,
 } from "../ui/table";
 import { Button } from "../ui/button";
-import { Edit, Trash2 } from "lucide-react";
+import { Trash2 } from "lucide-react";
+import { EditExpenseCategoryDialog } from "./edit-expense-category-dialog";
+import { type Team } from "~/types/team";
 
 const ExpenseCategoryTable: React.FC<{
   data: Array<ExpenseCategory>;
-}> = ({ data }) => {
+  team: Team;
+}> = ({ data, team }) => {
   return (
     <Table>
       <TableHeader>
@@ -29,9 +32,10 @@ const ExpenseCategoryTable: React.FC<{
             <TableCell>{expenseCategory.name}</TableCell>
             <TableCell>{expenseCategory._count?.expenses}</TableCell>
             <TableCell className="flex items-center gap-2">
-              <Button className="bg-blue-500/10 text-blue-500" size="icon">
-                <Edit size={16} />
-              </Button>
+              <EditExpenseCategoryDialog
+                team={team}
+                expenseCategory={expenseCategory}
+              />
               <Button className="bg-red-500/10 text-red-500" size="icon">
                 <Trash2 size={16} />
               </Button>

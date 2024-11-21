@@ -38,7 +38,7 @@ const ExpenseCategoryCard: React.FC<{ team: Team }> = ({ team }) => {
         when={Boolean(expenseCategories)}
         component={
           <CardContent>
-            <ExpenseCategoryTable data={expenseCategories!} />
+            <ExpenseCategoryTable team={team} data={expenseCategories!} />
           </CardContent>
         }
       />
