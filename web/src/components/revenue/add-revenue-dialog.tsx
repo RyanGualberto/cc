@@ -44,7 +44,7 @@ export const TRANSLATED_RECURRENCES = {
 
 export const TRANSLATED_STATUSES = {
   pending: "Pendente",
-  paid: "Pago",
+  paid: "Recebido",
   overdue: "Atrasado",
 };
 

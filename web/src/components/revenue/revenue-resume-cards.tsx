@@ -50,7 +50,7 @@ const RevenueResumeCards: React.FC<{
             R$ {maskAmount(String(organizedData.paid))}
           </CardTitle>
         </CardHeader>
-        <CardFooter>Pagos</CardFooter>
+        <CardFooter>Recebidos</CardFooter>
       </Card>
       <Card className="w-48 bg-red-400 text-white dark:bg-red-900">
         <CardHeader className="pb-0">

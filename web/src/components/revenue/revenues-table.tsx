@@ -175,7 +175,7 @@ const StatusCell: React.FC<{
         onClick={() => mutateAsync()}
         className="bg-green-500/10 text-green-500"
       >
-        Marcar como Pago
+        Marcar como Recebido
       </Button>
     </TableCell>
   );
