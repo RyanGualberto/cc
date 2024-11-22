@@ -3,6 +3,8 @@ import { handleError } from "../utils/handleError";
 import { TeamModel } from "../model/team";
 import { decodeTokenFromHeader, generateToken } from "../services/jwt";
 import { AppError } from "../utils/appError";
+import { mailTransporter } from "../clients/mailer-client";
+import { inviteTemplate } from "../templates/invite-template";
 
 export class Team {
   constructor() {}
@@ -60,6 +62,19 @@ export class Team {
     }
   }
 
+  public async listTeamInvites(req: Request, res: Response) {
+    try {
+      const invites = await TeamModel.listTeamInvites(
+        req.user.id,
+        req.params.teamId
+      );
+
+      return res.status(200).json(invites);
+    } catch (error: unknown) {
+      return handleError(error, res, "Team.listTeamInvites");
+    }
+  }
+
   public async inviteMember(req: Request, res: Response) {
     try {
       const { email, teamId } = req.body;
@@ -70,8 +85,30 @@ export class Team {
       });
 
       const inviteToken = generateToken({ inviteId: invite.id });
+      const mailOptions = {
+        from: "suporte@recebee.com",
+        to: email,
+        subject: "Convite para participar de um time",
+        html: inviteTemplate({
+          inviteToken,
+          teamName: invite.team.name,
+          invitedBy: req.user.first_name + " " + req.user.last_name,
+        }),
+      };
 
-      return res.status(201).json({ inviteToken });
+      mailTransporter.sendMail(mailOptions, (error, info) => {
+        if (error) {
+          console.log("Error sending email");
+
+          console.log(error);
+        } else {
+          console.log("Email sent: " + info.response);
+        }
+      });
+
+      return res.status(201).json({
+        message: "Invite sent",
+      });
     } catch (error: unknown) {
       return handleError(error, res, "Team.inviteMember");
     }
@@ -99,6 +136,20 @@ export class Team {
     }
   }
 
+  public async removeTeamInvite(req: Request, res: Response) {
+    try {
+      await TeamModel.removeTeamInvite(
+        req.user.id,
+        req.params.teamId,
+        req.params.inviteId
+      );
+
+      return res.status(204).send();
+    } catch (error: unknown) {
+      return handleError(error, res, "Team.removeTeamInvite");
+    }
+  }
+
   public async updateMemberRole(req: Request, res: Response) {
     try {
       await TeamModel.updateMemberRole(
@@ -110,7 +161,7 @@ export class Team {
 
       return res.status(200).send();
     } catch (error: unknown) {
-      return handleError(error, res, "Team.acceptInvite");
+      return handleError(error, res, "Team.updateMemberRole");
     }
   }
 
@@ -123,7 +174,7 @@ export class Team {
       );
       return res.status(204).send();
     } catch (error: unknown) {
-      return handleError(error, res, "Team.acceptInvite");
+      return handleError(error, res, "Team.removeMember");
     }
   }
 }

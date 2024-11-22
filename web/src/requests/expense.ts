@@ -58,20 +58,29 @@ async function listByTeamAndDate(params: ListByTeamAndDateRequest) {
 }
 
 export interface UpdateExpenseRequest {
-  payload: Expense;
+  payload: {
+    amountInCents: number;
+    categoryId: string | undefined;
+    date: string;
+    description: string | undefined;
+    status: string;
+    title: string;
+    includeFuture?: boolean;
+  };
   teamId: string;
+  expenseId: string;
 }
 
 async function updateByTeamAndId(params: UpdateExpenseRequest) {
   try {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { category, user, id, ...payload } = params.payload;
-    const endpoint = `/expenses/${params.teamId}/${id}`;
+    const { categoryId, ...payload } = params.payload;
+    const endpoint = `/expenses/${params.teamId}/${params.expenseId}`;
     const method = "put";
 
     const { data: response } = await apiClient[method]<Expense>(endpoint, {
       ...payload,
-      categoryId: params.payload.category.id,
+      description: payload.description ?? undefined,
     });
     return response;
   } catch (error: unknown) {

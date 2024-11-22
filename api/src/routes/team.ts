@@ -12,6 +12,8 @@ router.delete("/:teamId", teamController.deleteTeam);
 router.delete("/:teamId/members/:teamMemberId", teamController.removeMember);
 router.put("/:teamId/members/:teamMemberId", teamController.updateMemberRole);
 router.post("/invites/create", teamController.inviteMember);
+router.get("/:teamId/invites", teamController.listTeamInvites);
 router.post("/invites/accept", teamController.acceptInvite);
+router.delete("/invites/:teamId/:inviteId", teamController.removeTeamInvite);
 
 export { router as teamRouter };

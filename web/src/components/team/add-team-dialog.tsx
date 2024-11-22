@@ -24,9 +24,9 @@ const AddTeamDialog = () => {
   });
   const [open, setOpen] = useState(false);
   const { refetchTeams } = useUserContext();
-  const { mutate } = useMutation({
-    mutationKey: ["spaces", "create"],
-    onMutate: async (data: { name: string }) =>
+  const { mutate, isPending } = useMutation({
+    mutationKey: ["team", "create"],
+    mutationFn: async (data: { name: string }) =>
       await teamRequests.createTeam(data).then(() => {
         refetchTeams();
         setOpen(false);
@@ -36,11 +36,12 @@ const AddTeamDialog = () => {
   const onSubmit = useCallback(
     async (event: React.FormEvent<HTMLFormElement>) => {
       event.preventDefault();
+      if (isPending) return;
       await form.handleSubmit(async (values: z.infer<typeof TeamSchema>) => {
         mutate(values);
       })();
     },
-    [form, mutate],
+    [form, mutate, isPending],
   );
 
   return (
@@ -68,7 +69,7 @@ const AddTeamDialog = () => {
                 </FormItem>
               )}
             />
-            <Button type="submit" className="h-12">
+            <Button disabled={isPending} type="submit" className="h-12">
               Adicionar espaço
             </Button>
           </form>

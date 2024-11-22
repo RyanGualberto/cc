@@ -18,8 +18,7 @@ import { Label } from "../ui/label";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { expenseRequest } from "~/requests/expense";
 import { useUserContext } from "~/hooks/use-user-context";
-
-const TIME_TO_CONFIRM = 3;
+import { TIME_TO_CONFIRM } from "~/config/constants";
 
 const DeleteExpenseDialog: React.FC<{
   expense: Expense;

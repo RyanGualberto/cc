@@ -13,7 +13,7 @@ import { type z } from "zod";
 import { TeamMemberSchema } from "~/schemas/team-member-schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Input } from "../ui/input";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { teamRequests } from "~/requests/team";
 import { useUserContext } from "~/hooks/use-user-context";
 import React, { useCallback, useState } from "react";
@@ -25,11 +25,12 @@ const AddTeamMemberDialog: React.FC<{
   const form = useForm<z.infer<typeof TeamMemberSchema>>({
     resolver: zodResolver(TeamMemberSchema),
   });
+  const queryClient = useQueryClient();
   const [open, setOpen] = useState(false);
   const { refetchTeams } = useUserContext();
-  const { mutate } = useMutation({
+  const { mutate, isPending } = useMutation({
     mutationKey: ["teams", team.id, "invite"],
-    onMutate: async (data: { email: string }) => {
+    mutationFn: async (data: { email: string }) => {
       if (!team || !data.email) {
         return;
       }
@@ -40,6 +41,9 @@ const AddTeamMemberDialog: React.FC<{
         })
         .then(() => {
           refetchTeams();
+          void queryClient.invalidateQueries({
+            queryKey: ["team", team.id, "invites"],
+          });
           setOpen(false);
           form.reset();
         });
@@ -49,13 +53,14 @@ const AddTeamMemberDialog: React.FC<{
   const onSubmit = useCallback(
     async (event: React.FormEvent<HTMLFormElement>) => {
       event.preventDefault();
+      if (isPending) return;
       await form.handleSubmit(
         async (values: z.infer<typeof TeamMemberSchema>) => {
           mutate(values);
         },
       )();
     },
-    [form, mutate],
+    [form, mutate, isPending],
   );
 
   return (
@@ -83,7 +88,7 @@ const AddTeamMemberDialog: React.FC<{
                 </FormItem>
               )}
             />
-            <Button type="submit" className="h-12">
+            <Button disabled={isPending} type="submit" className="h-12">
               Enviar Convite
             </Button>
           </form>

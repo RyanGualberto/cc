@@ -142,25 +142,26 @@ class ExpenseModel {
       throw new AppError(error.message, 400);
     }
 
-    await this.findExpenseById(id, data.userId, teamId);
-
-    const { includeFuture, ...payload } = value;
+    const { includeFuture, date, ...payload } = value;
     if (!includeFuture) {
+      await this.findExpenseById(id, data.userId, teamId);
       return await prisma.expense.update({
         where: {
           id,
         },
-        data: payload,
+        data: {
+          ...payload,
+          date: date,
+        },
         select: expenseSerializer,
       });
     }
 
+    await TeamModel.findTeamAndValidatingUser(teamId, data.userId);
+
     return await prisma.expense.updateMany({
       where: {
         batch: id,
-        date: {
-          gte: new Date(),
-        },
       },
       data: payload,
     });

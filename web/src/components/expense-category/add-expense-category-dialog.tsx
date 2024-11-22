@@ -9,7 +9,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "../ui/dialog";
-import React, { useState } from "react";
+import React, { useCallback, useState } from "react";
 import { type Team } from "~/types/team";
 import { Form, FormField, FormItem, FormLabel, FormMessage } from "../ui/form";
 import { useForm } from "react-hook-form";
@@ -25,10 +25,10 @@ const AddExpenseCategoryDialog: React.FC<{
 }> = ({ team }) => {
   const queryClient = useQueryClient();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const { mutateAsync } = useMutation({
+  const { mutateAsync, isPending } = useMutation({
     mutationKey: ["expense-categories", team.id, "create"],
     mutationFn: async (data: z.infer<typeof addExpenseCategorySchema>) => {
-      await expenseCategoriesRequest.createByTeam({
+      return await expenseCategoriesRequest.createByTeam({
         name: data.name,
         teamId: team.id,
       });
@@ -38,14 +38,18 @@ const AddExpenseCategoryDialog: React.FC<{
     resolver: zodResolver(addExpenseCategorySchema),
   });
 
-  const onSubmit = async (data: z.infer<typeof addExpenseCategorySchema>) => {
-    await mutateAsync(data);
-    form.reset();
-    void queryClient.invalidateQueries({
-      queryKey: ["expense-categories", { teamId: team.id }],
-    });
-    setIsDialogOpen(false);
-  };
+  const onSubmit = useCallback(
+    async (data: z.infer<typeof addExpenseCategorySchema>) => {
+      if (isPending) return;
+      await mutateAsync(data);
+      form.reset();
+      void queryClient.invalidateQueries({
+        queryKey: ["expense-categories", { teamId: team.id }],
+      });
+      setIsDialogOpen(false);
+    },
+    [mutateAsync, queryClient, team.id, isPending, form],
+  );
 
   return (
     <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
@@ -82,7 +86,9 @@ const AddExpenseCategoryDialog: React.FC<{
             />
             <DialogFooter className="gap-6">
               <DialogClose>Cancelar</DialogClose>
-              <Button type="submit">Adicionar Categoria de Despesa</Button>
+              <Button disabled={isPending} type="submit">
+                Adicionar Categoria de Despesa
+              </Button>
             </DialogFooter>
           </form>
         </Form>

@@ -34,7 +34,7 @@ const TeamMembersCard: React.FC<{ team: Team }> = ({ team }) => {
               <TableHead>Nome</TableHead>
               <TableHead>Email</TableHead>
               <TableHead>Função</TableHead>
-              <TableHead className="text-center">#</TableHead>
+              <TableHead className="text-center">Ações</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>

@@ -3,7 +3,7 @@ import { useMutation } from "@tanstack/react-query";
 import { teamRequests } from "~/requests/team";
 import { useUserContext } from "~/hooks/use-user-context";
 import React, { useState } from "react";
-import { Team } from "~/types/team";
+import { type Team } from "~/types/team";
 import {
   AlertDialog,
   AlertDialogCancel,
@@ -20,9 +20,9 @@ const DeleteSpaceDialog: React.FC<{
 }> = ({ team, trigger }) => {
   const [open, setOpen] = useState(false);
   const { refetchTeams } = useUserContext();
-  const { mutate } = useMutation({
-    mutationKey: ["spaces", team.id, "delete"],
-    onMutate: async () =>
+  const { mutate, isPending } = useMutation({
+    mutationKey: ["team", team.id, "delete"],
+    mutationFn: async () =>
       await teamRequests.deleteTeam(team.id).then(() => {
         refetchTeams();
         setOpen(false);
@@ -47,6 +47,7 @@ const DeleteSpaceDialog: React.FC<{
 
           <Button
             variant="destructive"
+            disabled={isPending}
             onClick={() => {
               mutate();
             }}

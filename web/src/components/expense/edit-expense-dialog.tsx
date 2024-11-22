@@ -1,4 +1,4 @@
-import { Plus } from "lucide-react";
+import { Edit } from "lucide-react";
 import { Button } from "../ui/button";
 import {
   Dialog,
@@ -9,16 +9,11 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "../ui/dialog";
-import React, { useCallback, useState } from "react";
-import { type Team } from "~/types/team";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { Form, FormField, FormItem, FormLabel, FormMessage } from "../ui/form";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import {
-  addExpenseSchema,
-  ALLOWED_RECURRENCES,
-  ALLOWED_STATUSES,
-} from "~/schemas/add-expense-schema";
+import { ALLOWED_STATUSES } from "~/schemas/add-expense-schema";
 import { type z } from "zod";
 import { Input } from "../ui/input";
 import {
@@ -34,6 +29,11 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { expenseRequest } from "~/requests/expense";
 import Show from "../utils/show";
 import { expenseCategoriesRequest } from "~/requests/expense-category";
+import { type Expense } from "~/types/expense";
+import { useUserContext } from "~/hooks/use-user-context";
+import { Switch } from "../ui/switch";
+import { Label } from "../ui/label";
+import { editExpenseSchema } from "~/schemas/edit-expense-schema";
 
 export const TRANSLATED_RECURRENCES = {
   once: "Uma vez",
@@ -48,74 +48,90 @@ export const TRANSLATED_STATUSES = {
   overdue: "Atrasado",
 };
 
-const AddExpenseDialog: React.FC<{
-  team: Team;
-}> = ({ team }) => {
+const EditExpenseDialog: React.FC<{
+  expense: Expense;
+}> = ({ expense }) => {
   const queryClient = useQueryClient();
+  const { selectedTeam } = useUserContext();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [includeFuture, setDeleteAll] = useState(false);
+  const hasMany = useMemo(
+    () => expense.recurrence !== "once",
+    [expense.recurrence],
+  );
   const {
     data: expenseCategories,
     isPending,
     isError,
   } = useQuery({
-    queryKey: ["expense-categories", { teamId: team.id }],
+    queryKey: ["expense-categories", { teamId: selectedTeam?.id }],
     queryFn: async () =>
       await expenseCategoriesRequest.listByTeam({
-        teamId: team.id,
+        teamId: selectedTeam!.id,
       }),
   });
 
   const { mutateAsync, isPending: addingExpense } = useMutation({
-    mutationKey: ["expenses", team.id, "create"],
-    mutationFn: async (data: z.infer<typeof addExpenseSchema>) => {
-      return await expenseRequest.createByTeam({
-        ...data,
-        teamId: team.id,
-        amountInCents: parseInt(String(data.amountInCents).replace(/\D/g, "")),
-        date: new Date(data.date).toISOString(),
-        ...(data.until && {
-          until: new Date(data.until).toISOString(),
-        }),
-        description: data.description ?? undefined,
-        category: data.category ?? undefined,
+    mutationKey: ["expenses", selectedTeam?.id, expense.id, "edit"],
+    mutationFn: async (data: z.infer<typeof editExpenseSchema>) => {
+      return await expenseRequest.updateByTeamAndId({
+        expenseId: includeFuture ? expense.batch : expense.id,
+        payload: {
+          categoryId: data.category,
+          amountInCents: parseInt(
+            String(data.amountInCents).replace(/\D/g, ""),
+          ),
+          description: data.description,
+          title: data.title,
+          status: data.status,
+          includeFuture: includeFuture,
+          date: new Date(data.date).toISOString(),
+        },
+        teamId: selectedTeam!.id,
       });
     },
   });
-  const form = useForm<z.infer<typeof addExpenseSchema>>({
-    resolver: zodResolver(addExpenseSchema),
-    defaultValues: {
-      recurrence: "once",
-      status: "pending",
-    },
+  const form = useForm<z.infer<typeof editExpenseSchema>>({
+    resolver: zodResolver(editExpenseSchema),
   });
 
+  useEffect(() => {
+    form.reset({
+      status: expense.status,
+      title: expense.title,
+      description: expense.description,
+      amountInCents: maskAmount(String(expense.amountInCents)),
+      category: expense.category.id,
+      date: new Date(expense.date),
+    });
+  }, [expense, form]);
+
   const onSubmit = useCallback(
-    async (data: z.infer<typeof addExpenseSchema>) => {
+    async (data: z.infer<typeof editExpenseSchema>) => {
       if (addingExpense) return;
       await mutateAsync(data);
       form.reset();
       void queryClient.invalidateQueries({
-        queryKey: ["expenses", { teamId: team.id }],
+        queryKey: ["expenses", { teamId: selectedTeam?.id }],
       });
       void queryClient.invalidateQueries({
-        queryKey: ["expense-categories", { teamId: team.id }],
+        queryKey: ["expense-categories", { teamId: selectedTeam?.id }],
       });
       setIsDialogOpen(false);
     },
-    [mutateAsync, addingExpense, form, queryClient, team.id],
+    [mutateAsync, addingExpense, form, queryClient, selectedTeam?.id],
   );
 
   return (
     <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
       <DialogTrigger asChild>
-        <Button className="items-center gap-2">
-          <Plus size={16} />
-          Adicionar Despesa
+        <Button className="bg-blue-500/10 text-blue-500" size="icon">
+          <Edit size={16} />
         </Button>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Adicionar Despesa em {team.name}</DialogTitle>
+          <DialogTitle>Editar Despesa</DialogTitle>
         </DialogHeader>
         <Form {...form}>
           <form
@@ -169,59 +185,15 @@ const AddExpenseDialog: React.FC<{
                   </FormItem>
                 )}
               />
-              <FormField
-                control={form.control}
-                name="date"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Data de Vencimento</FormLabel>
-                    <DatePicker
-                      date={field.value ? new Date(field.value) : null}
-                      setDate={(value) => {
-                        field.onChange(value);
-                      }}
-                    />
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
-            <div className="flex gap-4">
-              <FormField
-                control={form.control}
-                name="recurrence"
-                render={({ field }) => (
-                  <FormItem className="w-full">
-                    <FormLabel>Recorrência</FormLabel>
-                    <Select
-                      value={field.value}
-                      onValueChange={(value) => {
-                        field.onChange(value);
-                      }}
-                    >
-                      <SelectTrigger className="h-12">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {ALLOWED_RECURRENCES.map((recurrence) => (
-                          <SelectItem key={recurrence} value={recurrence}>
-                            {TRANSLATED_RECURRENCES[recurrence]}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
               <Show
+                when={!includeFuture}
                 component={
                   <FormField
                     control={form.control}
-                    name="until"
+                    name="date"
                     render={({ field }) => (
-                      <FormItem className="w-full">
-                        <FormLabel>Até</FormLabel>
+                      <FormItem>
+                        <FormLabel>Data de Vencimento</FormLabel>
                         <DatePicker
                           date={field.value ? new Date(field.value) : null}
                           setDate={(value) => {
@@ -233,9 +205,9 @@ const AddExpenseDialog: React.FC<{
                     )}
                   />
                 }
-                when={form.watch("recurrence") !== "once"}
               />
             </div>
+
             <FormField
               control={form.control}
               name="category"
@@ -274,38 +246,57 @@ const AddExpenseDialog: React.FC<{
                 </FormItem>
               )}
             />
-            <FormField
-              control={form.control}
-              name="status"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Status</FormLabel>
-                  <Select
-                    value={field.value}
-                    onValueChange={(value) => {
-                      field.onChange(value);
-                    }}
-                  >
-                    <SelectTrigger className="h-12">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {ALLOWED_STATUSES.map((status) => (
-                        <SelectItem key={status} value={status}>
-                          {TRANSLATED_STATUSES[status]}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              )}
+            <Show
+              when={!includeFuture}
+              component={
+                <FormField
+                  control={form.control}
+                  name="status"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Status</FormLabel>
+                      <Select
+                        value={field.value}
+                        onValueChange={(value) => {
+                          field.onChange(value);
+                        }}
+                      >
+                        <SelectTrigger className="h-12">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {ALLOWED_STATUSES.map((status) => (
+                            <SelectItem key={status} value={status}>
+                              {TRANSLATED_STATUSES[status]}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              }
             />
-
+            <Show
+              when={hasMany}
+              component={
+                <div className="flex items-center gap-2">
+                  <Switch
+                    checked={includeFuture}
+                    name="includeFuture"
+                    onCheckedChange={(checked) => setDeleteAll(checked)}
+                  />
+                  <Label htmlFor="includeFuture">
+                    Editar todas as recorrências
+                  </Label>
+                </div>
+              }
+            />
             <DialogFooter className="gap-6">
               <DialogClose>Cancelar</DialogClose>
               <Button disabled={addingExpense} type="submit">
-                Adicionar Despesa
+                Salvar
               </Button>
             </DialogFooter>
           </form>
@@ -315,4 +306,4 @@ const AddExpenseDialog: React.FC<{
   );
 };
 
-export { AddExpenseDialog };
+export { EditExpenseDialog };

@@ -15,7 +15,6 @@ import {
   TRANSLATED_STATUSES,
 } from "./add-expense-dialog";
 import { Button } from "../ui/button";
-import { Edit } from "lucide-react";
 import { cn } from "~/lib/utils";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { expenseRequest } from "~/requests/expense";
@@ -28,6 +27,7 @@ import {
 } from "../ui/tooltip";
 import { type User } from "~/types/user";
 import { DeleteExpenseDialog } from "./delete-expense-dialog";
+import { EditExpenseDialog } from "./edit-expense-dialog";
 
 const ExpensesTable: React.FC<{
   short?: boolean;
@@ -123,9 +123,7 @@ const UserCell: React.FC<{ user: User }> = ({ user }) => {
 const EditCell: React.FC<{ expense: Expense }> = ({ expense }) => {
   return (
     <TableCell className="flex items-center justify-center gap-2">
-      <Button className="bg-blue-500/10 text-blue-500" size="icon">
-        <Edit size={16} />
-      </Button>
+      <EditExpenseDialog expense={expense} />
       <DeleteExpenseDialog expense={expense} />
     </TableCell>
   );
@@ -137,16 +135,21 @@ const StatusCell: React.FC<{
   expense: Expense;
 }> = ({ status, teamId, expense }) => {
   const queryClient = useQueryClient();
-  const { mutateAsync } = useMutation({
+  const { mutateAsync, isPending } = useMutation({
     mutationKey: ["expenses", teamId, "update", expense.id],
-    onMutate: async () => {
+    mutationFn: async () => {
       return await expenseRequest
         .updateByTeamAndId({
           teamId,
+          expenseId: expense.id,
           payload: {
-            ...expense,
+            amountInCents: expense.amountInCents,
+            categoryId: expense.category.id,
+            date: expense.date,
+            description: expense.description,
+            recurrence: expense.recurrence,
             status: "paid",
-            description: expense.description ?? undefined,
+            title: expense.title,
           },
         })
         .then(() => {
@@ -169,6 +172,7 @@ const StatusCell: React.FC<{
   return (
     <TableCell>
       <Button
+        disabled={isPending}
         onClick={() => mutateAsync()}
         className="bg-green-500/10 text-green-500"
       >

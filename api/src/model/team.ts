@@ -76,12 +76,27 @@ class TeamModel {
     };
   }
 
+  public async listTeamInvites(userId: string, teamId: string) {
+    await this.validateTeamMemberRole(teamId, userId);
+
+    const invites = await prisma.teamInvite.findMany({
+      where: {
+        teamId,
+      },
+    });
+
+    return invites;
+  }
+
   public async inviteTeamMembers(data: TeamInviteInput) {
     await this.validateTeamMemberRole(data.teamId, data.userId);
     const invite = await prisma.teamInvite.create({
       data: {
         email: data.email,
         teamId: data.teamId,
+      },
+      include: {
+        team: true,
       },
     });
 
@@ -121,7 +136,40 @@ class TeamModel {
       },
     });
 
+    await prisma.teamInvite.delete({
+      where: {
+        id: inviteId,
+      },
+    });
+
     return invite;
+  }
+
+  public async removeTeamInvite(
+    userId: string,
+    teamId: string,
+    inviteId: string
+  ) {
+    await this.validateTeamMemberRole(teamId, userId);
+
+    const invite = await prisma.teamInvite.findFirst({
+      where: {
+        id: inviteId,
+        teamId,
+      },
+    });
+
+    if (!invite) {
+      throw new AppError("Invite not found", 404);
+    }
+
+    await prisma.teamInvite.delete({
+      where: {
+        id: inviteId,
+      },
+    });
+
+    return;
   }
 
   public async removeTeamMember(

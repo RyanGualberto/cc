@@ -1,4 +1,4 @@
-import { Edit, Plus } from "lucide-react";
+import { Edit } from "lucide-react";
 import { Button } from "../ui/button";
 import {
   Dialog,
@@ -9,7 +9,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "../ui/dialog";
-import React, { useState } from "react";
+import React, { useCallback, useState } from "react";
 import { type Team } from "~/types/team";
 import { Form, FormField, FormItem, FormLabel, FormMessage } from "../ui/form";
 import { useForm } from "react-hook-form";
@@ -27,10 +27,10 @@ const EditExpenseCategoryDialog: React.FC<{
 }> = ({ team, expenseCategory }) => {
   const queryClient = useQueryClient();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const { mutateAsync } = useMutation({
+  const { mutateAsync, isPending } = useMutation({
     mutationKey: ["expense-categories", team.id, "create"],
     mutationFn: async (data: z.infer<typeof editExpenseCategorySchema>) => {
-      await expenseCategoriesRequest.updateByTeamAndId({
+      return await expenseCategoriesRequest.updateByTeamAndId({
         teamId: team.id,
         payload: {
           ...expenseCategory,
@@ -46,17 +46,21 @@ const EditExpenseCategoryDialog: React.FC<{
     },
   });
 
-  const onSubmit = async (data: z.infer<typeof editExpenseCategorySchema>) => {
-    await mutateAsync(data);
-    form.reset();
-    void queryClient.invalidateQueries({
-      queryKey: ["expense-categories", { teamId: team.id }],
-    });
-    void queryClient.invalidateQueries({
-      queryKey: ["expenses", { teamId: team.id }],
-    });
-    setIsDialogOpen(false);
-  };
+  const onSubmit = useCallback(
+    async (data: z.infer<typeof editExpenseCategorySchema>) => {
+      if (isPending) return;
+      await mutateAsync(data);
+      form.reset();
+      void queryClient.invalidateQueries({
+        queryKey: ["expense-categories", { teamId: team.id }],
+      });
+      void queryClient.invalidateQueries({
+        queryKey: ["expenses", { teamId: team.id }],
+      });
+      setIsDialogOpen(false);
+    },
+    [mutateAsync, queryClient, team.id, isPending, form],
+  );
 
   return (
     <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
@@ -90,7 +94,9 @@ const EditExpenseCategoryDialog: React.FC<{
             />
             <DialogFooter className="gap-6">
               <DialogClose>Cancelar</DialogClose>
-              <Button type="submit">Salvar</Button>
+              <Button disabled={isPending} type="submit">
+                Salvar
+              </Button>
             </DialogFooter>
           </form>
         </Form>

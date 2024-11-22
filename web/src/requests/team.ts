@@ -1,5 +1,5 @@
 import apiClient from "~/config/api-client";
-import { type Team } from "~/types/team";
+import { type TeamInvite, type Team } from "~/types/team";
 
 export type ListTeamsResponse = Array<Team>;
 
@@ -96,10 +96,44 @@ async function teamMemberInvite(
   }
 }
 
+async function listTeamInvites(
+  teamId: string,
+): Promise<Array<TeamInvite> | undefined> {
+  try {
+    const endpoint = `/teams/${teamId}/invites`;
+    const method = "get";
+    const { data: response } =
+      await apiClient[method]<Array<TeamInvite>>(endpoint);
+
+    return response;
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      throw new Error(error.message);
+    }
+  }
+}
+
+async function removeTeamInvite(
+  teamId: string,
+  inviteId: string,
+): Promise<void> {
+  try {
+    const endpoint = `/teams/invites/${teamId}/${inviteId}`;
+    const method = "delete";
+    await apiClient[method]<void>(endpoint);
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      throw new Error(error.message);
+    }
+  }
+}
+
 export const teamRequests = {
   createTeam,
   listTeams,
   updateTeam,
   deleteTeam,
   teamMemberInvite,
+  listTeamInvites,
+  removeTeamInvite,
 };

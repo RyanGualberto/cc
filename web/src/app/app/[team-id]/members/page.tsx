@@ -1,5 +1,6 @@
 "use client";
 import React from "react";
+import TeamInvitesCard from "~/components/team/team-invites-card";
 import TeamMembersCard from "~/components/team/team-members-card";
 import { useUserContext } from "~/hooks/use-user-context";
 
@@ -10,5 +11,10 @@ export default function Page() {
     return null;
   }
 
-  return <TeamMembersCard team={selectedTeam} />;
+  return (
+    <div className="flex gap-4">
+      <TeamMembersCard team={selectedTeam} />
+      <TeamInvitesCard team={selectedTeam} />
+    </div>
+  );
 }

@@ -16,3 +16,11 @@ export interface TeamMember {
   userId: string;
   user: User;
 }
+
+export interface TeamInvite {
+  id: string;
+  email: string;
+  teamId: string;
+  createdAt: string;
+  updatedAt: string;
+}

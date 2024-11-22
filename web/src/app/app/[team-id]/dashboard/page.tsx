@@ -2,6 +2,7 @@
 import React from "react";
 import ExpenseCategoryCard from "~/components/expense-category/expense-category-card";
 import ExpensesCard from "~/components/expense/expenses-card";
+import TeamInvitesCard from "~/components/team/team-invites-card";
 import TeamMembersCard from "~/components/team/team-members-card";
 import { useUserContext } from "~/hooks/use-user-context";
 
@@ -13,14 +14,18 @@ export default function Page() {
   }
 
   return (
-    <section className="flex flex-col gap-8">
+    <section className="flex flex-col gap-4">
       <div className="flex gap-4">
         <ExpensesCard short team={selectedTeam} />
         <ExpensesCard short team={selectedTeam} />
       </div>
       <div className="flex gap-4">
         <ExpenseCategoryCard team={selectedTeam} />
+        <ExpenseCategoryCard team={selectedTeam} />
+      </div>
+      <div className="flex gap-4">
         <TeamMembersCard team={selectedTeam} />
+        <TeamInvitesCard team={selectedTeam} />
       </div>
     </section>
   );

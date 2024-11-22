@@ -12,4 +12,5 @@ export type Expense = {
   amountInCents: number;
   status: "pending" | "paid" | "overdue";
   category: ExpenseCategory;
+  until: string | null;
 };
