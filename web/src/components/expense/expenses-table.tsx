@@ -58,9 +58,11 @@ const ExpensesTable: React.FC<{
       <TableBody>
         {data.map((expense) => (
           <TableRow key={expense.id}>
-            <TableCell>{expense.title}</TableCell>
+            <TableCell className="max-w-48 overflow-hidden text-ellipsis whitespace-nowrap">
+              {expense.title}
+            </TableCell>
             <DateCell date={expense.date} status={expense.status} />
-            <TableCell>
+            <TableCell className="max-w-36 overflow-hidden text-ellipsis whitespace-nowrap">
               R$ {maskAmount(String(expense.amountInCents))}
             </TableCell>
             <StatusCell
@@ -68,7 +70,7 @@ const ExpensesTable: React.FC<{
               status={expense.status}
               expense={expense}
             />
-            <TableCell>
+            <TableCell className="max-w-32 overflow-hidden text-ellipsis whitespace-nowrap">
               {expense.category ? expense.category.name : "--"}
             </TableCell>
             <Show

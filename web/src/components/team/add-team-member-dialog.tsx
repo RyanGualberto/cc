@@ -66,7 +66,7 @@ const AddTeamMemberDialog: React.FC<{
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button className="items-center gap-2">
+        <Button className="items-center gap-2 w-full md:w-fit">
           <Plus size={16} />
           Adicionar Membro
         </Button>

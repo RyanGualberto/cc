@@ -17,15 +17,15 @@ export default function Page() {
 
   return (
     <section className="flex flex-col gap-4">
-      <div className="flex gap-4">
+      <div className="flex gap-4 flex-col md:flex-row">
         <RevenuesCard short team={selectedTeam} />
         <ExpensesCard short team={selectedTeam} />
       </div>
-      <div className="flex gap-4">
+      <div className="flex gap-4 flex-col md:flex-row">
         <RevenueCategoryCard team={selectedTeam} />
         <ExpenseCategoryCard team={selectedTeam} />
       </div>
-      <div className="flex gap-4">
+      <div className="flex gap-4 flex-col md:flex-row">
         <TeamMembersCard team={selectedTeam} />
         <TeamInvitesCard team={selectedTeam} />
       </div>

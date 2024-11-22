@@ -1,6 +1,7 @@
 "use client";
 import React from "react";
 import ExpenseCategoryCard from "~/components/expense-category/expense-category-card";
+import RevenueCategoryCard from "~/components/revenue-category/revenue-category-card";
 import { useUserContext } from "~/hooks/use-user-context";
 
 export default function Page() {
@@ -11,11 +12,9 @@ export default function Page() {
   }
 
   return (
-    <section className="flex flex-col gap-8">
-      <div className="flex gap-4">
-        <ExpenseCategoryCard team={selectedTeam} />
-        <ExpenseCategoryCard team={selectedTeam} />
-      </div>
+    <section className="flex flex-col gap-4 md:flex-row">
+      <RevenueCategoryCard team={selectedTeam} />
+      <ExpenseCategoryCard team={selectedTeam} />
     </section>
   );
 }

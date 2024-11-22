@@ -40,11 +40,11 @@ const TeamMembersCard: React.FC<{ team: Team }> = ({ team }) => {
           <TableBody>
             {team.teamMembers.map((member) => (
               <TableRow key={member.userId}>
-                <TableCell>
+                <TableCell className="max-w-36 overflow-hidden text-ellipsis whitespace-nowrap">
                   {member.user.first_name} {member.user.last_name}
                 </TableCell>
                 <TableCell>{member.user.email}</TableCell>
-                <TableCell>
+                <TableCell className="min-w-36">
                   <Select defaultValue={member.role}>
                     <SelectTrigger disabled={team.role === "MEMBER"}>
                       <SelectValue />

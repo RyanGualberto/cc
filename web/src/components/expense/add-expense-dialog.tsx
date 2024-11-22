@@ -108,7 +108,7 @@ const AddExpenseDialog: React.FC<{
   return (
     <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
       <DialogTrigger asChild>
-        <Button className="items-center gap-2">
+        <Button className="items-center gap-2 w-full md:w-fit">
           <Plus size={16} />
           Adicionar Despesa
         </Button>
