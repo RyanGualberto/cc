@@ -2,7 +2,7 @@ export default function isCPFValid(cpf: string): boolean {
 
   // Remove special characters
   cpf = cpf.replace(/[^0-9]/g, '');
-  console.log(cpf)
+  
   // Check if every digit is the same
   if (cpf.split('').every((char) => char === cpf[0])) return false;
 

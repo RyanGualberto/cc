@@ -1,22 +1,26 @@
-import { useCallback, useMemo } from "react"
-import { Progress } from "../ui/progress"
-import { Check, CircleCheck } from "lucide-react"
-import { cn } from "~/lib/utils"
+import { useCallback, useMemo } from "react";
+import { Progress } from "../ui/progress";
+import { Check } from "lucide-react";
+import { cn } from "~/lib/utils";
 
 export default function PasswordProgress({ password }: { password: string }) {
   const handleProgress = useCallback(() => {
-    const hasLowercase = /[a-z]/.test(password)
-    const hasUppercase = /[A-Z]/.test(password)
-    const hasSpecial = /[!@#\$%\^&*\(\)_+\-=\[\]\{\}\'\";:\./\<\>,.\?]/.test(password)
-    const hasLength = password.length >= 8
+    const hasLowercase = /[a-z]/.test(password);
+    const hasUppercase = /[A-Z]/.test(password);
+    const hasSpecial = /[!@#\$%\^&*\(\)_+\-=\[\]\{\}\'\";:\./\<\>,.\?]/.test(
+      password,
+    );
+    const hasLength = password.length >= 8;
 
     return {
       values: { hasLowercase, hasUppercase, hasSpecial, hasLength },
-      progress: [hasLowercase, hasUppercase, hasSpecial, hasLength].filter(Boolean).length
-    }
-  }, [password])
+      progress: [hasLowercase, hasUppercase, hasSpecial, hasLength].filter(
+        Boolean,
+      ).length,
+    };
+  }, [password]);
 
-  const progress = useMemo(() => handleProgress(), [handleProgress])
+  const progress = useMemo(() => handleProgress(), [handleProgress]);
 
   const handleLabel = useCallback(() => {
     const message: Record<number, string> = {
@@ -25,44 +29,57 @@ export default function PasswordProgress({ password }: { password: string }) {
       2: "Média",
       3: "Forte",
       4: "Muito forte",
-    }
-    return message[progress.progress]
-  }, [progress])
+    };
+    return message[progress.progress];
+  }, [progress]);
 
-  const label = useMemo(() => handleLabel(), [handleLabel])
+  const label = useMemo(() => handleLabel(), [handleLabel]);
 
-  function PasswordRule({ valid, label }: { valid: boolean, label: string }) {
+  function PasswordRule({ valid, label }: { valid: boolean; label: string }) {
     return (
       <div className="flex items-center gap-2">
-        <div className={cn(
-          "w-5 h-5 rounded-full bg-black/10 dark:bg-white/10 flex items-center justify-center duration-150",
-          valid && "!bg-green-500/60"
-        )}>
+        <div
+          className={cn(
+            "flex h-5 w-5 items-center justify-center rounded-full bg-black/10 duration-150 dark:bg-white/10",
+            valid && "!bg-green-500/60",
+          )}
+        >
           {valid && <Check size={12} fontWeight={900} />}
         </div>
         <span className="text-sm text-gray-400">{label}</span>
       </div>
-    )
+    );
   }
 
-  console.log(progress)
   return (
-    <div className="flex flex-col gap-2 items-center">
-      <section className="w-full flex items-center">
+    <div className="flex flex-col items-center gap-2">
+      <section className="flex w-full items-center">
         <Progress
           value={progress.progress * 25}
-          className="w-full h-2 rounded-lg bg-black/10 dark:bg-white/10"
+          className="h-2 w-full rounded-lg bg-black/10 dark:bg-white/10"
         />
-        <div className="ml-2 text-sm text-gray-500 whitespace-nowrap">
+        <div className="ml-2 whitespace-nowrap text-sm text-gray-500">
           {label}
         </div>
       </section>
       <section className="w-full space-y-2">
-        <PasswordRule valid={progress.values.hasLength} label="Deve possuir pelo menos 8 caracteres" />
-        <PasswordRule valid={progress.values.hasLowercase} label="Deve possuir letras minúsculas" />
-        <PasswordRule valid={progress.values.hasUppercase} label="Deve possuir letras maiúsculas" />
-        <PasswordRule valid={progress.values.hasSpecial} label="Deve possuir caracteres especiais" />
+        <PasswordRule
+          valid={progress.values.hasLength}
+          label="Deve possuir pelo menos 8 caracteres"
+        />
+        <PasswordRule
+          valid={progress.values.hasLowercase}
+          label="Deve possuir letras minúsculas"
+        />
+        <PasswordRule
+          valid={progress.values.hasUppercase}
+          label="Deve possuir letras maiúsculas"
+        />
+        <PasswordRule
+          valid={progress.values.hasSpecial}
+          label="Deve possuir caracteres especiais"
+        />
       </section>
     </div>
-  )
+  );
 }

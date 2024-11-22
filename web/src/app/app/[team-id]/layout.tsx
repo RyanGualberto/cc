@@ -1,17 +1,30 @@
 "use client";
 import React from "react";
 import { useUserContext } from "~/hooks/use-user-context";
-import { Home, List, Settings, TrendingDown, TrendingUp, Users } from "lucide-react";
+import {
+  Home,
+  List,
+  Settings,
+  TrendingDown,
+  TrendingUp,
+  Users,
+} from "lucide-react";
 import Link from "next/link";
 import { cn } from "~/lib/utils";
 import { usePathname } from "next/navigation";
+import { Loading } from "~/components/ui/loading";
+import { NotFound } from "~/components/ui/not-found";
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
-  const { selectedTeam } = useUserContext();
+  const { selectedTeam, loadingTeams } = useUserContext();
+
+  if (loadingTeams) {
+    return <Loading />;
+  }
 
   if (!selectedTeam) {
-    return null;
+    return <NotFound label="Time não encontrado" />;
   }
 
   return (
@@ -21,7 +34,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           <h2 className="text-2xl font-semibold">{selectedTeam.name}</h2>
         </div>
       </header>
-      <nav className="flex items-center gap-2 max-w-full overflow-x-scroll">
+      <nav className="flex max-w-full items-center gap-2 overflow-x-scroll">
         {navItems.map((item) => (
           <Link
             key={item.href}

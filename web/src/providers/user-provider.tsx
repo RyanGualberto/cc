@@ -37,8 +37,6 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
   });
 
   const refetchTeams = useCallback(() => {
-    console.log("Refetching teams...");
-
     queryClient.invalidateQueries({ queryKey: ["teams"] }).catch((error) => {
       console.error("Error invalidating queries:", error);
     });

@@ -7,7 +7,6 @@ async function listTeams(): Promise<ListTeamsResponse | undefined> {
   try {
     const endpoint = "/teams";
     const method = "get";
-    console.log("listTeams");
 
     const { data: response } =
       await apiClient[method]<ListTeamsResponse>(endpoint);
