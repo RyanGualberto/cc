@@ -1,5 +1,5 @@
 import React from "react";
-import { Team } from "~/types/team";
+import { type Team } from "~/types/team";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import { useQuery } from "@tanstack/react-query";
 import { expenseCategoriesRequest } from "~/requests/expense-category";

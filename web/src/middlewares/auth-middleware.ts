@@ -24,15 +24,11 @@ const AuthMiddleware = async (request: NextRequest, response: NextResponse) => {
   if (!token) return sendToLogin(request);
 
   try {
-    console.log("Checking token", token);
-
     const whoamiRequest = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/users/me`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
     });
-
-    console.log("Whoami request", whoamiRequest.status, whoamiRequest.data);
 
     if (
       String(whoamiRequest.status).startsWith("4") ||
@@ -46,8 +42,6 @@ const AuthMiddleware = async (request: NextRequest, response: NextResponse) => {
       halt: false,
     };
   } catch (error) {
-    console.log("Erro Tá aqui", error);
-
     return sendToLogin(request);
   }
 };

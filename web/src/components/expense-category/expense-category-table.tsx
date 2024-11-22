@@ -1,5 +1,5 @@
 import React from "react";
-import { ExpenseCategory } from "~/types/expense-category";
+import { type ExpenseCategory } from "~/types/expense-category";
 import {
   Table,
   TableBody,
