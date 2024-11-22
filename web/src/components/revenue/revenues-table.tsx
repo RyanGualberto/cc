@@ -1,4 +1,4 @@
-import { type Expense } from "~/types/expense";
+import { type Revenue } from "~/types/revenue";
 import {
   Table,
   TableBody,
@@ -13,11 +13,11 @@ import maskAmount from "~/helpers/maskAmount";
 import {
   TRANSLATED_RECURRENCES,
   TRANSLATED_STATUSES,
-} from "./add-expense-dialog";
+} from "./add-revenue-dialog";
 import { Button } from "../ui/button";
 import { cn } from "~/lib/utils";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { expenseRequest } from "~/requests/expense";
+import { revenueRequest } from "~/requests/revenue";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import {
   Tooltip,
@@ -26,12 +26,12 @@ import {
   TooltipTrigger,
 } from "../ui/tooltip";
 import { type User } from "~/types/user";
-import { DeleteExpenseDialog } from "./delete-expense-dialog";
-import { EditExpenseDialog } from "./edit-expense-dialog";
+import { DeleteRevenueDialog } from "./delete-revenue-dialog";
+import { EditRevenueDialog } from "./edit-revenue-dialog";
 
-const ExpensesTable: React.FC<{
+const RevenuesTable: React.FC<{
   short?: boolean;
-  data: Array<Expense>;
+  data: Array<Revenue>;
   teamId: string;
 }> = ({ short, data, teamId }) => {
   return (
@@ -56,29 +56,29 @@ const ExpensesTable: React.FC<{
         </TableRow>
       </TableHeader>
       <TableBody>
-        {data.map((expense) => (
-          <TableRow key={expense.id}>
-            <TableCell>{expense.title}</TableCell>
-            <DateCell date={expense.date} status={expense.status} />
+        {data.map((revenue) => (
+          <TableRow key={revenue.id}>
+            <TableCell>{revenue.title}</TableCell>
+            <DateCell date={revenue.date} status={revenue.status} />
             <TableCell>
-              R$ {maskAmount(String(expense.amountInCents))}
+              R$ {maskAmount(String(revenue.amountInCents))}
             </TableCell>
             <StatusCell
               teamId={teamId}
-              status={expense.status}
-              expense={expense}
+              status={revenue.status}
+              revenue={revenue}
             />
             <TableCell>
-              {expense.category ? expense.category.name : "--"}
+              {revenue.category ? revenue.category.name : "--"}
             </TableCell>
             <Show
               component={
                 <React.Fragment>
                   <TableCell>
-                    {TRANSLATED_RECURRENCES[expense.recurrence]}
+                    {TRANSLATED_RECURRENCES[revenue.recurrence]}
                   </TableCell>
-                  <UserCell user={expense.user} />
-                  <EditCell expense={expense} />
+                  <UserCell user={revenue.user} />
+                  <EditCell revenue={revenue} />
                 </React.Fragment>
               }
               when={!short}
@@ -120,11 +120,11 @@ const UserCell: React.FC<{ user: User }> = ({ user }) => {
   );
 };
 
-const EditCell: React.FC<{ expense: Expense }> = ({ expense }) => {
+const EditCell: React.FC<{ revenue: Revenue }> = ({ revenue }) => {
   return (
     <TableCell className="flex items-center justify-center gap-2">
-      <EditExpenseDialog expense={expense} />
-      <DeleteExpenseDialog expense={expense} />
+      <EditRevenueDialog revenue={revenue} />
+      <DeleteRevenueDialog revenue={revenue} />
     </TableCell>
   );
 };
@@ -132,28 +132,28 @@ const EditCell: React.FC<{ expense: Expense }> = ({ expense }) => {
 const StatusCell: React.FC<{
   status: string;
   teamId: string;
-  expense: Expense;
-}> = ({ status, teamId, expense }) => {
+  revenue: Revenue;
+}> = ({ status, teamId, revenue }) => {
   const queryClient = useQueryClient();
   const { mutateAsync, isPending } = useMutation({
-    mutationKey: ["expenses", teamId, "update", expense.id],
+    mutationKey: ["revenues", teamId, "update", revenue.id],
     mutationFn: async () => {
-      return await expenseRequest
+      return await revenueRequest
         .updateByTeamAndId({
           teamId,
-          expenseId: expense.id,
+          revenueId: revenue.id,
           payload: {
-            amountInCents: expense.amountInCents,
-            categoryId: expense.category.id,
-            date: expense.date,
-            description: expense.description,
+            amountInCents: revenue.amountInCents,
+            categoryId: revenue.category.id,
+            date: revenue.date,
+            description: revenue.description,
             status: "paid",
-            title: expense.title,
+            title: revenue.title,
           },
         })
         .then(() => {
           void queryClient.invalidateQueries({
-            queryKey: ["expenses", { teamId }],
+            queryKey: ["revenues", { teamId }],
           });
         });
     },
@@ -202,4 +202,4 @@ const DateCell: React.FC<{
   );
 };
 
-export { ExpensesTable };
+export { RevenuesTable };

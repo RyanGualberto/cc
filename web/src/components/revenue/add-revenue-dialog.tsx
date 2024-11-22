@@ -15,10 +15,10 @@ import { Form, FormField, FormItem, FormLabel, FormMessage } from "../ui/form";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
-  addExpenseSchema,
+  addRevenueSchema,
   ALLOWED_RECURRENCES,
   ALLOWED_STATUSES,
-} from "~/schemas/add-expense-schema";
+} from "~/schemas/add-revenue-schema";
 import { type z } from "zod";
 import { Input } from "../ui/input";
 import {
@@ -31,9 +31,9 @@ import {
 import { DatePicker } from "../ui/date-picker";
 import maskAmount from "~/helpers/maskAmount";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { expenseRequest } from "~/requests/expense";
+import { revenueRequest } from "~/requests/revenue";
 import Show from "../utils/show";
-import { expenseCategoriesRequest } from "~/requests/expense-category";
+import { revenueCategoriesRequest } from "~/requests/revenue-category";
 
 export const TRANSLATED_RECURRENCES = {
   once: "Uma vez",
@@ -48,27 +48,27 @@ export const TRANSLATED_STATUSES = {
   overdue: "Atrasado",
 };
 
-const AddExpenseDialog: React.FC<{
+const AddRevenueDialog: React.FC<{
   team: Team;
 }> = ({ team }) => {
   const queryClient = useQueryClient();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const {
-    data: expenseCategories,
+    data: revenueCategories,
     isPending,
     isError,
   } = useQuery({
-    queryKey: ["expense-categories", { teamId: team.id }],
+    queryKey: ["revenue-categories", { teamId: team.id }],
     queryFn: async () =>
-      await expenseCategoriesRequest.listByTeam({
+      await revenueCategoriesRequest.listByTeam({
         teamId: team.id,
       }),
   });
 
-  const { mutateAsync, isPending: addingExpense } = useMutation({
-    mutationKey: ["expenses", team.id, "create"],
-    mutationFn: async (data: z.infer<typeof addExpenseSchema>) => {
-      return await expenseRequest.createByTeam({
+  const { mutateAsync, isPending: addingRevenue } = useMutation({
+    mutationKey: ["revenues", team.id, "create"],
+    mutationFn: async (data: z.infer<typeof addRevenueSchema>) => {
+      return await revenueRequest.createByTeam({
         ...data,
         teamId: team.id,
         amountInCents: parseInt(String(data.amountInCents).replace(/\D/g, "")),
@@ -81,8 +81,8 @@ const AddExpenseDialog: React.FC<{
       });
     },
   });
-  const form = useForm<z.infer<typeof addExpenseSchema>>({
-    resolver: zodResolver(addExpenseSchema),
+  const form = useForm<z.infer<typeof addRevenueSchema>>({
+    resolver: zodResolver(addRevenueSchema),
     defaultValues: {
       recurrence: "once",
       status: "pending",
@@ -90,19 +90,19 @@ const AddExpenseDialog: React.FC<{
   });
 
   const onSubmit = useCallback(
-    async (data: z.infer<typeof addExpenseSchema>) => {
-      if (addingExpense) return;
+    async (data: z.infer<typeof addRevenueSchema>) => {
+      if (addingRevenue) return;
       await mutateAsync(data);
       form.reset();
       void queryClient.invalidateQueries({
-        queryKey: ["expenses", { teamId: team.id }],
+        queryKey: ["revenues", { teamId: team.id }],
       });
       void queryClient.invalidateQueries({
-        queryKey: ["expense-categories", { teamId: team.id }],
+        queryKey: ["revenue-categories", { teamId: team.id }],
       });
       setIsDialogOpen(false);
     },
-    [mutateAsync, addingExpense, form, queryClient, team.id],
+    [mutateAsync, addingRevenue, form, queryClient, team.id],
   );
 
   return (
@@ -110,12 +110,12 @@ const AddExpenseDialog: React.FC<{
       <DialogTrigger asChild>
         <Button className="items-center gap-2">
           <Plus size={16} />
-          Adicionar Despesa
+          Adicionar Receita
         </Button>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Adicionar Despesa em {team.name}</DialogTitle>
+          <DialogTitle>Adicionar Receita em {team.name}</DialogTitle>
         </DialogHeader>
         <Form {...form}>
           <form
@@ -263,7 +263,7 @@ const AddExpenseDialog: React.FC<{
                       />
                     </SelectTrigger>
                     <SelectContent>
-                      {expenseCategories?.map((expCategory) => (
+                      {revenueCategories?.map((expCategory) => (
                         <SelectItem key={expCategory.id} value={expCategory.id}>
                           {expCategory.name}
                         </SelectItem>
@@ -304,8 +304,8 @@ const AddExpenseDialog: React.FC<{
 
             <DialogFooter className="gap-6">
               <DialogClose>Cancelar</DialogClose>
-              <Button disabled={addingExpense} type="submit">
-                Adicionar Despesa
+              <Button disabled={addingRevenue} type="submit">
+                Adicionar Receita
               </Button>
             </DialogFooter>
           </form>
@@ -315,4 +315,4 @@ const AddExpenseDialog: React.FC<{
   );
 };
 
-export { AddExpenseDialog };
+export { AddRevenueDialog };

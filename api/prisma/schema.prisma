@@ -21,6 +21,7 @@ model User {
 
   expenses    Expense[]
   teamMembers TeamMember[]
+  Revenue     Revenue[]
 
   @@map("users")
 }
@@ -58,9 +59,11 @@ model Team {
   teamMembers       TeamMember[]
   expenseCategories ExpenseCategory[]
 
-  createdAt  DateTime     @default(now())
-  updatedAt  DateTime     @updatedAt
-  TeamInvite TeamInvite[]
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+  TeamInvite      TeamInvite[]
+  RevenueCategory RevenueCategory[]
+  Revenue         Revenue[]
 
   @@map("teams")
 }
@@ -105,10 +108,49 @@ model ExpenseCategory {
 
   Team   Team   @relation(fields: [teamId], references: [id])
   teamId String
-  
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-
   @@map("expense_categories")
+}
+
+model RevenueCategory {
+  id   String @id @default(cuid())
+  name String
+
+  revenues Revenue[]
+
+  Team   Team   @relation(fields: [teamId], references: [id])
+  teamId String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("revenue_categories")
+}
+
+model Revenue {
+  id            String    @id @default(cuid())
+  title         String
+  description   String?
+  recurrence    String // monthly, weekly, daily or once
+  amountInCents Int
+  date          DateTime
+  status        String    @default("pending") // pending, paid, overdue
+  until         DateTime?
+  batch         String? // uuid
+
+  team   Team   @relation(fields: [teamId], references: [id])
+  teamId String
+
+  user   User   @relation(fields: [userId], references: [id])
+  userId String
+
+  createdAt  DateTime         @default(now())
+  updatedAt  DateTime         @updatedAt
+  category   RevenueCategory? @relation(fields: [categoryId], references: [id])
+  categoryId String?
+
+  @@map("revenues")
 }

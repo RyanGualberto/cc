@@ -193,7 +193,7 @@ const EditExpenseDialog: React.FC<{
                     name="date"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Data de Vencimento</FormLabel>
+                        <FormLabel>Data </FormLabel>
                         <DatePicker
                           date={field.value ? new Date(field.value) : null}
                           setDate={(value) => {

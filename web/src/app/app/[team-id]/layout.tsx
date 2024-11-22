@@ -70,7 +70,7 @@ const navItems = [
   },
   {
     label: "Receitas",
-    href: "/incomes",
+    href: "/revenues",
     icon: <TrendingUp size={18} />,
   },
   {
