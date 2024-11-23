@@ -1,0 +1,11 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.revenueCategoryRouter = void 0;
+const express_1 = require("express");
+const revenue_category_1 = require("../controllers/revenue-category");
+const router = (0, express_1.Router)();
+exports.revenueCategoryRouter = router;
+const revenueCategoryController = new revenue_category_1.RevenueCategory();
+router.post("/", revenueCategoryController.createTeamRevenueCategory);
+router.get("/:teamId", revenueCategoryController.listTeamRevenueCategories);
+router.put("/:teamId/:id", revenueCategoryController.updateTeamRevenueCategory);

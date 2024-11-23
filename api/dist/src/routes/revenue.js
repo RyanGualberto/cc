@@ -1,0 +1,13 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.revenueRouter = void 0;
+const express_1 = require("express");
+const revenue_1 = require("../controllers/revenue");
+const router = (0, express_1.Router)();
+exports.revenueRouter = router;
+const revenueController = new revenue_1.Revenue();
+router.post("/", revenueController.createTeamRevenue);
+router.get("/:teamId", revenueController.listTeamRevenues);
+router.put("/:teamId/:id", revenueController.updateTeamRevenue);
+router.delete("/:teamId/:id", revenueController.deleteTeamRevenue);
+router.delete("/:teamId/batch/:batchId", revenueController.deleteTeamRevenuesByBatch);
