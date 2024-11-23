@@ -18,4 +18,8 @@ router.use("/expense-categories", authenticator, expenseCategoryRouter);
 router.use("/revenues", authenticator, revenueRouter);
 router.use("/revenue-categories", authenticator, revenueCategoryRouter);
 
+router.get("/", (req, res) => {
+  res.send("All routes are working");
+});
+
 export { router as routes };
