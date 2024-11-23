@@ -88,11 +88,39 @@ class TeamModel {
     return invites;
   }
 
+  public async findTeamByInviteCode(inviteId: string, userId: string) {
+    const user = await prisma.user.findFirst({
+      where: {
+        id: userId,
+      },
+    });
+
+    if (!user) {
+      throw new AppError("User not found", 404);
+    }
+
+    const invite = await prisma.teamInvite.findFirst({
+      where: {
+        id: inviteId,
+        email: user.email.toLowerCase(),
+      },
+      select: {
+        team: true,
+      },
+    });
+
+    if (!invite) {
+      throw new AppError("Invite not found or invalid", 404);
+    }
+
+    return invite.team;
+  }
+
   public async inviteTeamMembers(data: TeamInviteInput) {
     await this.validateTeamMemberRole(data.teamId, data.userId);
     const invite = await prisma.teamInvite.create({
       data: {
-        email: data.email,
+        email: data.email.toLowerCase(),
         teamId: data.teamId,
       },
       include: {
@@ -120,7 +148,7 @@ class TeamModel {
     const invite = await prisma.teamInvite.findFirst({
       where: {
         id: inviteId,
-        email: userEmail.email,
+        email: userEmail.email.toLowerCase(),
       },
     });
 

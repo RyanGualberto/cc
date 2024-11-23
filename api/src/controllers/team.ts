@@ -75,6 +75,29 @@ export class Team {
     }
   }
 
+  public async findTeamByInviteToken(req: Request, res: Response) {
+    try {
+      const inviteToken = req.query.token;
+
+      if (!inviteToken) {
+        throw new AppError("Invite token is required");
+      }
+      const decodedToken = decodeTokenFromHeader<{
+        inviteId: string;
+      }>(`Bearer ${inviteToken}`);
+      
+
+      const team = await TeamModel.findTeamByInviteCode(
+        decodedToken.inviteId,
+        req.user.id
+      );
+
+      return res.status(200).json(team);
+    } catch (error: unknown) {
+      return handleError(error, res, "Team.findTeamByInviteToken");
+    }
+  }
+
   public async inviteMember(req: Request, res: Response) {
     try {
       const { email, teamId } = req.body;

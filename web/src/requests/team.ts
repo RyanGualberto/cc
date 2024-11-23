@@ -113,6 +113,33 @@ async function listTeamInvites(
   }
 }
 
+async function findTeamByInviteToken(token: string): Promise<Team | undefined> {
+  try {
+    const endpoint = `/teams/invites/find?token=${token}`;
+    const method = "get";
+    const { data: response } = await apiClient[method]<Team>(endpoint);
+    return response;
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      throw new Error(error.message);
+    }
+  }
+}
+
+async function acceptTeamInvite(token: string): Promise<void> {
+  try {
+    const endpoint = `/teams/invites/accept?token=${token}`;
+    const method = "post";
+    await apiClient[method]<void>(endpoint);
+
+    return;
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      throw new Error(error.message);
+    }
+  }
+}
+
 async function removeTeamInvite(
   teamId: string,
   inviteId: string,
@@ -135,5 +162,7 @@ export const teamRequests = {
   deleteTeam,
   teamMemberInvite,
   listTeamInvites,
+  findTeamByInviteToken,
+  acceptTeamInvite,
   removeTeamInvite,
 };

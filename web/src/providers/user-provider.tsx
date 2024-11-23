@@ -1,5 +1,6 @@
 "use client";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { hasCookie } from "cookies-next";
 import { useParams } from "next/navigation";
 import { createContext, useCallback, useEffect, useState } from "react";
 import { teamRequests } from "~/requests/team";
@@ -27,6 +28,7 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
     queryFn: async () => {
       return userRequest.whoami();
     },
+    enabled: hasCookie("token"),
   });
 
   const { data: teams, isPending: loadingTeams } = useQuery({
@@ -34,6 +36,7 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
     queryFn: async () => {
       return teamRequests.listTeams();
     },
+    enabled: hasCookie("token"),
   });
 
   const refetchTeams = useCallback(() => {

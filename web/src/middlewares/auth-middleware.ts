@@ -24,11 +24,14 @@ const AuthMiddleware = async (request: NextRequest, response: NextResponse) => {
   if (!token) return sendToLogin(request);
 
   try {
-    const whoamiRequest = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/users/me`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
+    const whoamiRequest = await axios.get(
+      `${process.env.NEXT_PUBLIC_API_URL}/users/me`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       },
-    });
+    );
 
     if (
       String(whoamiRequest.status).startsWith("4") ||

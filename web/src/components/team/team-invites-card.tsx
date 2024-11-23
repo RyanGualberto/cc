@@ -15,9 +15,10 @@ import { useQuery } from "@tanstack/react-query";
 import { teamRequests } from "~/requests/team";
 import Show from "../utils/show";
 import DeleteTeamInviteDialog from "./delete-team-invite-dialog";
+import { hasCookie } from "cookies-next";
 
 const TeamInvitesCard: React.FC<{ team: Team }> = ({ team }) => {
-  const { data: teamInvites } = useQuery({
+  const { isError, data: teamInvites } = useQuery({
     queryKey: ["team", team.id, "invites"],
     queryFn: async () => {
       if (!team) {
@@ -25,9 +26,10 @@ const TeamInvitesCard: React.FC<{ team: Team }> = ({ team }) => {
       }
       return await teamRequests.listTeamInvites(team.id);
     },
+    enabled: hasCookie("token"),
   });
 
-  if (!teamInvites) {
+  if (!teamInvites || isError) {
     return null;
   }
 

@@ -19,13 +19,17 @@ import {
   SelectValue,
 } from "../ui/select";
 import AddTeamMemberDialog from "./add-team-member-dialog";
+import Show from "../utils/show";
 
 const TeamMembersCard: React.FC<{ team: Team }> = ({ team }) => {
   return (
     <Card className="flex-1">
       <CardHeader className="flex flex-col items-center justify-between gap-4 md:flex-row">
         <CardTitle className="w-full">Participantes do time</CardTitle>
-        <AddTeamMemberDialog team={team} />
+        <Show
+          when={team.role !== "MEMBER"}
+          component={<AddTeamMemberDialog team={team} />}
+        />
       </CardHeader>
       <CardContent>
         <Table>

@@ -54,7 +54,6 @@ class ExpenseModel {
         AND: [
           {
             teamId,
-            userId,
             date: {
               gte: startDate,
               lte: endDate,
@@ -122,7 +121,6 @@ class ExpenseModel {
     const expense = await prisma.expense.findFirst({
       where: {
         id: expenseId,
-        userId,
         teamId,
       },
       select: expenseSerializer,

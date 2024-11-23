@@ -16,8 +16,11 @@ import {
 } from "../ui/select";
 import { useRouter } from "next/navigation";
 import React from "react";
+import { useAuth } from "~/hooks/use-auth";
+import { Button } from "../ui/button";
 
 const Navbar: React.FC = () => {
+  const { logout } = useAuth();
   const { user, selectedTeam, teams } = useUserContext();
   const { push } = useRouter();
 
@@ -99,10 +102,14 @@ const Navbar: React.FC = () => {
                   </Link>
                 </li>
                 <li>
-                  <Link href="/app/logout" className="flex items-center gap-2">
+                  <Button
+                    variant="ghost"
+                    className="w-full justify-start items-center gap-2"
+                    onClick={logout}
+                  >
                     <LogOut size={16} />
                     <span className="text-sm">Sair</span>
-                  </Link>
+                  </Button>
                 </li>
               </ul>
             </PopoverContent>

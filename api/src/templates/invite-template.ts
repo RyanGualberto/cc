@@ -39,7 +39,7 @@ const inviteTemplate = ({
                   display: block;
                   text-align: center;
               "
-              href="http://localhost:3000/invite?token=${inviteToken}"
+              href="${process.env.NEXT_APP_URL}/invite?token=${inviteToken}"
             >
               Aceitar convite
             </a>

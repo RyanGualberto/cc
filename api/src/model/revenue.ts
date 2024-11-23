@@ -54,7 +54,6 @@ class RevenueModel {
         AND: [
           {
             teamId,
-            userId,
             date: {
               gte: startDate,
               lte: endDate,
@@ -122,7 +121,6 @@ class RevenueModel {
     const revenue = await prisma.revenue.findFirst({
       where: {
         id: revenueId,
-        userId,
         teamId,
       },
       select: revenueSerializer,
