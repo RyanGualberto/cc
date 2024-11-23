@@ -62,7 +62,19 @@ class TeamModel {
       };
     });
 
-    return teamsWithCurrentRole;
+    const teamsWithBalanceAndQtTransactions = await Promise.all(
+      teamsWithCurrentRole.map(async (team) => {
+        const { balance, qtTransactions } =
+          await this.calculateTeamBalanceAndQtTransactions(team.id);
+        return {
+          ...team,
+          balance,
+          qtTransactions,
+        };
+      })
+    );
+
+    return teamsWithBalanceAndQtTransactions;
   }
 
   public async findTeam(userId: string, teamId: string) {
@@ -321,6 +333,45 @@ class TeamModel {
     });
 
     return;
+  }
+
+  private async calculateTeamBalanceAndQtTransactions(teamId: string) {
+    const teamExpensesInCurrentYearAndMonth = await prisma.expense.aggregate({
+      where: {
+        teamId,
+        createdAt: {
+          gte: new Date(new Date().getFullYear(), new Date().getMonth(), 1),
+          lt: new Date(new Date().getFullYear(), new Date().getMonth() + 1, 1),
+        },
+      },
+      _sum: {
+        amountInCents: true,
+      },
+      _count: true,
+    });
+
+    const teamRevenuesInCurrentYearAndMonth = await prisma.revenue.aggregate({
+      where: {
+        teamId,
+        createdAt: {
+          gte: new Date(new Date().getFullYear(), new Date().getMonth(), 1),
+          lt: new Date(new Date().getFullYear(), new Date().getMonth() + 1, 1),
+        },
+      },
+      _sum: {
+        amountInCents: true,
+      },
+      _count: true,
+    });
+
+    return {
+      balance:
+        (teamRevenuesInCurrentYearAndMonth._sum?.amountInCents || 0) -
+        (teamExpensesInCurrentYearAndMonth._sum?.amountInCents || 0),
+      qtTransactions:
+        teamExpensesInCurrentYearAndMonth._count +
+        teamRevenuesInCurrentYearAndMonth._count,
+    };
   }
 
   private async validateTeamMemberRole(teamId: string, userId: string) {

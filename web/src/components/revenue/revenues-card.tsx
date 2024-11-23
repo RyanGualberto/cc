@@ -10,6 +10,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { revenueRequest } from "~/requests/revenue";
 import Link from "next/link";
 import { AddRevenueDialog } from "./add-revenue-dialog";
+import { Loading } from "../ui/loading";
 
 const RevenuesCard: React.FC<{
   team: Team;
@@ -49,7 +50,11 @@ const RevenuesCard: React.FC<{
       </CardHeader>
       <Show
         when={isPending}
-        component={<CardContent>Carregando...</CardContent>}
+        component={
+          <CardContent>
+            <Loading />
+          </CardContent>
+        }
       />
       <Show
         when={isError}

@@ -12,9 +12,12 @@ import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import EditTeamDialog from "./edit-team-dialog";
 import { Button } from "../ui/button";
 import DeleteTeamDialog from "./delete-team-dialog";
+import maskAmount from "~/helpers/maskAmount";
+import { cn } from "~/lib/utils";
+import Show from "../utils/show";
 
 export const TeamCard: React.FC<{
-  team: Team;
+  team: Required<Team>;
 }> = ({ team }) => {
   const [open, setOpen] = useState(false);
   return (
@@ -67,14 +70,29 @@ export const TeamCard: React.FC<{
           </PopoverContent>
         </Popover>
       </header>
-      <p className="text-sm font-light opacity-80"></p>
       <div className="flex flex-1 items-end justify-between">
         <div className="flex flex-col gap-1">
-          <p className="font-semibold">R$ 0,00</p>
-          <p className="text-sm font-light opacity-80">Saldo</p>
+          <p
+            className={cn("font-semibold", {
+              "text-green-500": team.balance > 0,
+              "text-red-500": team.balance < 0,
+            })}
+          >
+            <Show
+              when={team.balance === 0}
+              component="R$ 0,00"
+              fallback={
+                <React.Fragment>
+                  {team.balance < 0 ? "- " : ""}
+                  R$ {maskAmount(String(Math.abs(team.balance)))}
+                </React.Fragment>
+              }
+            />
+          </p>
+          <p className="text-sm font-light opacity-80">Balanço</p>
         </div>
         <div className="flex flex-col gap-1">
-          <p className="font-semibold">0</p>
+          <p className="font-semibold">{team.qtTransactions}</p>
           <p className="text-sm font-light opacity-80">Transações</p>
         </div>
       </div>

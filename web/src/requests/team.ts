@@ -155,6 +155,21 @@ async function removeTeamInvite(
   }
 }
 
+async function removeTeamMember(
+  teamId: string,
+  memberId: string,
+): Promise<void> {
+  try {
+    const endpoint = `/teams/${teamId}/members/${memberId}`;
+    const method = "delete";
+    await apiClient[method]<void>(endpoint);
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      throw new Error(error.message);
+    }
+  }
+}
+
 export const teamRequests = {
   createTeam,
   listTeams,
@@ -165,4 +180,5 @@ export const teamRequests = {
   findTeamByInviteToken,
   acceptTeamInvite,
   removeTeamInvite,
+  removeTeamMember,
 };

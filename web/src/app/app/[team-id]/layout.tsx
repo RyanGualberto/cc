@@ -35,7 +35,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         </div>
       </header>
       <nav className="flex max-w-full items-center gap-2 overflow-x-scroll">
-        {navItems.map((item) => (
+        {navItems(selectedTeam.role).map((item) => (
           <Link
             key={item.href}
             href={`/app/${selectedTeam.id}${item.href}`}
@@ -61,31 +61,55 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   );
 }
 
-const navItems = [
-  { label: "Dashboard", href: "/dashboard", icon: <Home size={18} /> },
-  {
-    label: "Despesas",
-    href: "/expenses",
-    icon: <TrendingDown size={18} />,
-  },
-  {
-    label: "Receitas",
-    href: "/revenues",
-    icon: <TrendingUp size={18} />,
-  },
-  {
-    label: "Categorias",
-    href: "/categories",
-    icon: <List size={18} />,
-  },
-  {
-    label: "Membros",
-    href: "/members",
-    icon: <Users size={18} />,
-  },
-  {
-    label: "Configurações",
-    href: "/settings",
-    icon: <Settings size={18} />,
-  },
-];
+const navItems = (role: "MEMBER" | "ADMIN" | "OWNER") => {
+  const routes = [
+    { label: "Dashboard", href: "/dashboard", icon: <Home size={18} /> },
+    {
+      label: "Despesas",
+      href: "/expenses",
+      icon: <TrendingDown size={18} />,
+    },
+    {
+      label: "Receitas",
+      href: "/revenues",
+      icon: <TrendingUp size={18} />,
+    },
+    {
+      label: "Categorias",
+      href: "/categories",
+      icon: <List size={18} />,
+    },
+    {
+      label: "Membros",
+      href: "/members",
+      icon: <Users size={18} />,
+    },
+    {
+      label: "Configurações",
+      href: "/settings",
+      icon: <Settings size={18} />,
+    },
+  ];
+
+  const routesByRole = {
+    OWNER: [
+      "Dashboard",
+      "Despesas",
+      "Receitas",
+      "Categorias",
+      "Membros",
+      "Configurações",
+    ],
+    ADMIN: [
+      "Dashboard",
+      "Despesas",
+      "Receitas",
+      "Categorias",
+      "Membros",
+      "Configurações",
+    ],
+    MEMBER: ["Dashboard", "Despesas", "Receitas", "Categorias"],
+  };
+
+  return routes.filter((route) => routesByRole[role].includes(route.label));
+};

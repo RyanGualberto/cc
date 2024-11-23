@@ -3,7 +3,7 @@ import { useMutation } from "@tanstack/react-query";
 import { teamRequests } from "~/requests/team";
 import { useUserContext } from "~/hooks/use-user-context";
 import React, { useCallback, useEffect, useState } from "react";
-import { type Team } from "~/types/team";
+import { type TeamMember, type Team } from "~/types/team";
 import {
   AlertDialog,
   AlertDialogCancel,
@@ -15,17 +15,18 @@ import {
 } from "../ui/alert-dialog";
 import { TIME_TO_CONFIRM } from "~/config/constants";
 
-const DeleteSpaceDialog: React.FC<{
+const DeleteTeamMemberDialog: React.FC<{
   team: Team;
+  teamMember: TeamMember;
   trigger: React.ReactNode;
-}> = ({ team, trigger }) => {
+}> = ({ team, trigger, teamMember }) => {
   const [confirmCount, setConfirmCount] = useState(TIME_TO_CONFIRM);
   const [open, setOpen] = useState(false);
   const { refetchTeams } = useUserContext();
   const { mutate, isPending } = useMutation({
-    mutationKey: ["team", team.id, "delete"],
+    mutationKey: ["team", team.id, "members", teamMember.id, "delete"],
     mutationFn: async () =>
-      await teamRequests.deleteTeam(team.id).then(() => {
+      await teamRequests.removeTeamMember(team.id, teamMember.id).then(() => {
         refetchTeams();
         setOpen(false);
       }),
@@ -55,11 +56,14 @@ const DeleteSpaceDialog: React.FC<{
       <AlertDialogTrigger asChild>{trigger}</AlertDialogTrigger>
       <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle>Excluir Espaço</AlertDialogTitle>
+          <AlertDialogTitle>Remover Membro</AlertDialogTitle>
         </AlertDialogHeader>
         <p>
-          Você tem certeza que deseja excluir o espaço{" "}
-          <strong>{team.name}</strong>? Essa ação não pode ser desfeita.
+          Tem certeza que deseja remover{" "}
+          <strong>
+            {teamMember.user.first_name} {teamMember.user.last_name}
+          </strong>{" "}
+          do time?
         </p>
         <AlertDialogFooter>
           <AlertDialogCancel asChild>
@@ -73,7 +77,7 @@ const DeleteSpaceDialog: React.FC<{
               mutate();
             }}
           >
-            Excluir
+            Remover
           </Button>
         </AlertDialogFooter>
       </AlertDialogContent>
@@ -81,4 +85,4 @@ const DeleteSpaceDialog: React.FC<{
   );
 };
 
-export default DeleteSpaceDialog;
+export default DeleteTeamMemberDialog;

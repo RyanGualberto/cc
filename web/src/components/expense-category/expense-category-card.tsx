@@ -6,6 +6,7 @@ import { expenseCategoriesRequest } from "~/requests/expense-category";
 import Show from "../utils/show";
 import ExpenseCategoryTable from "./expense-category-table";
 import { AddExpenseCategoryDialog } from "./add-expense-category-dialog";
+import { Loading } from "../ui/loading";
 
 const ExpenseCategoryCard: React.FC<{ team: Team }> = ({ team }) => {
   const {
@@ -28,7 +29,11 @@ const ExpenseCategoryCard: React.FC<{ team: Team }> = ({ team }) => {
       </CardHeader>
       <Show
         when={isPending}
-        component={<CardContent>Carregando...</CardContent>}
+        component={
+          <CardContent>
+            <Loading />
+          </CardContent>
+        }
       />
       <Show
         when={isError}

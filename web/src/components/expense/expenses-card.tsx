@@ -10,6 +10,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { expenseRequest } from "~/requests/expense";
 import Link from "next/link";
 import { AddExpenseDialog } from "./add-expense-dialog";
+import { Loading } from "../ui/loading";
 
 const ExpensesCard: React.FC<{
   team: Team;
@@ -49,7 +50,11 @@ const ExpensesCard: React.FC<{
       </CardHeader>
       <Show
         when={isPending}
-        component={<CardContent>Carregando...</CardContent>}
+        component={
+          <CardContent>
+            <Loading />
+          </CardContent>
+        }
       />
       <Show
         when={isError}

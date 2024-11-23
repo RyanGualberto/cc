@@ -20,6 +20,7 @@ import {
 } from "../ui/select";
 import AddTeamMemberDialog from "./add-team-member-dialog";
 import Show from "../utils/show";
+import DeleteTeamMemberDialog from "./delete-team-member-dialog";
 
 const TeamMembersCard: React.FC<{ team: Team }> = ({ team }) => {
   return (
@@ -77,12 +78,20 @@ const TeamMembersCard: React.FC<{ team: Team }> = ({ team }) => {
                   </Select>
                 </TableCell>
                 <TableCell className="text-center">
-                  <Button
-                    variant="destructive"
-                    disabled={team.role === "MEMBER" || member.role === "OWNER"}
-                  >
-                    <Trash2 size={16} />
-                  </Button>
+                  <DeleteTeamMemberDialog
+                    team={team}
+                    teamMember={member}
+                    trigger={
+                      <Button
+                        variant="destructive"
+                        disabled={
+                          team.role === "MEMBER" || member.role === "OWNER"
+                        }
+                      >
+                        <Trash2 size={16} />
+                      </Button>
+                    }
+                  />
                 </TableCell>
               </TableRow>
             ))}

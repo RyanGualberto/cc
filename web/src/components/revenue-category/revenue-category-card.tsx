@@ -6,6 +6,7 @@ import { revenueCategoriesRequest } from "~/requests/revenue-category";
 import Show from "../utils/show";
 import RevenueCategoryTable from "./revenue-category-table";
 import { AddRevenueCategoryDialog } from "./add-revenue-category-dialog";
+import { Loading } from "../ui/loading";
 
 const RevenueCategoryCard: React.FC<{ team: Team }> = ({ team }) => {
   const {
@@ -28,7 +29,11 @@ const RevenueCategoryCard: React.FC<{ team: Team }> = ({ team }) => {
       </CardHeader>
       <Show
         when={isPending}
-        component={<CardContent>Carregando...</CardContent>}
+        component={
+          <CardContent>
+            <Loading />
+          </CardContent>
+        }
       />
       <Show
         when={isError}

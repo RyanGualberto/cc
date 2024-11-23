@@ -8,10 +8,13 @@ export interface Team {
   createdAt: string;
   updatedAt: string;
   teamMembers: TeamMember[];
+  balance?: number;
+  qtTransactions?: number;
   role: Role;
 }
 
 export interface TeamMember {
+  id: string;
   role: Role;
   userId: string;
   user: User;

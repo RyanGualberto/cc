@@ -23,7 +23,14 @@ export default function Page() {
         {teams.length > 0 && (
           <div className="flex flex-wrap gap-4">
             {teams.map((team) => (
-              <TeamCard key={team.id} team={team} />
+              <TeamCard
+                key={team.id}
+                team={{
+                  ...team,
+                  balance: team.balance ?? 0,
+                  qtTransactions: team.qtTransactions ?? 0,
+                }}
+              />
             ))}
           </div>
         )}

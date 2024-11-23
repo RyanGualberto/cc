@@ -5,6 +5,7 @@ export const teamSerializer = {
   name: true,
   teamMembers: {
     select: {
+      id: true,
       userId: true,
       role: true,
       user: {
