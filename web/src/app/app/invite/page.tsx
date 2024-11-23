@@ -1,6 +1,7 @@
 "use client";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useRouter, useSearchParams } from "next/navigation";
+import { Suspense } from "react";
 import { Button } from "~/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
 import { Loading } from "~/components/ui/loading";
@@ -8,6 +9,12 @@ import Show from "~/components/utils/show";
 import { teamRequests } from "~/requests/team";
 
 const Page = ({}) => {
+  <Suspense fallback={<Loading />}>
+    <Content />
+  </Suspense>;
+};
+
+const Content = ({}) => {
   const router = useRouter();
   const queryParams = useSearchParams();
   const inviteToken = queryParams.get("token");
