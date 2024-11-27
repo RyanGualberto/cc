@@ -9,9 +9,11 @@ import Show from "~/components/utils/show";
 import { teamRequests } from "~/requests/team";
 
 const Page = ({}) => {
-  <Suspense fallback={<Loading />}>
-    <Content />
-  </Suspense>;
+  return (
+    <Suspense fallback={<Loading />}>
+      <Content />
+    </Suspense>
+  );
 };
 
 const Content = ({}) => {
@@ -22,11 +24,11 @@ const Content = ({}) => {
   const { data, isPending } = useQuery({
     queryKey: ["invite", { token: inviteToken }],
     queryFn: async () => {
-      if (!inviteToken) return null;
-
+      if (!inviteToken) {
+        return null;
+      }
       return await teamRequests.findTeamByInviteToken(inviteToken);
     },
-    enabled: !!inviteToken,
   });
 
   const { mutateAsync: acceptInvite, isPending: isAccepting } = useMutation({

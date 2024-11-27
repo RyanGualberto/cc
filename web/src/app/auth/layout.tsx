@@ -1,5 +1,4 @@
 import { Suspense } from "react";
-import Navbar from "~/components/shared/navbar";
 import { Loading } from "~/components/ui/loading";
 
 export default function Layout({ children }: { children: React.ReactNode }) {
@@ -12,7 +11,6 @@ export default function Layout({ children }: { children: React.ReactNode }) {
       }
     >
       <div className="flex min-h-screen flex-1 flex-col">
-        <Navbar />
         {children}
       </div>
     </Suspense>

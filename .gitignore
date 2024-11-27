@@ -2,4 +2,5 @@
 */.env*
 
 api/db
+api/dist
 api/coverage

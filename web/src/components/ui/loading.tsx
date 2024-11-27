@@ -4,6 +4,8 @@ import { type StaticImport } from "next/dist/shared/lib/get-img-props";
 import { LoaderCircle } from "lucide-react";
 
 const Loading = () => {
+  console.log("here5");
+  
   return (
     <div className="flex flex-1 flex-col items-center justify-center">
       <div className="relative animate-pulse">

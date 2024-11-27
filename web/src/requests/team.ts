@@ -115,6 +115,8 @@ async function listTeamInvites(
 
 async function findTeamByInviteToken(token: string): Promise<Team | undefined> {
   try {
+    console.log("here1");
+    
     const endpoint = `/teams/invites/find?token=${token}`;
     const method = "get";
     const { data: response } = await apiClient[method]<Team>(endpoint);
