@@ -104,7 +104,7 @@ const Navbar: React.FC = () => {
                 <li>
                   <Button
                     variant="ghost"
-                    className="w-full items-center justify-start gap-2"
+                    className="w-full items-center justify-start gap-2 py-0"
                     onClick={logout}
                   >
                     <LogOut size={16} />

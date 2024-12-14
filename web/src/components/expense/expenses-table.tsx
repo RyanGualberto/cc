@@ -192,10 +192,12 @@ const DateCell: React.FC<{
     new Date(date) > new Date() &&
     status !== "paid";
 
+  const isOverdue = new Date(date) < new Date() && status !== "paid";
+
   return (
     <TableCell
       className={cn({
-        "text-red-500": status === "overdue",
+        "text-red-500": status === "overdue" || isOverdue,
         "text-yellow-500": isNear,
       })}
     >

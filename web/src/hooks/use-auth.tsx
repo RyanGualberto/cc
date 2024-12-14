@@ -35,13 +35,6 @@ export const useAuth = () => {
     (data: { token: string } | undefined) => {
       if (!data) return;
       setCookie("token", data.token);
-      const pathname = getCookie("callback_pathname");
-      const url = pathname
-        ? `${pathname}?${searchParams.toString()}`
-        : INITIAL_ROUTE;
-      console.log("url", url);
-
-      router.push(url);
       void queryClient.invalidateQueries({
         queryKey: ["teams"],
       });
@@ -49,7 +42,18 @@ export const useAuth = () => {
         queryKey: ["whoami"],
       });
 
-      deleteCookie("callback_pathname");
+      const pathname = getCookie("callback_pathname");
+
+      console.log("pathname", pathname);
+      if (pathname) {
+        router.push(pathname + "?" + searchParams.toString());
+
+        deleteCookie("callback_pathname");
+        return;
+      }
+
+      router.push(INITIAL_ROUTE);
+      return;
     },
     [router, queryClient, searchParams],
   );

@@ -5,6 +5,10 @@ import { expenseSerializer } from "../serializers/expense";
 import { AppError } from "../utils/appError";
 import { TeamModel } from "./team";
 import { v4 as uuidv4 } from "uuid";
+import {
+  calculateIntervalTimeByRecurrence,
+  calculateLengthIntervalTimeByRecurrence,
+} from "../helpers/calculate-interval-time";
 
 interface CreateExpenseInput {
   title: string;
@@ -62,6 +66,9 @@ class ExpenseModel {
         ],
       },
       select: expenseSerializer,
+      orderBy: {
+        date: "asc",
+      },
     });
 
     return expenses;
@@ -98,12 +105,20 @@ class ExpenseModel {
       data: Array.from(
         {
           length: Math.ceil(
-            (value.until.getTime() - value.date.getTime()) / 2628000000
+            calculateLengthIntervalTimeByRecurrence(
+              value.recurrence,
+              value.date,
+              value.until
+            )
           ),
         },
         (_, index) => ({
           ...value,
-          date: new Date(value.date.getTime() + index * 2628000000),
+          date: calculateIntervalTimeByRecurrence(
+            value.recurrence,
+            value.date,
+            index + 1
+          ),
           batch: batch,
         })
       ),

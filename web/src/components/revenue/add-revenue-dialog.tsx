@@ -155,7 +155,7 @@ const AddRevenueDialog: React.FC<{
                 control={form.control}
                 name="amountInCents"
                 render={({ field }) => (
-                  <FormItem>
+                  <FormItem className="w-full">
                     <FormLabel>Valor</FormLabel>
                     <Input
                       containerClassName="!bg-transparent border"
@@ -173,7 +173,7 @@ const AddRevenueDialog: React.FC<{
                 control={form.control}
                 name="date"
                 render={({ field }) => (
-                  <FormItem>
+                  <FormItem className="w-full">
                     <FormLabel>Data </FormLabel>
                     <DatePicker
                       date={field.value ? new Date(field.value) : null}

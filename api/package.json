@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "main": "index.js",
   "scripts": {
-    "dev": " NODE_ENV=development && ts-node-dev --env-file=.env.development --respawn --transpile-only index.ts",
+    "dev": " npx prisma generate && NODE_ENV=development && ts-node-dev --env-file=.env.development --respawn --transpile-only index.ts",
     "start": "NODE_ENV=production && node dist/index.js",
     "build": "rimraf dist && tsc",
     "test": "jest --runInBand",

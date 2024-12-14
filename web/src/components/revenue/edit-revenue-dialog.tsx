@@ -71,7 +71,7 @@ const EditRevenueDialog: React.FC<{
       }),
   });
 
-  const { mutateAsync, isPending: addingRevenue } = useMutation({
+  const { mutateAsync, isPending: editingRevenue } = useMutation({
     mutationKey: ["revenues", selectedTeam?.id, revenue.id, "edit"],
     mutationFn: async (data: z.infer<typeof editRevenueSchema>) => {
       return await revenueRequest.updateByTeamAndId({
@@ -108,7 +108,7 @@ const EditRevenueDialog: React.FC<{
 
   const onSubmit = useCallback(
     async (data: z.infer<typeof editRevenueSchema>) => {
-      if (addingRevenue) return;
+      if (editingRevenue) return;
       await mutateAsync(data);
       form.reset();
       void queryClient.invalidateQueries({
@@ -119,7 +119,7 @@ const EditRevenueDialog: React.FC<{
       });
       setIsDialogOpen(false);
     },
-    [mutateAsync, addingRevenue, form, queryClient, selectedTeam?.id],
+    [mutateAsync, editingRevenue, form, queryClient, selectedTeam?.id],
   );
 
   return (
@@ -171,7 +171,7 @@ const EditRevenueDialog: React.FC<{
                 control={form.control}
                 name="amountInCents"
                 render={({ field }) => (
-                  <FormItem>
+                  <FormItem className="w-full">
                     <FormLabel>Valor</FormLabel>
                     <Input
                       containerClassName="!bg-transparent border"
@@ -192,7 +192,7 @@ const EditRevenueDialog: React.FC<{
                     control={form.control}
                     name="date"
                     render={({ field }) => (
-                      <FormItem>
+                      <FormItem className="w-full">
                         <FormLabel>Data </FormLabel>
                         <DatePicker
                           date={field.value ? new Date(field.value) : null}
@@ -295,7 +295,7 @@ const EditRevenueDialog: React.FC<{
             />
             <DialogFooter className="gap-6">
               <DialogClose>Cancelar</DialogClose>
-              <Button disabled={addingRevenue} type="submit">
+              <Button disabled={editingRevenue} type="submit">
                 Salvar
               </Button>
             </DialogFooter>

@@ -21,7 +21,11 @@ const AuthMiddleware = async (request: NextRequest, response: NextResponse) => {
   const cookieStore = cookies();
   const token = cookieStore.get("token")?.value;
 
-  if (!token) return sendToLogin(request);
+  if (!token) {
+    console.log("não tem token");
+    
+    return sendToLogin(request);
+  }
 
   try {
     const whoamiRequest = await axios.get(
@@ -37,6 +41,8 @@ const AuthMiddleware = async (request: NextRequest, response: NextResponse) => {
       String(whoamiRequest.status).startsWith("4") ||
       String(whoamiRequest.status).startsWith("5")
     ) {
+      console.log("Caiu no if");
+
       return sendToLogin(request);
     }
 
@@ -45,6 +51,8 @@ const AuthMiddleware = async (request: NextRequest, response: NextResponse) => {
       halt: false,
     };
   } catch (error) {
+    console.log("Caiu no catch");
+
     return sendToLogin(request);
   }
 };

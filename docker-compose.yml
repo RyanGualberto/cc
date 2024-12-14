@@ -35,7 +35,7 @@ services:
     build: ./web
     env_file: ./web/.env
     ports:
-      - 3001:3000
+      - 3001:3001
     volumes:
       - ./web:/app
     stdin_open: true

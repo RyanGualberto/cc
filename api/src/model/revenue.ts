@@ -4,6 +4,10 @@ import { CreateRevenueSchema, UpdateRevenueSchema } from "../schemas/revenue";
 import { revenueSerializer } from "../serializers/revenue";
 import { AppError } from "../utils/appError";
 import { TeamModel } from "./team";
+import {
+  calculateIntervalTimeByRecurrence,
+  calculateLengthIntervalTimeByRecurrence,
+} from "../helpers/calculate-interval-time";
 import { v4 as uuidv4 } from "uuid";
 
 interface CreateRevenueInput {
@@ -62,6 +66,9 @@ class RevenueModel {
         ],
       },
       select: revenueSerializer,
+      orderBy: {
+        date: "asc",
+      },
     });
 
     return revenues;
@@ -98,12 +105,22 @@ class RevenueModel {
       data: Array.from(
         {
           length: Math.ceil(
-            (value.until.getTime() - value.date.getTime()) / 2628000000
+            calculateLengthIntervalTimeByRecurrence(
+              value.recurrence,
+              value.date,
+              value.until
+            )
           ),
         },
         (_, index) => ({
           ...value,
-          date: new Date(value.date.getTime() + index * 2628000000),
+          date: new Date(
+            calculateIntervalTimeByRecurrence(
+              value.recurrence,
+              value.date,
+              index
+            )
+          ),
           batch: batch,
         })
       ),
