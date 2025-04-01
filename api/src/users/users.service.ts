@@ -19,7 +19,7 @@ export class UsersService {
         email: data.email,
         firstName: data.firstName,
         lastName: data.lastName,
-        phone: data.phoneNumber,
+        phone: data.phone,
         password: hashed_password,
         cpf: data.cpf,
       },
@@ -57,9 +57,9 @@ export class UsersService {
     return { ...user, email: this.maskEmail(user.email) };
   }
 
-  async findByEmail(email: string): Promise<User | null> {
+  async findByCpf(cpf: string): Promise<User | null> {
     const record = await this.prisma.user.findUnique({
-      where: { email: email },
+      where: { cpf: cpf },
     });
     if (!record) return null;
 

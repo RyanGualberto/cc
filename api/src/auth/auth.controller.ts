@@ -29,8 +29,8 @@ export class AuthController {
       const response = await this.authService.register(createUserDto);
       this.mailService
         .sendWelcomeEmail(
-          response.user.email,
-          response.user.firstName + ' ' + response.user.lastName,
+          response.email,
+          response.firstName + ' ' + response.lastName,
         )
         .then(() => {})
         .catch(() => {});

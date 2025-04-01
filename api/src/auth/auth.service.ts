@@ -25,17 +25,17 @@ export class AuthService {
       cpf: createUserDto.cpf,
       email: createUserDto.email,
       password: createUserDto.password,
-      phoneNumber: createUserDto.phoneNumber,
+      phone: createUserDto.phone,
     });
 
     return {
-      user,
-      accessToken: await this.generateToken(user),
+      ...user,
+      token: await this.generateToken(user),
     };
   }
 
   async login(loginAuthDto: LoginAuthDto) {
-    const user = await this.usersService.findByEmail(loginAuthDto.email);
+    const user = await this.usersService.findByCpf(loginAuthDto.cpf);
     if (!user) {
       throw new BadRequestException('Invalid credentials');
     }
@@ -50,8 +50,8 @@ export class AuthService {
     }
 
     return {
-      user,
-      accessToken: await this.generateToken(user),
+      ...user,
+      token: await this.generateToken(user),
     };
   }
 
@@ -60,8 +60,8 @@ export class AuthService {
     return user;
   }
 
-  async requestPasswordReset(email: string) {
-    const user = await this.usersService.findByEmail(email);
+  async requestPasswordReset(cpf: string) {
+    const user = await this.usersService.findByCpf(cpf);
 
     if (!user) {
       throw new Error('Usuário não encontrado.');
@@ -71,7 +71,7 @@ export class AuthService {
     const resetExpires = new Date(Date.now() + 3600000);
 
     await this.prismaService.user.update({
-      where: { email },
+      where: { cpf },
       data: { resetToken, resetExpires },
     });
 
