@@ -29,7 +29,7 @@ const AuthMiddleware = async (request: NextRequest, response: NextResponse) => {
 
   try {
     const whoamiRequest = await axios.get(
-      `${process.env.NEXT_PUBLIC_API_URL}/users/me`,
+      `${process.env.NEXT_PUBLIC_API_URL}/auth/me`,
       {
         headers: {
           Authorization: `Bearer ${token}`,

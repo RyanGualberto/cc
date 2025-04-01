@@ -106,14 +106,14 @@ const UserCell: React.FC<{ user: User }> = ({ user }) => {
                 height={40}
               />
               <AvatarFallback>
-                {user.first_name[0]}
-                {user.last_name[0]}
+                {user.firstName[0]}
+                {user.lastName[0]}
               </AvatarFallback>
             </Avatar>
           </TooltipTrigger>
           <TooltipContent>
             <span>
-              {user.first_name} {user.last_name}
+              {user.firstName} {user.lastName}
             </span>
           </TooltipContent>
         </Tooltip>

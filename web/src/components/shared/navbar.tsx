@@ -79,8 +79,8 @@ const Navbar: React.FC = () => {
                   height={40}
                 />
                 <AvatarFallback>
-                  {user?.first_name[0]}
-                  {user?.last_name[0]}
+                  {user?.firstName[0]}
+                  {user?.lastName[0]}
                 </AvatarFallback>
               </Avatar>
             </PopoverTrigger>

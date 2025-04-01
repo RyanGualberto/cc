@@ -1,6 +1,6 @@
 "use client";
 import Image from "next/image";
-import registerBackground from "../../../assets/images/register-background.webp";
+import registerBackground from "~/assets/images/register-background.webp";
 import { Input } from "~/components/ui/input";
 import { Lock, Mail, Phone, User } from "lucide-react";
 
@@ -41,8 +41,8 @@ export default function RegisterPage() {
 
   async function onSubmit(values: z.infer<typeof RegisterSchema>) {
     await register({
-      first_name: values.firstName,
-      last_name: values.lastName,
+      firstName: values.firstName,
+      lastName: values.lastName,
       email: values.email,
       cpf: values.cpf,
       phone: values.phone,

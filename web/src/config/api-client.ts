@@ -2,7 +2,7 @@ import axios from "axios";
 import { parseCookies } from "nookies";
 
 const apiClient = axios.create({
-  baseURL: "http://recebee.local:3000",
+  baseURL: "http://localhost:3000",
   headers: {
     "Content-type": "application/json",
   },

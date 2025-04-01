@@ -61,7 +61,7 @@ const DeleteTeamMemberDialog: React.FC<{
         <p>
           Tem certeza que deseja remover{" "}
           <strong>
-            {teamMember.user.first_name} {teamMember.user.last_name}
+            {teamMember.user.firstName} {teamMember.user.lastName}
           </strong>{" "}
           do time?
         </p>

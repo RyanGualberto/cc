@@ -2,10 +2,13 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useCallback } from "react";
-import { authRequest, type LoginRequest } from "~/requests/auth";
-import { type UserCreateRequest, userRequest } from "~/requests/user";
+import {
+  authRequest,
+  type UserCreateRequest,
+  type LoginRequest,
+} from "~/requests/auth";
 import { deleteCookie, getCookie, setCookie } from "cookies-next";
-const INITIAL_ROUTE = "/app/teams";
+import { INITIAL_ROUTE } from "~/config/constants";
 
 export const useAuth = () => {
   const queryClient = useQueryClient();
@@ -24,7 +27,7 @@ export const useAuth = () => {
   const { mutateAsync: register } = useMutation({
     mutationKey: ["register"],
     mutationFn: async (values: UserCreateRequest) => {
-      return await userRequest.createUser(values);
+      return await authRequest.register(values);
     },
     onSuccess: (data) => {
       afterLogin(data);

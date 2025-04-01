@@ -49,6 +49,8 @@ export class AuthService {
       throw new BadRequestException('Invalid credentials');
     }
 
+    delete user.password;
+
     return {
       ...user,
       token: await this.generateToken(user),

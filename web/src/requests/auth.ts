@@ -17,20 +17,45 @@ async function login(data: LoginRequest): Promise<LoginResponse | undefined> {
     const endpoint = "/auth/login";
     const method = "post";
 
-    const { data: response, headers } = await apiClient[method]<LoginResponse>(
+    const { data: response } = await apiClient[method]<LoginResponse>(
       endpoint,
       data,
     );
-    const token = (headers.authorization as string).split(" ")[1];
 
-    if (!token) {
-      throw new Error("Token not found");
+    return response;
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      throw new Error(error.message);
     }
+  }
+}
 
-    return {
-      ...response,
-      token,
-    };
+export interface UserCreateRequest {
+  firstName: string;
+  lastName: string;
+  cpf: string;
+  phone: string;
+  email: string;
+  password: string;
+}
+
+export interface UserCreateResponse extends User {
+  token: string;
+}
+
+async function register(
+  data: UserCreateRequest,
+): Promise<UserCreateResponse | undefined> {
+  try {
+    const endpoint = "/auth/register";
+    const method = "post";
+
+    const { data: response } = await apiClient[method]<UserCreateResponse>(
+      endpoint,
+      data,
+    );
+
+    return response;
   } catch (error: unknown) {
     if (error instanceof Error) {
       throw new Error(error.message);
@@ -40,4 +65,5 @@ async function login(data: LoginRequest): Promise<LoginResponse | undefined> {
 
 export const authRequest = {
   login,
+  register,
 };
