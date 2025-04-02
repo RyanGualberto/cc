@@ -18,8 +18,11 @@ async function listTeams(): Promise<ListTeamsResponse | undefined> {
   }
 }
 
-async function findTeam(id: string): Promise<Team | undefined> {
+async function findTeam(id?: string): Promise<Team | undefined> {
   try {
+    if (!id) {
+      return undefined;
+    }
     const endpoint = `/teams/${id}`;
     const method = "get";
 

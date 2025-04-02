@@ -2,7 +2,7 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { hasCookie } from "cookies-next";
 import { useParams } from "next/navigation";
-import { createContext, useCallback } from "react";
+import { createContext, useCallback, useEffect } from "react";
 import { teamRequests } from "~/requests/team";
 import { userRequest } from "~/requests/user";
 import { type Team } from "~/types/team";
@@ -22,11 +22,11 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
   const queryClient = useQueryClient();
   const { ["team-id"]: teamId } = useParams<{ "team-id": string }>();
   const { data: selectedTeam } = useQuery({
-    queryKey: ["user"],
+    queryKey: ["selectedTeam"],
     queryFn: async () => {
       return teamRequests.findTeam(teamId);
     },
-    enabled: hasCookie("token"),
+    enabled: hasCookie("token") && Boolean(teamId),
   });
   const { data: user } = useQuery({
     queryKey: ["whoami"],
@@ -49,6 +49,18 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
       console.error("Error invalidating queries:", error);
     });
   }, [queryClient]);
+
+  useEffect(() => {
+    if (teamId) {
+      queryClient
+        .invalidateQueries({
+          queryKey: ["selectedTeam"],
+        })
+        .catch((error) => {
+          console.error("Error invalidating queries:", error);
+        });
+    }
+  }, [teamId, queryClient]);
 
   return (
     <UserContext.Provider

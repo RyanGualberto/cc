@@ -58,6 +58,10 @@ export class TeamsService {
       },
     });
 
+    if (!team) {
+      return null;
+    }
+
     const currentUserRole =
       team.teamMembers.find((member) => member.userId === userId)?.role || null;
 
