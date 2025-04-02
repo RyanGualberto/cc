@@ -2,7 +2,7 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { hasCookie } from "cookies-next";
 import { useParams } from "next/navigation";
-import { createContext, useCallback, useEffect, useState } from "react";
+import { createContext, useCallback } from "react";
 import { teamRequests } from "~/requests/team";
 import { userRequest } from "~/requests/user";
 import { type Team } from "~/types/team";
@@ -12,7 +12,6 @@ interface IUserContext {
   user: User | undefined;
   teams: Array<Team>;
   selectedTeam: Team | undefined;
-  setSelectedTeam: (team: Team) => void;
   refetchTeams: () => void;
   loadingTeams: boolean;
 }
@@ -22,7 +21,13 @@ export const UserContext = createContext<IUserContext | undefined>(undefined);
 export const UserProvider = ({ children }: { children: React.ReactNode }) => {
   const queryClient = useQueryClient();
   const { ["team-id"]: teamId } = useParams<{ "team-id": string }>();
-  const [selectedTeam, setSelectedTeam] = useState<Team | undefined>(undefined);
+  const { data: selectedTeam } = useQuery({
+    queryKey: ["user"],
+    queryFn: async () => {
+      return teamRequests.findTeam(teamId);
+    },
+    enabled: hasCookie("token"),
+  });
   const { data: user } = useQuery({
     queryKey: ["whoami"],
     queryFn: async () => {
@@ -45,26 +50,12 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
     });
   }, [queryClient]);
 
-  useEffect(() => {
-    if (!teams) return setSelectedTeam(undefined);
-    if (teams) {
-      if (!teamId) return setSelectedTeam(undefined);
-
-      const team = teams.find((team) => team.id === teamId);
-
-      if (!team) return setSelectedTeam(undefined);
-
-      setSelectedTeam(team);
-    }
-  }, [teamId, teams]);
-
   return (
     <UserContext.Provider
       value={{
         user,
         teams: teams ?? [],
-        selectedTeam: selectedTeam,
-        setSelectedTeam: setSelectedTeam,
+        selectedTeam,
         refetchTeams,
         loadingTeams,
       }}

@@ -18,6 +18,20 @@ async function listTeams(): Promise<ListTeamsResponse | undefined> {
   }
 }
 
+async function findTeam(id: string): Promise<Team | undefined> {
+  try {
+    const endpoint = `/teams/${id}`;
+    const method = "get";
+
+    const { data: response } = await apiClient[method]<Team>(endpoint);
+    return response;
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      throw new Error(error.message);
+    }
+  }
+}
+
 export interface CreateTeamRequest {
   name: string;
 }
@@ -116,7 +130,7 @@ async function listTeamInvites(
 async function findTeamByInviteToken(token: string): Promise<Team | undefined> {
   try {
     console.log("here1");
-    
+
     const endpoint = `/teams/invites/find?token=${token}`;
     const method = "get";
     const { data: response } = await apiClient[method]<Team>(endpoint);
@@ -183,4 +197,5 @@ export const teamRequests = {
   acceptTeamInvite,
   removeTeamInvite,
   removeTeamMember,
+  findTeam,
 };

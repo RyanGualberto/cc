@@ -36,7 +36,7 @@ export class TeamsService {
   }
 
   async findOne(id: string, userId: string) {
-    return await this.prismaService.team.findFirst({
+    const team = await this.prismaService.team.findFirst({
       where: {
         id,
         teamMembers: {
@@ -46,9 +46,25 @@ export class TeamsService {
         },
       },
       include: {
-        teamMembers: true,
+        teamMembers: {
+          include: {
+            user: {
+              omit: {
+                password: true,
+              },
+            },
+          },
+        },
       },
     });
+
+    const currentUserRole =
+      team.teamMembers.find((member) => member.userId === userId)?.role || null;
+
+    return {
+      ...team,
+      role: currentUserRole,
+    };
   }
 
   async update(id: string, userId: string, updateTeamDto: UpdateTeamDto) {
