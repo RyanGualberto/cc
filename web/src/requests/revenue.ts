@@ -76,7 +76,7 @@ async function updateByTeamAndId(params: UpdateRevenueRequest) {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { categoryId, ...payload } = params.payload;
     const endpoint = `/revenues/${params.teamId}/${params.revenueId}`;
-    const method = "put";
+    const method = "patch";
 
     const { data: response } = await apiClient[method]<Revenue>(endpoint, {
       ...payload,

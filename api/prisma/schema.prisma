@@ -65,14 +65,14 @@ model Team {
 }
 
 model TeamMember {
-  id        String   @id @default(cuid())
-  team      Team     @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  id        String         @id @default(cuid())
+  team      Team           @relation(fields: [teamId], references: [id], onDelete: Cascade)
   teamId    String
-  user      User     @relation(fields: [userId], references: [id])
+  user      User           @relation(fields: [userId], references: [id])
   userId    String
-  role      String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  role      TeamMemberRole
+  createdAt DateTime       @default(now())
+  updatedAt DateTime       @updatedAt
 
   @@map("team_members")
 }
@@ -159,4 +159,9 @@ enum ExpenseRecurrence {
   WEEKLY
   DAILY
   ONCE
+}
+
+enum TeamMemberRole {
+  ADMIN
+  USER
 }

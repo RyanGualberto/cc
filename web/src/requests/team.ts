@@ -50,7 +50,7 @@ export type UpdateTeamResponse = Team;
 async function updateTeam(team: UpdateTeamRequest): Promise<Team | undefined> {
   try {
     const endpoint = "/teams/" + team.id;
-    const method = "put";
+    const method = "patch";
     const { data: response } = await apiClient[method]<UpdateTeamResponse>(
       endpoint,
       {

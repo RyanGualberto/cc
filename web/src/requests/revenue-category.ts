@@ -51,7 +51,7 @@ async function updateByTeamAndId(params: RevenueCategoryRequest) {
   try {
     const { id, ...payload } = params.payload;
     const endpoint = `/revenue-categories/${params.teamId}/${id}`;
-    const method = "put";
+    const method = "patch";
 
     const { data: response } = await apiClient[method]<RevenueCategory>(
       endpoint,
