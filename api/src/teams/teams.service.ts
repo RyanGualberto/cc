@@ -13,7 +13,7 @@ export class TeamsService {
         teamMembers: {
           create: {
             userId: createTeamDto.userId,
-            role: 'ADMIN',
+            role: 'OWNER',
           },
         },
       },

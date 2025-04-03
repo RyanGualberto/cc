@@ -8,6 +8,7 @@ import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handleba
 import { join } from 'path';
 import { TeamsModule } from './teams/teams.module';
 import { ExpenseCategoriesModule } from './expense-categories/expense-categories.module';
+import { RevenueCategoriesModule } from './revenue-categories/revenue-categories.module';
 
 @Module({
   imports: [
@@ -34,6 +35,7 @@ import { ExpenseCategoriesModule } from './expense-categories/expense-categories
     }),
     TeamsModule,
     ExpenseCategoriesModule,
+    RevenueCategoriesModule,
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -162,6 +162,7 @@ enum ExpenseRecurrence {
 }
 
 enum TeamMemberRole {
+  OWNER
   ADMIN
-  USER
+  MEMBER
 }

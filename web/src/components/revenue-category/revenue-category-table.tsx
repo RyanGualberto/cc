@@ -8,10 +8,9 @@ import {
   TableHeader,
   TableRow,
 } from "../ui/table";
-import { Button } from "../ui/button";
-import { Trash2 } from "lucide-react";
 import { EditRevenueCategoryDialog } from "./edit-revenue-category-dialog";
 import { type Team } from "~/types/team";
+import { DeleteRevenueCategoryDialog } from "./delete-revenue-category-dialog";
 
 const RevenueCategoryTable: React.FC<{
   data: Array<RevenueCategory>;
@@ -36,9 +35,7 @@ const RevenueCategoryTable: React.FC<{
                 team={team}
                 revenueCategory={revenueCategory}
               />
-              <Button className="bg-red-500/10 text-red-500" size="icon">
-                <Trash2 size={16} />
-              </Button>
+              <DeleteRevenueCategoryDialog revenueCategory={revenueCategory} />
             </TableCell>
           </TableRow>
         ))}

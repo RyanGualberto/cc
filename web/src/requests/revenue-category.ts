@@ -8,12 +8,14 @@ export interface CreateByTeamRequest {
 
 async function createByTeam(payload: CreateByTeamRequest) {
   try {
-    const endpoint = `/revenue-categories`;
+    const endpoint = `/revenue-categories/teams/${payload.teamId}`;
     const method = "post";
 
     const { data: response } = await apiClient[method]<RevenueCategory>(
       endpoint,
-      payload,
+      {
+        name: payload.name,
+      },
     );
     return response;
   } catch (error: unknown) {
@@ -29,7 +31,7 @@ export interface ListByTeamAndDateRequest {
 
 async function listByTeam(params: ListByTeamAndDateRequest) {
   try {
-    const endpoint = `/revenue-categories/${params.teamId}`;
+    const endpoint = `/revenue-categories/teams/${params.teamId}`;
     const method = "get";
 
     const { data: response } =
@@ -50,7 +52,7 @@ export interface RevenueCategoryRequest {
 async function updateByTeamAndId(params: RevenueCategoryRequest) {
   try {
     const { id, ...payload } = params.payload;
-    const endpoint = `/revenue-categories/${params.teamId}/${id}`;
+    const endpoint = `/revenue-categories/teams/${params.teamId}/${id}`;
     const method = "patch";
 
     const { data: response } = await apiClient[method]<RevenueCategory>(
@@ -65,8 +67,24 @@ async function updateByTeamAndId(params: RevenueCategoryRequest) {
   }
 }
 
+async function deleteByTeamAndId(params: RevenueCategoryRequest) {
+  try {
+    const endpoint = `/revenue-categories/teams/${params.teamId}/${params.payload.id}`;
+    const method = "delete";
+
+    const { data: response } =
+      await apiClient[method]<RevenueCategory>(endpoint);
+    return response;
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      throw new Error(error.message);
+    }
+  }
+}
+
 export const revenueCategoriesRequest = {
   createByTeam,
   listByTeam,
   updateByTeamAndId,
+  deleteByTeamAndId,
 };

@@ -1,30 +1,30 @@
 import { ForbiddenException, Injectable } from '@nestjs/common';
-import { CreateExpenseCategoryDto } from './dto/create-expense-category.dto';
-import { UpdateExpenseCategoryDto } from './dto/update-expense-category.dto';
+import { CreateRevenueCategoryDto } from './dto/create-revenue-category.dto';
+import { UpdateRevenueCategoryDto } from './dto/update-revenue-category.dto';
 import { PrismaService } from 'src/config/prisma-service';
 import { TeamMemberRole } from '@prisma/client';
 
 @Injectable()
-export class ExpenseCategoriesService {
+export class RevenueCategoriesService {
   constructor(private readonly prismaService: PrismaService) {}
   async create(
     userId: string,
-    createExpenseCategoryDto: CreateExpenseCategoryDto,
+    createRevenueCategoryDto: CreateRevenueCategoryDto,
   ) {
     await this.validateUserPermission(
       userId,
-      createExpenseCategoryDto.teamId,
+      createRevenueCategoryDto.teamId,
       'ADMIN',
     );
-    return await this.prismaService.expenseCategory.create({
-      data: createExpenseCategoryDto,
+    return await this.prismaService.revenueCategory.create({
+      data: createRevenueCategoryDto,
     });
   }
 
   async findAll(userId: string, teamId: string) {
     await this.validateUserPermission(userId, teamId, 'MEMBER');
 
-    const expenseCategories = await this.prismaService.expenseCategory.findMany(
+    const revenueCategories = await this.prismaService.revenueCategory.findMany(
       {
         where: {
           teamId,
@@ -32,38 +32,41 @@ export class ExpenseCategoriesService {
         include: {
           _count: {
             select: {
-              expenses: true,
+              revenues: true,
             },
           },
         },
       },
     );
-    return expenseCategories;
+    return revenueCategories;
   }
 
   async update(
     id: string,
     userId: string,
-    updateExpenseCategoryDto: UpdateExpenseCategoryDto,
+    updateRevenueCategoryDto: UpdateRevenueCategoryDto,
   ) {
     await this.validateUserPermission(
       userId,
-      updateExpenseCategoryDto.teamId,
+      updateRevenueCategoryDto.teamId,
       'ADMIN',
     );
 
-    return await this.prismaService.expenseCategory.update({
+    return await this.prismaService.revenueCategory.update({
       where: {
         id,
       },
-      data: updateExpenseCategoryDto,
+      data: {
+        name: updateRevenueCategoryDto.name,
+        teamId: updateRevenueCategoryDto.teamId,
+      },
     });
   }
 
   async remove(id: string, teamId: string, userId: string) {
     await this.validateUserPermission(userId, teamId, 'ADMIN');
 
-    return await this.prismaService.expenseCategory.delete({
+    return await this.prismaService.revenueCategory.delete({
       where: {
         id,
       },

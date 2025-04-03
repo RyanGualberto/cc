@@ -10,7 +10,7 @@ import {
 } from "../ui/table";
 import { EditExpenseCategoryDialog } from "./edit-expense-category-dialog";
 import { type Team } from "~/types/team";
-import { DeleteExpenseCategoryDialog } from "./delete-expense-dialog";
+import { DeleteExpenseCategoryDialog } from "./delete-expense-category-dialog";
 
 const ExpenseCategoryTable: React.FC<{
   data: Array<ExpenseCategory>;
