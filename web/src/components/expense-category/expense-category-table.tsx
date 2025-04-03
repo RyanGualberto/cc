@@ -8,10 +8,9 @@ import {
   TableHeader,
   TableRow,
 } from "../ui/table";
-import { Button } from "../ui/button";
-import { Trash2 } from "lucide-react";
 import { EditExpenseCategoryDialog } from "./edit-expense-category-dialog";
 import { type Team } from "~/types/team";
+import { DeleteExpenseCategoryDialog } from "./delete-expense-dialog";
 
 const ExpenseCategoryTable: React.FC<{
   data: Array<ExpenseCategory>;
@@ -36,9 +35,7 @@ const ExpenseCategoryTable: React.FC<{
                 team={team}
                 expenseCategory={expenseCategory}
               />
-              <Button className="bg-red-500/10 text-red-500" size="icon">
-                <Trash2 size={16} />
-              </Button>
+              <DeleteExpenseCategoryDialog expenseCategory={expenseCategory} />
             </TableCell>
           </TableRow>
         ))}

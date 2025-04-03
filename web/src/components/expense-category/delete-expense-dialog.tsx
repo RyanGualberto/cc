@@ -10,49 +10,42 @@ import {
 } from "../ui/alert-dialog";
 import { Button } from "../ui/button";
 import { Trash2 } from "lucide-react";
-import { type Expense } from "~/types/expense";
+import { type ExpenseCategory } from "~/types/expense-category";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { Switch } from "../ui/switch";
-import Show from "../utils/show";
-import { Label } from "../ui/label";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { expenseRequest } from "~/requests/expense";
+import { expenseCategoriesRequest } from "~/requests/expense-category";
 import { useUserContext } from "~/hooks/use-user-context";
 import { TIME_TO_CONFIRM } from "~/config/constants";
 
-const DeleteExpenseDialog: React.FC<{
-  expense: Expense;
-}> = ({ expense }) => {
+const DeleteExpenseCategoryDialog: React.FC<{
+  expenseCategory: ExpenseCategory;
+}> = ({ expenseCategory }) => {
   const queryClient = useQueryClient();
   const { selectedTeam } = useUserContext();
   const [confirmCount, setConfirmCount] = useState(TIME_TO_CONFIRM);
   const [open, setOpen] = useState(false);
-  const [deleteAll, setDeleteAll] = useState(false);
-  const hasMany = useMemo(
-    () => expense.recurrence !== "once",
-    [expense.recurrence],
-  );
   const { mutateAsync: deleteRequest, isPending: loadingDeleteRequest } =
     useMutation({
-      mutationKey: [selectedTeam?.id, "expenses", expense.id, "delete"],
+      mutationKey: [
+        selectedTeam?.id,
+        "expense-categories",
+        expenseCategory.id,
+        "delete",
+      ],
       mutationFn: async () => {
         if (!selectedTeam) return;
 
-        if (deleteAll) {
-          return await expenseRequest.deleteByTeamAndBatchId({
-            teamId: selectedTeam.id,
-            batchId: expense.batch,
-          });
-        }
-
-        return await expenseRequest.deleteByTeamAndId({
+        return await expenseCategoriesRequest.deleteByTeamAndId({
           teamId: selectedTeam.id,
-          id: expense.id,
+          payload: expenseCategory,
         });
       },
       onSuccess: () => {
         setOpen(false);
         if (!selectedTeam) return;
+        void queryClient.invalidateQueries({
+          queryKey: ["expense-categories", { teamId: selectedTeam.id }],
+        });
         void queryClient.invalidateQueries({
           queryKey: ["expenses", { teamId: selectedTeam.id }],
         });
@@ -92,26 +85,14 @@ const DeleteExpenseDialog: React.FC<{
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle>
-            Tem certeza que deseja excluir a despesa?
+            Tem certeza que deseja excluir a categoria de despesa?
           </AlertDialogTitle>
         </AlertDialogHeader>
         <p>
-          Você está prestes a excluir a despesa <strong>{expense.title}</strong>
-          . Esta ação não pode ser desfeita.
+          Você está prestes a excluir a categoria de despesa{" "}
+          <strong>{expenseCategory.name}</strong>. Esta ação não pode ser
+          desfeita.
         </p>
-        <Show
-          when={hasMany}
-          component={
-            <div className="flex items-center gap-2">
-              <Switch
-                checked={deleteAll}
-                name="deleteAll"
-                onCheckedChange={(checked) => setDeleteAll(checked)}
-              />
-              <Label htmlFor="deleteAll">Excluir todas as recorrências</Label>
-            </div>
-          }
-        />
         <AlertDialogFooter>
           <AlertDialogCancel>Cancelar</AlertDialogCancel>
           <Button
@@ -128,4 +109,4 @@ const DeleteExpenseDialog: React.FC<{
   );
 };
 
-export { DeleteExpenseDialog };
+export { DeleteExpenseCategoryDialog };
