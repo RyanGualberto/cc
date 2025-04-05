@@ -9,6 +9,7 @@ import { join } from 'path';
 import { TeamsModule } from './teams/teams.module';
 import { ExpenseCategoriesModule } from './expense-categories/expense-categories.module';
 import { RevenueCategoriesModule } from './revenue-categories/revenue-categories.module';
+import { ExpensesModule } from './expenses/expenses.module';
 
 @Module({
   imports: [
@@ -36,6 +37,7 @@ import { RevenueCategoriesModule } from './revenue-categories/revenue-categories
     TeamsModule,
     ExpenseCategoriesModule,
     RevenueCategoriesModule,
+    ExpensesModule,
   ],
   controllers: [AppController],
   providers: [AppService],

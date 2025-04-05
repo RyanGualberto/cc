@@ -8,11 +8,11 @@ const ExpenseResumeCards: React.FC<{
 }> = ({ data }) => {
   const organizedData = data.reduce(
     (acc, expense) => {
-      if (expense.status === "pending") {
+      if (expense.status === "PENDING") {
         acc.pending += expense.amountInCents;
-      } else if (expense.status === "paid") {
+      } else if (expense.status === "PAID") {
         acc.paid += expense.amountInCents;
-      } else if (expense.status === "overdue") {
+      } else if (expense.status === "OVERDUE") {
         acc.overdue += expense.amountInCents;
       }
       acc.total += expense.amountInCents;

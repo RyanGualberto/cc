@@ -146,10 +146,10 @@ const StatusCell: React.FC<{
           expenseId: expense.id,
           payload: {
             amountInCents: expense.amountInCents,
-            categoryId: expense.category.id,
+            categoryId: expense.category?.id ?? null,
             date: expense.date,
             description: expense.description,
-            status: "paid",
+            status: "PAID",
             title: expense.title,
           },
         })
@@ -160,11 +160,11 @@ const StatusCell: React.FC<{
         });
     },
   });
-  if (status === "paid") {
+  if (status === "PAID") {
     return (
       <TableCell>
         <span className="rounded-full px-2 py-1 text-xs font-medium text-green-800">
-          {TRANSLATED_STATUSES[status as "paid"]}
+          {TRANSLATED_STATUSES[status as "PAID"]}
         </span>
       </TableCell>
     );
@@ -185,19 +185,19 @@ const StatusCell: React.FC<{
 
 const DateCell: React.FC<{
   date: string;
-  status: "pending" | "overdue" | "paid";
+  status: "PENDING" | "OVERDUE" | "PAID";
 }> = ({ date, status }) => {
   const isNear =
     new Date(date) < new Date(new Date().getTime() + 3 * 24 * 60 * 60 * 1000) &&
     new Date(date) > new Date() &&
-    status !== "paid";
+    status !== "PAID";
 
-  const isOverdue = new Date(date) < new Date() && status !== "paid";
+  const isOverdue = new Date(date) < new Date() && status !== "PAID";
 
   return (
     <TableCell
       className={cn({
-        "text-red-500": status === "overdue" || isOverdue,
+        "text-red-500": status === "OVERDUE" || isOverdue,
         "text-yellow-500": isNear,
       })}
     >

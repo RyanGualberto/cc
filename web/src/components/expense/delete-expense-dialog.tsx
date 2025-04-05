@@ -29,7 +29,7 @@ const DeleteExpenseDialog: React.FC<{
   const [open, setOpen] = useState(false);
   const [deleteAll, setDeleteAll] = useState(false);
   const hasMany = useMemo(
-    () => expense.recurrence !== "once",
+    () => expense.recurrence !== "ONCE",
     [expense.recurrence],
   );
   const { mutateAsync: deleteRequest, isPending: loadingDeleteRequest } =

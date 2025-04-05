@@ -36,16 +36,16 @@ import { Label } from "../ui/label";
 import { editExpenseSchema } from "~/schemas/edit-expense-schema";
 
 export const TRANSLATED_RECURRENCES = {
-  once: "Uma vez",
-  daily: "Diário",
-  weekly: "Semanal",
-  monthly: "Mensal",
+  ONCE: "Uma vez",
+  DAILY: "Diário",
+  WEEKLY: "Semanal",
+  MONTHLY: "Mensal",
 };
 
 export const TRANSLATED_STATUSES = {
-  pending: "Pendente",
-  paid: "Pago",
-  overdue: "Atrasado",
+  PENDING: "Pendente",
+  PAID: "Pago",
+  OVERDUE: "Atrasado",
 };
 
 const EditExpenseDialog: React.FC<{
@@ -56,7 +56,7 @@ const EditExpenseDialog: React.FC<{
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [includeFuture, setDeleteAll] = useState(false);
   const hasMany = useMemo(
-    () => expense.recurrence !== "once",
+    () => expense.recurrence !== "ONCE",
     [expense.recurrence],
   );
   const {
@@ -75,13 +75,13 @@ const EditExpenseDialog: React.FC<{
     mutationKey: ["expenses", selectedTeam?.id, expense.id, "edit"],
     mutationFn: async (data: z.infer<typeof editExpenseSchema>) => {
       return await expenseRequest.updateByTeamAndId({
-        expenseId: includeFuture ? expense.batch : expense.id,
+        expenseId: expense.id,
         payload: {
           categoryId: data.category,
           amountInCents: parseInt(
             String(data.amountInCents).replace(/\D/g, ""),
           ),
-          description: data.description,
+          description: data.description ?? null,
           title: data.title,
           status: data.status,
           includeFuture: includeFuture,
@@ -99,9 +99,9 @@ const EditExpenseDialog: React.FC<{
     form.reset({
       status: expense.status,
       title: expense.title,
-      description: expense.description,
+      description: expense.description ?? undefined,
       amountInCents: maskAmount(String(expense.amountInCents)),
-      category: expense.category.id,
+      category: expense.category?.id ?? undefined,
       date: new Date(expense.date),
     });
   }, [expense, form]);

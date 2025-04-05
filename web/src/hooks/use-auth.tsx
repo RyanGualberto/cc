@@ -47,7 +47,6 @@ export const useAuth = () => {
 
       const pathname = getCookie("callback_pathname");
 
-      console.log("pathname", pathname);
       if (pathname) {
         router.push(pathname + "?" + searchParams.toString());
 

@@ -1,11 +1,11 @@
 import { z } from "zod";
 
-export const ALLOWED_STATUSES = ["pending", "paid", "overdue"] as const;
+export const ALLOWED_STATUSES = ["PENDING", "PAID", "OVERDUE"] as const;
 export const ALLOWED_RECURRENCES = [
-  "monthly",
-  "weekly",
-  "daily",
-  "once",
+  "MONTHLY",
+  "WEEKLY",
+  "DAILY",
+  "ONCE",
 ] as const;
 
 export const addExpenseSchema = z.object({

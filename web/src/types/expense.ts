@@ -5,12 +5,12 @@ export type Expense = {
   user: User;
   id: string;
   title: string;
-  description?: string;
+  description: string | null;
   date: string;
   batch: string;
-  recurrence: "monthly" | "weekly" | "daily" | "once";
+  recurrence: "MONTHLY" | "WEEKLY" | "DAILY" | "ONCE";
   amountInCents: number;
-  status: "pending" | "paid" | "overdue";
-  category: ExpenseCategory;
+  status: "PENDING" | "PAID" | "OVERDUE";
+  category?: ExpenseCategory;
   until: string | null;
 };

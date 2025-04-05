@@ -36,16 +36,16 @@ import Show from "../utils/show";
 import { expenseCategoriesRequest } from "~/requests/expense-category";
 
 export const TRANSLATED_RECURRENCES = {
-  once: "Uma vez",
-  daily: "Diário",
-  weekly: "Semanal",
-  monthly: "Mensal",
+  ONCE: "Uma vez",
+  DAILY: "Diário",
+  WEEKLY: "Semanal",
+  MONTHLY: "Mensal",
 };
 
 export const TRANSLATED_STATUSES = {
-  pending: "Pendente",
-  paid: "Pago",
-  overdue: "Atrasado",
+  PENDING: "Pendente",
+  PAID: "Pago",
+  OVERDUE: "Atrasado",
 };
 
 const AddExpenseDialog: React.FC<{
@@ -65,27 +65,34 @@ const AddExpenseDialog: React.FC<{
       }),
   });
 
+  
+  
   const { mutateAsync, isPending: addingExpense } = useMutation({
     mutationKey: ["expenses", team.id, "create"],
     mutationFn: async (data: z.infer<typeof addExpenseSchema>) => {
+      const { until, ...dataWithoutUntil } = data;
+      const untilToStringOrUndefined = until
+        ? new Date(until).toISOString()
+        : undefined;
+
       return await expenseRequest.createByTeam({
-        ...data,
+        ...dataWithoutUntil,
         teamId: team.id,
-        amountInCents: parseInt(String(data.amountInCents).replace(/\D/g, "")),
-        date: new Date(data.date).toISOString(),
-        ...(data.until && {
-          until: new Date(data.until).toISOString(),
-        }),
-        description: data.description ?? undefined,
-        category: data.category ?? undefined,
-      });
+        amountInCents: parseInt(
+          String(dataWithoutUntil.amountInCents).replace(/\D/g, ""),
+        ),
+        date: new Date(dataWithoutUntil.date).toISOString(),
+        description: dataWithoutUntil.description ?? undefined,
+        category: dataWithoutUntil.category ?? undefined,
+        until: untilToStringOrUndefined,
+    });
     },
   });
   const form = useForm<z.infer<typeof addExpenseSchema>>({
     resolver: zodResolver(addExpenseSchema),
     defaultValues: {
-      recurrence: "once",
-      status: "pending",
+      recurrence: "ONCE",
+      status: "PENDING",
     },
   });
 
@@ -108,7 +115,7 @@ const AddExpenseDialog: React.FC<{
   return (
     <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
       <DialogTrigger asChild>
-        <Button className="items-center gap-2 w-full md:w-fit">
+        <Button className="w-full items-center gap-2 md:w-fit">
           <Plus size={16} />
           Adicionar Despesa
         </Button>
@@ -233,7 +240,7 @@ const AddExpenseDialog: React.FC<{
                     )}
                   />
                 }
-                when={form.watch("recurrence") !== "once"}
+                when={form.watch("recurrence") !== "ONCE"}
               />
             </div>
             <FormField

@@ -88,7 +88,7 @@ export class ExpenseCategoriesService {
       );
     }
 
-    if (role === 'ADMIN' && userTeamMember.role !== 'ADMIN') {
+    if (role === 'ADMIN' && userTeamMember.role === 'MEMBER') {
       throw new ForbiddenException(
         'User does not have permission to view or update somethin at this team',
       );
