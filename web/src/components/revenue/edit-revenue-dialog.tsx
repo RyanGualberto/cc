@@ -36,16 +36,16 @@ import { Label } from "../ui/label";
 import { editRevenueSchema } from "~/schemas/edit-revenue-schema";
 
 export const TRANSLATED_RECURRENCES = {
-  once: "Uma vez",
-  daily: "Diário",
-  weekly: "Semanal",
-  monthly: "Mensal",
+  ONCE: "Uma vez",
+  DAILY: "Diário",
+  WEEKLY: "Semanal",
+  MONTHLY: "Mensal",
 };
 
 export const TRANSLATED_STATUSES = {
-  pending: "Pendente",
-  paid: "Recebido",
-  overdue: "Atrasado",
+  PENDING: "Pendente",
+  RECEIVED: "Recebido",
+  OVERDUE: "Atrasado",
 };
 
 const EditRevenueDialog: React.FC<{
@@ -56,7 +56,7 @@ const EditRevenueDialog: React.FC<{
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [includeFuture, setDeleteAll] = useState(false);
   const hasMany = useMemo(
-    () => revenue.recurrence !== "once",
+    () => revenue.recurrence !== "ONCE",
     [revenue.recurrence],
   );
   const {
@@ -71,17 +71,17 @@ const EditRevenueDialog: React.FC<{
       }),
   });
 
-  const { mutateAsync, isPending: editingRevenue } = useMutation({
+  const { mutateAsync, isPending: addingRevenue } = useMutation({
     mutationKey: ["revenues", selectedTeam?.id, revenue.id, "edit"],
     mutationFn: async (data: z.infer<typeof editRevenueSchema>) => {
       return await revenueRequest.updateByTeamAndId({
-        revenueId: includeFuture ? revenue.batch : revenue.id,
+        revenueId: revenue.id,
         payload: {
           categoryId: data.category,
           amountInCents: parseInt(
             String(data.amountInCents).replace(/\D/g, ""),
           ),
-          description: data.description,
+          description: data.description ?? null,
           title: data.title,
           status: data.status,
           includeFuture: includeFuture,
@@ -99,16 +99,16 @@ const EditRevenueDialog: React.FC<{
     form.reset({
       status: revenue.status,
       title: revenue.title,
-      description: revenue.description,
+      description: revenue.description ?? undefined,
       amountInCents: maskAmount(String(revenue.amountInCents)),
-      category: revenue.category.id,
+      category: revenue.category?.id ?? undefined,
       date: new Date(revenue.date),
     });
   }, [revenue, form]);
 
   const onSubmit = useCallback(
     async (data: z.infer<typeof editRevenueSchema>) => {
-      if (editingRevenue) return;
+      if (addingRevenue) return;
       await mutateAsync(data);
       form.reset();
       void queryClient.invalidateQueries({
@@ -119,7 +119,7 @@ const EditRevenueDialog: React.FC<{
       });
       setIsDialogOpen(false);
     },
-    [mutateAsync, editingRevenue, form, queryClient, selectedTeam?.id],
+    [mutateAsync, addingRevenue, form, queryClient, selectedTeam?.id],
   );
 
   return (
@@ -171,7 +171,7 @@ const EditRevenueDialog: React.FC<{
                 control={form.control}
                 name="amountInCents"
                 render={({ field }) => (
-                  <FormItem className="w-full">
+                  <FormItem>
                     <FormLabel>Valor</FormLabel>
                     <Input
                       containerClassName="!bg-transparent border"
@@ -192,7 +192,7 @@ const EditRevenueDialog: React.FC<{
                     control={form.control}
                     name="date"
                     render={({ field }) => (
-                      <FormItem className="w-full">
+                      <FormItem>
                         <FormLabel>Data </FormLabel>
                         <DatePicker
                           date={field.value ? new Date(field.value) : null}
@@ -295,7 +295,7 @@ const EditRevenueDialog: React.FC<{
             />
             <DialogFooter className="gap-6">
               <DialogClose>Cancelar</DialogClose>
-              <Button disabled={editingRevenue} type="submit">
+              <Button disabled={addingRevenue} type="submit">
                 Salvar
               </Button>
             </DialogFooter>

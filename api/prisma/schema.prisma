@@ -117,7 +117,7 @@ model Revenue {
   id            String           @id @default(cuid())
   title         String
   description   String?
-  recurrence    String
+  recurrence    RevenueRecurrence
   amountInCents Int
   date          DateTime
   status        RevenueStatus    @default(PENDING)

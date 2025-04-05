@@ -8,11 +8,11 @@ const RevenueResumeCards: React.FC<{
 }> = ({ data }) => {
   const organizedData = data.reduce(
     (acc, revenue) => {
-      if (revenue.status === "pending") {
+      if (revenue.status === "PENDING") {
         acc.pending += revenue.amountInCents;
-      } else if (revenue.status === "paid") {
+      } else if (revenue.status === "RECEIVED") {
         acc.paid += revenue.amountInCents;
-      } else if (revenue.status === "overdue") {
+      } else if (revenue.status === "OVERDUE") {
         acc.overdue += revenue.amountInCents;
       }
       acc.total += revenue.amountInCents;
@@ -27,14 +27,16 @@ const RevenueResumeCards: React.FC<{
   );
 
   return (
-    <div className="grid grid-cols-2 md:flex md:flex-wrap gap-4">
+    <div className="grid grid-cols-2 gap-4 md:flex md:flex-wrap">
       <Card className="w-full md:w-48 bg-blue-400 text-white dark:bg-blue-950">
         <CardHeader className="pb-0 md:p-4 md:pb-0">
           <CardTitle className="text-base md:text-xl">
             R$ {maskAmount(String(organizedData.total))}
           </CardTitle>
         </CardHeader>
-        <CardFooter className="pt-0 md:p-4 md:pt-0 text-sm md:text-base">Total</CardFooter>
+        <CardFooter className="pt-0 text-sm md:p-4 md:pt-0 md:text-base">
+          Total
+        </CardFooter>
       </Card>
       <Card className="w-full md:w-48 bg-yellow-400 text-white dark:bg-yellow-900">
         <CardHeader className="pb-0 md:p-4 md:pb-0">
@@ -42,7 +44,9 @@ const RevenueResumeCards: React.FC<{
             R$ {maskAmount(String(organizedData.pending))}
           </CardTitle>
         </CardHeader>
-        <CardFooter className="pt-0 md:p-4 md:pt-0 text-sm md:text-base">Pendente</CardFooter>
+        <CardFooter className="pt-0 text-sm md:p-4 md:pt-0 md:text-base">
+          Pendente
+        </CardFooter>
       </Card>
       <Card className="w-full md:w-48 bg-green-400 text-white dark:bg-green-900">
         <CardHeader className="pb-0 md:p-4 md:pb-0">
@@ -50,7 +54,9 @@ const RevenueResumeCards: React.FC<{
             R$ {maskAmount(String(organizedData.paid))}
           </CardTitle>
         </CardHeader>
-        <CardFooter className="pt-0 md:p-4 md:pt-0 text-sm md:text-base">Recebidos</CardFooter>
+        <CardFooter className="pt-0 text-sm md:p-4 md:pt-0 md:text-base">
+          Recebidos
+        </CardFooter>
       </Card>
       <Card className="w-full md:w-48 bg-red-400 text-white dark:bg-red-900">
         <CardHeader className="pb-0 md:p-4 md:pb-0">
@@ -58,7 +64,9 @@ const RevenueResumeCards: React.FC<{
             R$ {maskAmount(String(organizedData.overdue))}
           </CardTitle>
         </CardHeader>
-        <CardFooter className="pt-0 md:p-4 md:pt-0 text-sm md:text-base">Atrasados</CardFooter>
+        <CardFooter className="pt-0 text-sm md:p-4 md:pt-0 md:text-base">
+          Atrasados
+        </CardFooter>
       </Card>
     </div>
   );

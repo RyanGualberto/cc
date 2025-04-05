@@ -1,16 +1,16 @@
-import { type RevenueCategory } from "./revenue-category";
+import { type ExpenseCategory } from "./expense-category";
 import { type User } from "./user";
 
 export type Revenue = {
   user: User;
   id: string;
   title: string;
-  description?: string;
+  description: string | null;
   date: string;
   batch: string;
-  recurrence: "monthly" | "weekly" | "daily" | "once";
+  recurrence: "MONTHLY" | "WEEKLY" | "DAILY" | "ONCE";
   amountInCents: number;
-  status: "pending" | "paid" | "overdue";
-  category: RevenueCategory;
+  status: "PENDING" | "RECEIVED" | "OVERDUE";
+  category?: ExpenseCategory;
   until: string | null;
 };

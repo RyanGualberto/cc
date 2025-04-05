@@ -36,16 +36,16 @@ import Show from "../utils/show";
 import { revenueCategoriesRequest } from "~/requests/revenue-category";
 
 export const TRANSLATED_RECURRENCES = {
-  once: "Uma vez",
-  daily: "Diário",
-  weekly: "Semanal",
-  monthly: "Mensal",
+  ONCE: "Uma vez",
+  DAILY: "Diário",
+  WEEKLY: "Semanal",
+  MONTHLY: "Mensal",
 };
 
 export const TRANSLATED_STATUSES = {
-  pending: "Pendente",
-  paid: "Recebido",
-  overdue: "Atrasado",
+  PENDING: "Pendente",
+  RECEIVED: "Recebido",
+  OVERDUE: "Atrasado",
 };
 
 const AddRevenueDialog: React.FC<{
@@ -68,24 +68,29 @@ const AddRevenueDialog: React.FC<{
   const { mutateAsync, isPending: addingRevenue } = useMutation({
     mutationKey: ["revenues", team.id, "create"],
     mutationFn: async (data: z.infer<typeof addRevenueSchema>) => {
+      const { until, ...dataWithoutUntil } = data;
+      const untilToStringOrUndefined = until
+        ? new Date(until).toISOString()
+        : undefined;
+
       return await revenueRequest.createByTeam({
-        ...data,
+        ...dataWithoutUntil,
         teamId: team.id,
-        amountInCents: parseInt(String(data.amountInCents).replace(/\D/g, "")),
-        date: new Date(data.date).toISOString(),
-        ...(data.until && {
-          until: new Date(data.until).toISOString(),
-        }),
-        description: data.description ?? undefined,
-        category: data.category ?? undefined,
+        amountInCents: parseInt(
+          String(dataWithoutUntil.amountInCents).replace(/\D/g, ""),
+        ),
+        date: new Date(dataWithoutUntil.date).toISOString(),
+        description: dataWithoutUntil.description ?? undefined,
+        category: dataWithoutUntil.category ?? undefined,
+        until: untilToStringOrUndefined,
       });
     },
   });
   const form = useForm<z.infer<typeof addRevenueSchema>>({
     resolver: zodResolver(addRevenueSchema),
     defaultValues: {
-      recurrence: "once",
-      status: "pending",
+      recurrence: "ONCE",
+      status: "PENDING",
     },
   });
 
@@ -108,7 +113,7 @@ const AddRevenueDialog: React.FC<{
   return (
     <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
       <DialogTrigger asChild>
-        <Button className="items-center gap-2 w-full md:w-fit">
+        <Button className="w-full items-center gap-2 md:w-fit">
           <Plus size={16} />
           Adicionar Receita
         </Button>
@@ -155,7 +160,7 @@ const AddRevenueDialog: React.FC<{
                 control={form.control}
                 name="amountInCents"
                 render={({ field }) => (
-                  <FormItem className="w-full">
+                  <FormItem>
                     <FormLabel>Valor</FormLabel>
                     <Input
                       containerClassName="!bg-transparent border"
@@ -173,7 +178,7 @@ const AddRevenueDialog: React.FC<{
                 control={form.control}
                 name="date"
                 render={({ field }) => (
-                  <FormItem className="w-full">
+                  <FormItem>
                     <FormLabel>Data </FormLabel>
                     <DatePicker
                       date={field.value ? new Date(field.value) : null}
@@ -233,7 +238,7 @@ const AddRevenueDialog: React.FC<{
                     )}
                   />
                 }
-                when={form.watch("recurrence") !== "once"}
+                when={form.watch("recurrence") !== "ONCE"}
               />
             </div>
             <FormField

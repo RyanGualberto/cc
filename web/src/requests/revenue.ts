@@ -6,10 +6,11 @@ export interface CreateByTeamRequest {
   description?: string;
   amountInCents: number;
   date: string;
-  recurrence: string;
-  status: string;
+  recurrence: "MONTHLY" | "WEEKLY" | "DAILY" | "ONCE";
+  status: "PENDING" | "RECEIVED" | "OVERDUE";
   title: string;
   category: string | undefined;
+  until: string | undefined;
 }
 
 async function createByTeam(payload: CreateByTeamRequest) {
@@ -60,10 +61,10 @@ async function listByTeamAndDate(params: ListByTeamAndDateRequest) {
 export interface UpdateRevenueRequest {
   payload: {
     amountInCents: number;
-    categoryId: string | undefined;
+    categoryId: string | null;
     date: string;
-    description: string | undefined;
-    status: string;
+    description: string | null;
+    status: "PENDING" | "RECEIVED" | "OVERDUE";
     title: string;
     includeFuture?: boolean;
   };
@@ -73,15 +74,13 @@ export interface UpdateRevenueRequest {
 
 async function updateByTeamAndId(params: UpdateRevenueRequest) {
   try {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { categoryId, ...payload } = params.payload;
     const endpoint = `/revenues/${params.teamId}/${params.revenueId}`;
     const method = "patch";
 
-    const { data: response } = await apiClient[method]<Revenue>(endpoint, {
-      ...payload,
-      description: payload.description ?? undefined,
-    });
+    const { data: response } = await apiClient[method]<Revenue>(
+      endpoint,
+      params.payload,
+    );
     return response;
   } catch (error: unknown) {
     if (error instanceof Error) {

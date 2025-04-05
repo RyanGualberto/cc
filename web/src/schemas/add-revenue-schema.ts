@@ -1,19 +1,15 @@
 import { z } from "zod";
 
-export const ALLOWED_STATUSES = ["pending", "paid", "overdue"] as const;
+export const ALLOWED_STATUSES = ["PENDING", "RECEIVED", "OVERDUE"] as const;
 export const ALLOWED_RECURRENCES = [
-  "monthly",
-  "weekly",
-  "daily",
-  "once",
+  "MONTHLY",
+  "WEEKLY",
+  "DAILY",
+  "ONCE",
 ] as const;
 
 export const addRevenueSchema = z.object({
-  title: z
-    .string({
-      message: "Título inválido",
-    })
-    .min(3, "Título deve ter no mínimo 3 caracteres"),
+  title: z.string().min(3, "Título deve ter no mínimo 3 caracteres"),
   description: z.string().optional(),
   date: z.date({
     message: "Data inválida",
@@ -28,7 +24,5 @@ export const addRevenueSchema = z.object({
     message: "Recorrência inválida",
   }),
   until: z.date().optional(),
-  category: z.string({
-    message: "Categoria inválida",
-  }),
+  category: z.string().optional(),
 });

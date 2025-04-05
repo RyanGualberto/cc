@@ -29,7 +29,7 @@ const DeleteRevenueDialog: React.FC<{
   const [open, setOpen] = useState(false);
   const [deleteAll, setDeleteAll] = useState(false);
   const hasMany = useMemo(
-    () => revenue.recurrence !== "once",
+    () => revenue.recurrence !== "ONCE",
     [revenue.recurrence],
   );
   const { mutateAsync: deleteRequest, isPending: loadingDeleteRequest } =
@@ -55,9 +55,6 @@ const DeleteRevenueDialog: React.FC<{
         if (!selectedTeam) return;
         void queryClient.invalidateQueries({
           queryKey: ["revenues", { teamId: selectedTeam.id }],
-        });
-        void queryClient.invalidateQueries({
-          queryKey: ["revenue-categories", { teamId: selectedTeam.id }],
         });
       },
     });

@@ -10,6 +10,7 @@ import { TeamsModule } from './teams/teams.module';
 import { ExpenseCategoriesModule } from './expense-categories/expense-categories.module';
 import { RevenueCategoriesModule } from './revenue-categories/revenue-categories.module';
 import { ExpensesModule } from './expenses/expenses.module';
+import { RevenuesModule } from './revenues/revenues.module';
 
 @Module({
   imports: [
@@ -38,6 +39,7 @@ import { ExpensesModule } from './expenses/expenses.module';
     ExpenseCategoriesModule,
     RevenueCategoriesModule,
     ExpensesModule,
+    RevenuesModule,
   ],
   controllers: [AppController],
   providers: [AppService],
