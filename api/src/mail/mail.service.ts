@@ -35,4 +35,20 @@ export class MailService {
       console.error('Error sending password reset email:', error);
     }
   }
+
+  async sendTeamInvite(email: string, teamName: string, token: string) {
+    try {
+      await this.mailerService.sendMail({
+        to: email,
+        subject: 'Convite Para Espaço Financeiro',
+        template: 'team-invite',
+        context: {
+          teamName,
+          token,
+        },
+      });
+    } catch (error) {
+      console.error('Error sending team invite:', error);
+    }
+  }
 }

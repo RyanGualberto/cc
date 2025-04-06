@@ -103,7 +103,7 @@ async function teamMemberInvite(
   payload: TeamMemberInviteRequest,
 ): Promise<void> {
   try {
-    const endpoint = `/teams/invites/create`;
+    const endpoint = `/team-members/invites`;
     const method = "post";
     await apiClient[method]<void>(endpoint, payload);
   } catch (error: unknown) {
@@ -117,7 +117,7 @@ async function listTeamInvites(
   teamId: string,
 ): Promise<Array<TeamInvite> | undefined> {
   try {
-    const endpoint = `/teams/${teamId}/invites`;
+    const endpoint = `/team-members/${teamId}/invites`;
     const method = "get";
     const { data: response } =
       await apiClient[method]<Array<TeamInvite>>(endpoint);
@@ -132,7 +132,7 @@ async function listTeamInvites(
 
 async function findTeamByInviteToken(token: string): Promise<Team | undefined> {
   try {
-    const endpoint = `/teams/invites/find?token=${token}`;
+    const endpoint = `/team-members/invites/${token}`;
     const method = "get";
     const { data: response } = await apiClient[method]<Team>(endpoint);
     return response;
@@ -145,7 +145,7 @@ async function findTeamByInviteToken(token: string): Promise<Team | undefined> {
 
 async function acceptTeamInvite(token: string): Promise<void> {
   try {
-    const endpoint = `/teams/invites/accept?token=${token}`;
+    const endpoint = `/team-members/invites/accept/${token}`;
     const method = "post";
     await apiClient[method]<void>(endpoint);
 
@@ -162,7 +162,7 @@ async function removeTeamInvite(
   inviteId: string,
 ): Promise<void> {
   try {
-    const endpoint = `/teams/invites/${teamId}/${inviteId}`;
+    const endpoint = `/team-members/${teamId}/invites/${inviteId}`;
     const method = "delete";
     await apiClient[method]<void>(endpoint);
   } catch (error: unknown) {
@@ -177,7 +177,7 @@ async function removeTeamMember(
   memberId: string,
 ): Promise<void> {
   try {
-    const endpoint = `/teams/${teamId}/members/${memberId}`;
+    const endpoint = `/team-members/${teamId}/${memberId}`;
     const method = "delete";
     await apiClient[method]<void>(endpoint);
   } catch (error: unknown) {

@@ -11,6 +11,7 @@ import { ExpenseCategoriesModule } from './expense-categories/expense-categories
 import { RevenueCategoriesModule } from './revenue-categories/revenue-categories.module';
 import { ExpensesModule } from './expenses/expenses.module';
 import { RevenuesModule } from './revenues/revenues.module';
+import { TeamMembersModule } from './team-members/team-members.module';
 
 @Module({
   imports: [
@@ -40,6 +41,7 @@ import { RevenuesModule } from './revenues/revenues.module';
     RevenueCategoriesModule,
     ExpensesModule,
     RevenuesModule,
+    TeamMembersModule,
   ],
   controllers: [AppController],
   providers: [AppService],

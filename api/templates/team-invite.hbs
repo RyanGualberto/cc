@@ -1,10 +1,11 @@
+
 <!doctype html>
 <html lang="pt-BR">
 
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Recuperação de Senha - Recebee</title>
+  <title>Convite para espaço financeiro - {{teamName}}</title>
 </head>
 
 <body style="
@@ -69,24 +70,21 @@
                     margin-bottom: 20px;
                     font-size: 24px;
                   ">
-                Recuperação de Senha
+                Convite para {{teamName}}
               </h2>
               <p style="margin-bottom: 20px; line-height: 1.6; color: #555555">
-                Olá, {{clientName}}!
+                Olá
               </p>
               <p style="margin-bottom: 20px; line-height: 1.6; color: #555555">
-                Recebemos uma solicitação para redefinir a senha da sua conta.
-                Se você não fez esta solicitação, pode ignorar este email com
-                segurança.
+                Você recebeu um convite para participar de um espaço financeiro no Recebee
               </p>
               <p style="margin-bottom: 30px; line-height: 1.6; color: #555555">
-                Para redefinir sua senha, clique no botão abaixo. Este link é
-                válido por 24 horas.
+                Para aceitar o convite e entrar no espaço finaneciro {{teamName}}, basta clicar no botão abaixo
               </p>
               <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0">
                 <tr>
                   <td align="center" style="padding: 20px 0">
-                    <a href="https://recebee-front.vercel.app/reset-password?token={{token}}" style="
+                    <a href="https://recebee-front.vercel.app/app/invite?token={{token}}" style="
                           background-color: #040334;
                           color: #ffffff;
                           text-decoration: none;
@@ -95,7 +93,7 @@
                           font-weight: bold;
                           display: inline-block;
                           font-size: 16px;
-                        ">Redefinir Senha</a>
+                        ">Aceitar Convite</a>
                   </td>
                 </tr>
               </table>
@@ -113,11 +111,7 @@
                     border-radius: 4px;
                     font-size: 14px;
                   ">
-                https://recebee-next.vercel.app/reset-password?token={{token}}
-              </p>
-              <p style="margin-bottom: 20px; line-height: 1.6; color: #555555">
-                Por razões de segurança, se você não solicitou uma nova senha,
-                entre em contato com nosso suporte imediatamente.
+                https://recebee-next.vercel.app/app/invite?token={{token}}
               </p>
             </td>
           </tr>
@@ -137,7 +131,7 @@
                 WhatsApp: (13) 99160-4383 | Email: recebee@gmail.com.br
               </p>
               <p style="margin-top: 20px; color: #999999; font-size: 12px">
-                © 2025 Recebee. Todos os direitos reservados.
+                © 2025 Açaíteria. Todos os direitos reservados.
               </p>
               <p style="margin-top: 5px; color: #999999; font-size: 12px">
                 Você recebeu este email porque se cadastrou em nosso site.

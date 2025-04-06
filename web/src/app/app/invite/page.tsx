@@ -1,5 +1,5 @@
 "use client";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense } from "react";
 import { Button } from "~/components/ui/button";
@@ -18,6 +18,7 @@ const Page = ({}) => {
 
 const Content = ({}) => {
   const router = useRouter();
+  const queryClient = useQueryClient();
   const queryParams = useSearchParams();
   const inviteToken = queryParams.get("token");
 
@@ -37,7 +38,8 @@ const Content = ({}) => {
       if (!inviteToken) return null;
       return await teamRequests.acceptTeamInvite(inviteToken);
     },
-    onSuccess: () => {
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ["teams"] });
       router.push(`/app/${data?.id}/dashboard`);
     },
   });
@@ -50,20 +52,28 @@ const Content = ({}) => {
     <section className="flex flex-1 flex-col items-center justify-center">
       <Card>
         <CardHeader>
-          <CardTitle>
+          <CardTitle className="text-center">
             <h1>Convite</h1>
           </CardTitle>
         </CardHeader>
-        <CardContent>
+        <CardContent className="flex flex-1 flex-col items-center justify-center">
           <Show
             when={Boolean(data)}
             component={
-              <div>
+              <div className="flex flex-1 flex-col items-center justify-center gap-2">
                 <h2>{data?.name}</h2>
                 <p>
                   Você foi convidado para participar do time{" "}
                   <strong>{data?.name}</strong>.
                 </p>
+                <Button
+                  onClick={async () => {
+                    await acceptInvite();
+                  }}
+                  disabled={isAccepting}
+                >
+                  Aceitar Convite
+                </Button>
               </div>
             }
             fallback={
@@ -73,14 +83,6 @@ const Content = ({}) => {
               </div>
             }
           />
-          <Button
-            onClick={async () => {
-              await acceptInvite();
-            }}
-            disabled={isAccepting}
-          >
-            Aceitar Convite
-          </Button>
         </CardContent>
       </Card>
     </section>
