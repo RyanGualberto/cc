@@ -9,7 +9,7 @@ export class MailService {
     try {
       await this.mailerService.sendMail({
         to: email,
-        subject: 'Seja Bem vindo à Melinha Açaíteria!',
+        subject: 'Seja Bem vindo ao Recebee!',
         template: 'welcome',
         context: {
           name,
