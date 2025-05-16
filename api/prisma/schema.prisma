@@ -28,38 +28,51 @@ model User {
 }
 
 model Expense {
-  id            String            @id @default(cuid())
-  title         String
-  description   String?
-  recurrence    ExpenseRecurrence
-  amountInCents Int
-  date          DateTime
-  status        ExpenseStatus     @default(PENDING)
-  until         DateTime?
-  batch         String? // uuid
-  team          Team              @relation(fields: [teamId], references: [id])
-  teamId        String
-  user          User?             @relation(fields: [userId], references: [id], onDelete: SetNull)
-  userId        String?
-  createdAt     DateTime          @default(now())
-  updatedAt     DateTime          @updatedAt
-  category      ExpenseCategory?  @relation(fields: [categoryId], references: [id])
-  categoryId    String?
+  id                     String                @id @default(cuid())
+  title                  String
+  description            String?
+  recurrence             ExpenseRecurrence
+  amountInCents          Int
+  date                   DateTime
+  status                 ExpenseStatus         @default(PENDING)
+  paymentMethod          ExpensePaymentMethod? @relation(fields: [expensePaymentMethodId], references: [id], onDelete: SetNull)
+  expensePaymentMethodId String?
+  until                  DateTime?
+  batch                  String? // uuid
+  team                   Team                  @relation(fields: [teamId], references: [id])
+  teamId                 String
+  user                   User?                 @relation(fields: [userId], references: [id], onDelete: SetNull)
+  userId                 String?
+  createdAt              DateTime              @default(now())
+  updatedAt              DateTime              @updatedAt
+  category               ExpenseCategory?      @relation(fields: [categoryId], references: [id])
+  categoryId             String?
 
   @@map("expenses")
 }
 
+model ExpensePaymentMethod {
+  id       String    @id @default(cuid())
+  team     Team      @relation(fields: [teamId], references: [id])
+  teamId   String
+  name     String
+  expenses Expense[]
+
+  @@map("expense_payment_methods")
+}
+
 model Team {
-  id                String            @id @default(cuid())
-  name              String
-  expenses          Expense[]
-  teamMembers       TeamMember[]
-  expenseCategories ExpenseCategory[]
-  createdAt         DateTime          @default(now())
-  updatedAt         DateTime          @updatedAt
-  TeamInvite        TeamInvite[]
-  RevenueCategory   RevenueCategory[]
-  Revenue           Revenue[]
+  id                   String                 @id @default(cuid())
+  name                 String
+  expenses             Expense[]
+  teamMembers          TeamMember[]
+  expenseCategories    ExpenseCategory[]
+  createdAt            DateTime               @default(now())
+  updatedAt            DateTime               @updatedAt
+  TeamInvite           TeamInvite[]
+  RevenueCategory      RevenueCategory[]
+  Revenue              Revenue[]
+  ExpensePaymentMethod ExpensePaymentMethod[]
 
   @@map("teams")
 }
@@ -114,22 +127,22 @@ model RevenueCategory {
 }
 
 model Revenue {
-  id            String           @id @default(cuid())
+  id            String            @id @default(cuid())
   title         String
   description   String?
   recurrence    RevenueRecurrence
   amountInCents Int
   date          DateTime
-  status        RevenueStatus    @default(PENDING)
+  status        RevenueStatus     @default(PENDING)
   until         DateTime?
   batch         String? // uuid
-  team          Team             @relation(fields: [teamId], references: [id])
+  team          Team              @relation(fields: [teamId], references: [id])
   teamId        String
-  user          User?            @relation(fields: [userId], references: [id], onDelete: SetNull)
+  user          User?             @relation(fields: [userId], references: [id], onDelete: SetNull)
   userId        String?
-  createdAt     DateTime         @default(now())
-  updatedAt     DateTime         @updatedAt
-  category      RevenueCategory? @relation(fields: [categoryId], references: [id])
+  createdAt     DateTime          @default(now())
+  updatedAt     DateTime          @updatedAt
+  category      RevenueCategory?  @relation(fields: [categoryId], references: [id])
   categoryId    String?
 
   @@map("revenues")

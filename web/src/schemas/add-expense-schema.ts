@@ -25,4 +25,7 @@ export const addExpenseSchema = z.object({
   }),
   until: z.date().optional(),
   category: z.string().optional(),
+  paymentMethod: z.string({
+    message: "Método de pagamento inválido",
+  }),
 });

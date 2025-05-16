@@ -11,6 +11,7 @@ export interface CreateByTeamRequest {
   title: string;
   category: string | undefined;
   until: string | undefined;
+  paymentMethod: string | undefined;
 }
 
 async function createByTeam(payload: CreateByTeamRequest) {
@@ -18,11 +19,12 @@ async function createByTeam(payload: CreateByTeamRequest) {
     const endpoint = `/expenses`;
     const method = "post";
 
-    const { category, ...rest } = payload;
+    const { category, paymentMethod, ...rest } = payload;
 
     const { data: response } = await apiClient[method]<Expense>(endpoint, {
       ...rest,
       categoryId: category,
+      paymentMethodId: paymentMethod,
     });
     return response;
   } catch (error: unknown) {
@@ -67,6 +69,7 @@ export interface UpdateExpenseRequest {
     status: "PENDING" | "PAID" | "OVERDUE";
     title: string;
     includeFuture?: boolean;
+    paymentMethodId: string | null;
   };
   teamId: string;
   expenseId: string;

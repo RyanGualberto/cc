@@ -1,4 +1,5 @@
 import { type ExpenseCategory } from "./expense-category";
+import { type ExpensePaymentMethod } from "./expense-payment-method";
 import { type User } from "./user";
 
 export type Expense = {
@@ -12,5 +13,6 @@ export type Expense = {
   amountInCents: number;
   status: "PENDING" | "PAID" | "OVERDUE";
   category?: ExpenseCategory;
+  paymentMethod?: ExpensePaymentMethod;
   until: string | null;
 };

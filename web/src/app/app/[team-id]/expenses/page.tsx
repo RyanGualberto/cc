@@ -2,6 +2,7 @@
 import React from "react";
 import ExpensesCard from "~/components/expense/expenses-card";
 import { useUserContext } from "~/hooks/use-user-context";
+import ExpensePaymentMethodCard from "~/components/expense-payment-method/expense-payment-method-card";
 
 export default function Page() {
   const { selectedTeam } = useUserContext();
@@ -10,5 +11,10 @@ export default function Page() {
     return null;
   }
 
-  return <ExpensesCard team={selectedTeam} />;
+  return (
+    <div className="flex flex-col gap-4">
+      <ExpensesCard team={selectedTeam} />
+      <ExpensePaymentMethodCard team={selectedTeam} />
+    </div>
+  );
 }

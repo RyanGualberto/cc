@@ -24,6 +24,7 @@ export class ExpensesService {
           date: startDate,
           recurrence: createExpenseDto.recurrence,
           userId: userId,
+          expensePaymentMethodId: createExpenseDto.paymentMethodId,
         },
       });
     }
@@ -56,6 +57,7 @@ export class ExpensesService {
       recurrence,
       userId: userId,
       batch: batchId,
+      expensePaymentMethodId: createExpenseDto.paymentMethodId,
     }));
 
     const createdExpenses = await this.prismaService.expense.createMany({
@@ -96,6 +98,7 @@ export class ExpensesService {
           },
         },
         category: true,
+        paymentMethod: true,
       },
       orderBy: {
         date: 'asc',
@@ -130,6 +133,7 @@ export class ExpensesService {
         status: updateExpenseDto.status,
         categoryId: updateExpenseDto.categoryId,
         date: updateExpenseDto.date,
+        expensePaymentMethodId: updateExpenseDto.paymentMethodId,
       },
     });
 
@@ -148,6 +152,7 @@ export class ExpensesService {
           description: updateExpenseDto.description,
           status: updateExpenseDto.status,
           categoryId: updateExpenseDto.categoryId,
+          expensePaymentMethodId: updateExpenseDto.paymentMethodId,
         },
       });
     }

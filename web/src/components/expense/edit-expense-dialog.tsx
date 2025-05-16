@@ -34,6 +34,7 @@ import { useUserContext } from "~/hooks/use-user-context";
 import { Switch } from "../ui/switch";
 import { Label } from "../ui/label";
 import { editExpenseSchema } from "~/schemas/edit-expense-schema";
+import { expensePaymentMethodsRequest } from "~/requests/expense-payment-method";
 
 export const TRANSLATED_RECURRENCES = {
   ONCE: "Uma vez",
@@ -71,6 +72,18 @@ const EditExpenseDialog: React.FC<{
       }),
   });
 
+  const {
+    data: expensePaymentMethods,
+    isPending: isPendingExpensePaymentMethods,
+    isError: isErrorExpensePaymentMethods,
+  } = useQuery({
+    queryKey: ["expense-payment-methods", { teamId: selectedTeam?.id }],
+    queryFn: async () =>
+      await expensePaymentMethodsRequest.listByTeam({
+        teamId: selectedTeam!.id,
+      }),
+  });
+
   const { mutateAsync, isPending: addingExpense } = useMutation({
     mutationKey: ["expenses", selectedTeam?.id, expense.id, "edit"],
     mutationFn: async (data: z.infer<typeof editExpenseSchema>) => {
@@ -86,6 +99,7 @@ const EditExpenseDialog: React.FC<{
           status: data.status,
           includeFuture: includeFuture,
           date: new Date(data.date).toISOString(),
+          paymentMethodId: data.paymentMethod,
         },
         teamId: selectedTeam!.id,
       });
@@ -116,6 +130,9 @@ const EditExpenseDialog: React.FC<{
       });
       void queryClient.invalidateQueries({
         queryKey: ["expense-categories", { teamId: selectedTeam?.id }],
+      });
+      void queryClient.invalidateQueries({
+        queryKey: ["expense-payment-methods", { teamId: selectedTeam?.id }],
       });
       setIsDialogOpen(false);
     },
@@ -278,6 +295,51 @@ const EditExpenseDialog: React.FC<{
                 />
               }
             />
+            <FormField
+              control={form.control}
+              name="paymentMethod"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Método de Pagamento</FormLabel>
+                  <Select
+                    value={field.value}
+                    onValueChange={(value) => {
+                      field.onChange(value);
+                    }}
+                  >
+                    <SelectTrigger
+                      disabled={
+                        isPendingExpensePaymentMethods ||
+                        isErrorExpensePaymentMethods
+                      }
+                      className="h-12"
+                    >
+                      <SelectValue
+                        placeholder={
+                          isPendingExpensePaymentMethods
+                            ? "Carregando..."
+                            : isErrorExpensePaymentMethods
+                              ? "Erro ao carregar"
+                              : "Método de Pagamento"
+                        }
+                      />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {expensePaymentMethods?.map((expPaymentMethod) => (
+                        <SelectItem
+                          key={expPaymentMethod.id}
+                          value={expPaymentMethod.id}
+                        >
+                          {expPaymentMethod.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
             <Show
               when={hasMany}
               component={

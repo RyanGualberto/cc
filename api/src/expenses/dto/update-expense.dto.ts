@@ -7,5 +7,6 @@ export class UpdateExpenseDto {
   description: string | null;
   status: ExpenseStatus;
   title: string;
+  paymentMethodId: string | null;
   includeFuture?: boolean;
 }

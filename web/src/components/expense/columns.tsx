@@ -142,10 +142,26 @@ export const columns = (short: boolean): ColumnDef<Expense>[] => [
             </div>
           ),
           filterFn: "arrIncludesSome" as FilterFnOption<Expense> | undefined,
-          accessorFn: (row: Expense) => TRANSLATED_RECURRENCES[row.recurrence] ?? "N/A",
+          accessorFn: (row: Expense) =>
+            TRANSLATED_RECURRENCES[row.recurrence] ?? "N/A",
           cell: ({ row }: { row: { original: Expense } }) => {
             const recurrence = row.original.recurrence;
             return TRANSLATED_RECURRENCES[recurrence];
+          },
+        },
+        {
+          accessorKey: "paymentMethod",
+          header: ({ column }: { column: Column<Expense> }) => (
+            <div className="flex items-center gap-2">
+              Método de Pagamento
+              <ColumnOptions column={column} />
+            </div>
+          ),
+          filterFn: "arrIncludesSome" as FilterFnOption<Expense> | undefined,
+          accessorFn: (row: Expense) => row.paymentMethod?.name ?? "N/A",
+          cell: ({ row }: { row: { original: Expense } }) => {
+            const paymentMethod = row.original.paymentMethod;
+            return paymentMethod?.name ?? "N/A";
           },
         },
         {
@@ -179,6 +195,7 @@ const StatusCell: React.FC<{
             description: expense.description,
             status: "PAID",
             title: expense.title,
+            paymentMethodId: expense.paymentMethod?.id ?? null,
           },
         })
         .then(() => {

@@ -10,4 +10,5 @@ export class CreateExpenseDto {
   until?: string;
   title: string;
   categoryId: string | undefined;
+  paymentMethodId: string | undefined;
 }

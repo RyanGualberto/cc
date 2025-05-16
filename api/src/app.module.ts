@@ -12,7 +12,7 @@ import { RevenueCategoriesModule } from './revenue-categories/revenue-categories
 import { ExpensesModule } from './expenses/expenses.module';
 import { RevenuesModule } from './revenues/revenues.module';
 import { TeamMembersModule } from './team-members/team-members.module';
-
+import { ExpensePaymentMethodsModule } from './expense-payment-methods/expense-payment-methods.module';
 @Module({
   imports: [
     UsersModule,
@@ -42,6 +42,7 @@ import { TeamMembersModule } from './team-members/team-members.module';
     ExpensesModule,
     RevenuesModule,
     TeamMembersModule,
+    ExpensePaymentMethodsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
