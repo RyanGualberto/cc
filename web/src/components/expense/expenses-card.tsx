@@ -5,7 +5,6 @@ import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import type { Team } from "~/types/team";
 import { Button } from "../ui/button";
 import Show from "../utils/show";
-import { HeaderWithMonthPicker } from "../ui/header-with-month-picker";
 import { ExpensesTable } from "./expenses-table";
 import { ExpenseResumeCards } from "./expense-resume-cards";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
@@ -37,15 +36,11 @@ import { Label } from "../ui/label";
 const ExpensesCard: React.FC<{
   team: Team;
   short?: boolean;
-}> = ({ team, short = false }) => {
+  date: string;
+}> = ({ team, short = false, date }) => {
   const [rowSelection, setRowSelection] = React.useState<RowSelectionState>({});
   const queryClient = useQueryClient();
-  const [date, setDate] = React.useState(
-    new Date().toLocaleDateString("en-US", {
-      month: "2-digit",
-      year: "numeric",
-    }),
-  );
+
   const {
     data: expenses,
     isPending,
@@ -174,7 +169,6 @@ const ExpensesCard: React.FC<{
         when={Boolean(expenses)}
         component={
           <CardContent className="flex flex-col gap-8">
-            <HeaderWithMonthPicker value={date} onChange={setDate} />
             <ExpenseResumeCards
               rowSelection={rowSelection}
               data={filteredData}
