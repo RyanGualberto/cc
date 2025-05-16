@@ -45,12 +45,12 @@ export class ExpensesController {
     @Param('expenseId') expenseId: string,
     @Body() updateExpenseDto: UpdateExpenseDto,
   ) {
-    return await this.expensesService.update(
-      req.user.id,
+    return await this.expensesService.update({
+      userId: req.user.id,
       teamId,
       expenseId,
       updateExpenseDto,
-    );
+    });
   }
 
   @Delete(':teamId/:expenseId')

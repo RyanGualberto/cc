@@ -12,20 +12,22 @@ import {
 import Link from "next/link";
 import { cn } from "~/lib/utils";
 import { usePathname } from "next/navigation";
-import { Loading } from "~/components/ui/loading";
 import { NotFound } from "~/components/ui/not-found";
+import { Loading } from "~/components/ui/loading";
+
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const { selectedTeam, loadingTeams } = useUserContext();
 
   if (loadingTeams) {
-    return <Loading />;
+    return <Loading label="Carregando times..." />;
   }
 
   if (!selectedTeam) {
     return <NotFound label="Time não encontrado" />;
   }
+
 
   return (
     <main className="flex h-full flex-1 flex-col gap-6 px-8 py-6">

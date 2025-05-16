@@ -105,12 +105,17 @@ export class ExpensesService {
     return expenses;
   }
 
-  async update(
-    userId: string,
-    teamId: string,
-    expenseId: string,
-    updateExpenseDto: UpdateExpenseDto,
-  ) {
+  async update({
+    userId,
+    teamId,
+    expenseId,
+    updateExpenseDto,
+  }: {
+    userId: string;
+    teamId: string;
+    expenseId: string;
+    updateExpenseDto: UpdateExpenseDto;
+  }) {
     await this.validateIfUserIsPartFromTeam(userId, teamId);
 
     const updatedExpense = await this.prismaService.expense.update({

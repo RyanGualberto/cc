@@ -11,11 +11,14 @@ import { expenseRequest } from "~/requests/expense";
 import Link from "next/link";
 import { AddExpenseDialog } from "./add-expense-dialog";
 import { Loading } from "../ui/loading";
+import { type RowSelectionState } from "@tanstack/react-table";
+import { type Expense } from "~/types/expense";
 
 const ExpensesCard: React.FC<{
   team: Team;
   short?: boolean;
 }> = ({ team, short = false }) => {
+  const [rowSelection, setRowSelection] = React.useState<RowSelectionState>({});
   const queryClient = useQueryClient();
   const [date, setDate] = React.useState(
     new Date().toLocaleDateString("en-US", {
@@ -35,6 +38,11 @@ const ExpensesCard: React.FC<{
         date,
       }),
   });
+  const [filteredData, setFilteredData] = React.useState<Expense[]>([]);
+
+  useEffect(() => {
+    setFilteredData(expenses ?? []);
+  }, [expenses]);
 
   useEffect(() => {
     void queryClient.invalidateQueries({
@@ -65,8 +73,15 @@ const ExpensesCard: React.FC<{
         component={
           <CardContent className="flex flex-col gap-8">
             <HeaderWithMonthPicker value={date} onChange={setDate} />
-            <ExpenseResumeCards data={expenses!} />
-            <ExpensesTable short={short} data={expenses!} teamId={team.id} />
+            <ExpenseResumeCards rowSelection={rowSelection} data={filteredData} />
+            <ExpensesTable
+              rowSelection={rowSelection}
+              onRowSelectionChange={setRowSelection}
+              onFilteredRowsChange={setFilteredData}
+              short={short}
+              data={expenses!}
+              teamId={team.id}
+            />
             <Show
               component={
                 <Button className="w-full" variant="ghost" asChild>

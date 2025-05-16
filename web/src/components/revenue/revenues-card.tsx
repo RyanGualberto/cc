@@ -11,11 +11,14 @@ import { revenueRequest } from "~/requests/revenue";
 import Link from "next/link";
 import { AddRevenueDialog } from "./add-revenue-dialog";
 import { Loading } from "../ui/loading";
+import { type RowSelectionState } from "@tanstack/react-table";
+import { type Revenue } from "~/types/revenue";
 
 const RevenuesCard: React.FC<{
   team: Team;
   short?: boolean;
 }> = ({ team, short = false }) => {
+  const [rowSelection, setRowSelection] = React.useState<RowSelectionState>({});
   const queryClient = useQueryClient();
   const [date, setDate] = React.useState(
     new Date().toLocaleDateString("en-US", {
@@ -35,6 +38,11 @@ const RevenuesCard: React.FC<{
         date,
       }),
   });
+  const [filteredData, setFilteredData] = React.useState<Revenue[]>([]);
+
+  useEffect(() => {
+    setFilteredData(revenues ?? []);
+  }, [revenues]);
 
   useEffect(() => {
     void queryClient.invalidateQueries({
@@ -45,7 +53,7 @@ const RevenuesCard: React.FC<{
   return (
     <Card className="flex-1">
       <CardHeader className="flex flex-col items-center justify-between gap-4 md:flex-row">
-        <CardTitle className="w-full">Receitas</CardTitle>
+        <CardTitle className="w-full">Despesas</CardTitle>
         <AddRevenueDialog team={team} />
       </CardHeader>
       <Show
@@ -58,20 +66,27 @@ const RevenuesCard: React.FC<{
       />
       <Show
         when={isError}
-        component={<CardContent>Erro ao carregar receitas</CardContent>}
+        component={<CardContent>Erro ao carregar despesas</CardContent>}
       />
       <Show
         when={Boolean(revenues)}
         component={
           <CardContent className="flex flex-col gap-8">
             <HeaderWithMonthPicker value={date} onChange={setDate} />
-            <RevenueResumeCards data={revenues!} />
-            <RevenuesTable short={short} data={revenues!} teamId={team.id} />
+            <RevenueResumeCards rowSelection={rowSelection} data={filteredData} />
+            <RevenuesTable
+              rowSelection={rowSelection}
+              onRowSelectionChange={setRowSelection}
+              onFilteredRowsChange={setFilteredData}
+              short={short}
+              data={revenues!}
+              teamId={team.id}
+            />
             <Show
               component={
                 <Button className="w-full" variant="ghost" asChild>
                   <Link href={`/app/${team.id}/revenues`}>
-                    Ver todas as receitas
+                    Ver todas as despesas
                   </Link>
                 </Button>
               }

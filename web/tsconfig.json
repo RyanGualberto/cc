@@ -37,6 +37,6 @@
     "**/*.cjs",
     "**/*.js",
     ".next/types/**/*.ts"
-, "src/schemas/edit-expense-category-schemats"  ],
+  ],
   "exclude": ["node_modules"]
 }

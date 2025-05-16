@@ -10,7 +10,7 @@ import { teamRequests } from "~/requests/team";
 
 const Page = ({}) => {
   return (
-    <Suspense fallback={<Loading />}>
+    <Suspense>
       <Content />
     </Suspense>
   );

@@ -2,11 +2,15 @@ import React from "react";
 import { type Expense } from "~/types/expense";
 import { Card, CardFooter, CardHeader, CardTitle } from "../ui/card";
 import maskAmount from "~/helpers/maskAmount";
+import { type RowSelectionState } from "@tanstack/react-table";
 
 const ExpenseResumeCards: React.FC<{
   data: Array<Expense>;
-}> = ({ data }) => {
-  const organizedData = data.reduce(
+  rowSelection: RowSelectionState;
+}> = ({ data, rowSelection }) => {
+  const selected = data.filter((expense) => rowSelection[expense.id]);
+  const filteredData = selected.length > 0 ? selected : data;
+  const organizedData = filteredData.reduce(
     (acc, expense) => {
       if (expense.status === "PENDING") {
         acc.pending += expense.amountInCents;
@@ -28,7 +32,7 @@ const ExpenseResumeCards: React.FC<{
 
   return (
     <div className="grid grid-cols-2 gap-4 md:flex md:flex-wrap">
-      <Card className="w-full md:w-48 bg-blue-400 text-white dark:bg-blue-950">
+      <Card className="w-full bg-blue-400 text-white dark:bg-blue-950 md:w-48">
         <CardHeader className="pb-0 md:p-4 md:pb-0">
           <CardTitle className="text-base md:text-xl">
             R$ {maskAmount(String(organizedData.total))}
@@ -38,7 +42,7 @@ const ExpenseResumeCards: React.FC<{
           Total
         </CardFooter>
       </Card>
-      <Card className="w-full md:w-48 bg-yellow-400 text-white dark:bg-yellow-900">
+      <Card className="w-full bg-yellow-400 text-white dark:bg-yellow-900 md:w-48">
         <CardHeader className="pb-0 md:p-4 md:pb-0">
           <CardTitle className="text-base md:text-xl">
             R$ {maskAmount(String(organizedData.pending))}
@@ -48,7 +52,7 @@ const ExpenseResumeCards: React.FC<{
           Pendente
         </CardFooter>
       </Card>
-      <Card className="w-full md:w-48 bg-green-400 text-white dark:bg-green-900">
+      <Card className="w-full bg-green-400 text-white dark:bg-green-900 md:w-48">
         <CardHeader className="pb-0 md:p-4 md:pb-0">
           <CardTitle className="text-base md:text-xl">
             R$ {maskAmount(String(organizedData.paid))}
@@ -58,7 +62,7 @@ const ExpenseResumeCards: React.FC<{
           Pagos
         </CardFooter>
       </Card>
-      <Card className="w-full md:w-48 bg-red-400 text-white dark:bg-red-900">
+      <Card className="w-full bg-red-400 text-white dark:bg-red-900 md:w-48">
         <CardHeader className="pb-0 md:p-4 md:pb-0">
           <CardTitle className="text-base md:text-xl">
             R$ {maskAmount(String(organizedData.overdue))}
