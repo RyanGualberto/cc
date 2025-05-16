@@ -1,101 +1,124 @@
 "use client";
-import {
-  EditIcon,
-  MoreVertical,
-  SquareArrowOutUpRight,
-  Trash2,
-} from "lucide-react";
-import Link from "next/link";
-import React, { useState } from "react";
+import { Users, ArrowRight, TrendingUp, Receipt } from "lucide-react";
+import React from "react";
 import { type Team } from "~/types/team";
-import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
-import EditTeamDialog from "./edit-team-dialog";
 import { Button } from "../ui/button";
-import DeleteTeamDialog from "./delete-team-dialog";
-import maskAmount from "~/helpers/maskAmount";
-import { cn } from "~/lib/utils";
-import Show from "../utils/show";
+import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
+import { useRouter } from "next/navigation";
 
-export const TeamCard: React.FC<{
+interface TeamCardProps {
   team: Required<Team>;
-}> = ({ team }) => {
-  const [open, setOpen] = useState(false);
+  viewMode?: "grid" | "list";
+}
+
+export function TeamCard({ team, viewMode = "grid" }: TeamCardProps) {
+  const router = useRouter();
+
+  if (viewMode === "list") {
+    return (
+      <Card className="transition-all hover:bg-accent/50">
+        <CardContent className="p-4">
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <div className="flex items-center gap-4">
+              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 sm:h-12 sm:w-12">
+                <Users className="h-5 w-5 text-primary sm:h-6 sm:w-6" />
+              </div>
+              <div>
+                <h3 className="font-semibold">{team.name}</h3>
+                <p className="text-sm text-muted-foreground">
+                  {team.teamMembers.length} membro
+                  {team.teamMembers.length !== 1 ? "s" : ""}
+                </p>
+              </div>
+            </div>
+
+            <div className="flex items-center justify-between gap-4 sm:gap-8">
+              <div>
+                <p className="text-sm font-medium">Saldo Total</p>
+                <p className="text-base font-bold sm:text-lg">
+                  {new Intl.NumberFormat("pt-BR", {
+                    style: "currency",
+                    currency: "BRL",
+                  }).format(team.balance / 100)}
+                </p>
+              </div>
+
+              <div>
+                <p className="text-sm font-medium">Transações</p>
+                <p className="text-base font-bold sm:text-lg">
+                  {team.qtTransactions}
+                </p>
+              </div>
+
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => router.push(`/app/teams/${team.id}`)}
+              >
+                <ArrowRight className="h-4 w-4" />
+              </Button>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
+
   return (
-    <article className="flex h-32 w-full flex-col gap-2 rounded-xl bg-muted p-4 shadow-md duration-150 hover:scale-105 hover:transform md:w-64">
-      <header className="flex items-center justify-between">
-        <Link
-          href={`/app/${team.id}/dashboard`}
-          className="flex items-center gap-2"
-        >
-          <h3 className="font-semibold">{team.name}</h3>
-          <SquareArrowOutUpRight size={16} />
-        </Link>
-        <Popover open={open} onOpenChange={setOpen}>
-          <PopoverTrigger
-            onClick={(event: React.MouseEvent<HTMLButtonElement, MouseEvent>) =>
-              event.stopPropagation()
-            }
+    <Card className="transition-all hover:bg-accent/50">
+      <CardHeader className="p-4">
+        <CardTitle className="flex items-center justify-between text-base sm:text-lg">
+          <span className="truncate">{team.name}</span>
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => router.push(`/app/teams/${team.id}`)}
           >
-            <Button variant="ghost" size="icon">
-              <MoreVertical size={16} />
-            </Button>
-          </PopoverTrigger>
-          <PopoverContent className="max-w-36">
-            <ul className="flex flex-col gap-1">
-              <EditTeamDialog
-                team={team}
-                trigger={
-                  <Button
-                    variant="ghost"
-                    className="items-center justify-start gap-2"
-                  >
-                    <EditIcon size={16} />
-                    Editar
-                  </Button>
-                }
-              />
-              <DeleteTeamDialog
-                trigger={
-                  <Button
-                    variant="ghost"
-                    className="items-center justify-start gap-2"
-                  >
-                    <Trash2 size={16} />
-                    Excluir
-                  </Button>
-                }
-                team={team}
-              />
-            </ul>
-          </PopoverContent>
-        </Popover>
-      </header>
-      <div className="flex flex-1 items-end justify-between">
-        <div className="flex flex-col gap-1">
-          <p
-            className={cn("font-semibold", {
-              "text-green-500": team.balance > 0,
-              "text-red-500": team.balance < 0,
-            })}
-          >
-            <Show
-              when={team.balance === 0}
-              component="R$ 0,00"
-              fallback={
-                <React.Fragment>
-                  {team.balance < 0 ? "- " : ""}
-                  R$ {maskAmount(String(Math.abs(team.balance)))}
-                </React.Fragment>
-              }
-            />
-          </p>
-          <p className="text-sm font-light opacity-80">Balanço</p>
+            <ArrowRight className="h-4 w-4" />
+          </Button>
+        </CardTitle>
+      </CardHeader>
+      <CardContent className="grid gap-3 p-4 sm:gap-4">
+        <div className="flex items-center gap-3 sm:gap-4">
+          <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10">
+            <Users className="h-4 w-4 text-primary" />
+          </div>
+          <div>
+            <p className="text-sm font-medium leading-none">Membros</p>
+            <p className="text-sm text-muted-foreground">
+              {team.teamMembers.length} membro
+              {team.teamMembers.length !== 1 ? "s" : ""}
+            </p>
+          </div>
         </div>
-        <div className="flex flex-col gap-1">
-          <p className="font-semibold">{team.qtTransactions}</p>
-          <p className="text-sm font-light opacity-80">Transações</p>
+
+        <div className="flex items-center gap-3 sm:gap-4">
+          <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10">
+            <TrendingUp className="h-4 w-4 text-primary" />
+          </div>
+          <div>
+            <p className="text-sm font-medium leading-none">Saldo Total</p>
+            <p className="text-sm text-muted-foreground">
+              {new Intl.NumberFormat("pt-BR", {
+                style: "currency",
+                currency: "BRL",
+              }).format(team.balance / 100)}
+            </p>
+          </div>
         </div>
-      </div>
-    </article>
+
+        <div className="flex items-center gap-3 sm:gap-4">
+          <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10">
+            <Receipt className="h-4 w-4 text-primary" />
+          </div>
+          <div>
+            <p className="text-sm font-medium leading-none">Transações</p>
+            <p className="text-sm text-muted-foreground">
+              {team.qtTransactions} no total
+            </p>
+          </div>
+        </div>
+      </CardContent>
+    </Card>
   );
-};
+}

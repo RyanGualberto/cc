@@ -25,7 +25,7 @@ const Navbar: React.FC = () => {
     <header className="flex flex-col gap-4 border-b px-4 py-3 md:px-8 md:py-6">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <Link href={"/app/teams"} className="flex items-center gap-2 mr-4">
+          <Link href={"/app/teams"} className="mr-4 flex items-center gap-2">
             <Wallet width={28} height={28} />
             <span className="text-xl font-bold">Recebee</span>
           </Link>
@@ -36,7 +36,7 @@ const Navbar: React.FC = () => {
                 push(`/app/${value}/dashboard`);
               }}
             >
-              <SelectTrigger className="hidden md:flex min-w-32">
+              <SelectTrigger className="hidden min-w-32 md:flex">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -80,18 +80,33 @@ const Navbar: React.FC = () => {
             <PopoverContent align="end" className="max-w-48">
               <ul className="flex flex-col gap-2">
                 <li>
-                  <Link href="/app/profile" className="flex items-center gap-2">
-                    <User size={16} />
-                    <span className="text-sm">Perfil</span>
+                  <Link
+                    href="/app/profile"
+                    className="flex items-center gap-2"
+                    passHref
+                  >
+                    <Button
+                      variant="ghost"
+                      className="w-full items-center justify-start gap-2 py-0"
+                    >
+                      <User size={16} />
+                      <span className="text-sm">Perfil</span>
+                    </Button>
                   </Link>
                 </li>
                 <li>
                   <Link
                     href="/app/settings"
                     className="flex items-center gap-2"
+                    passHref
                   >
-                    <Settings size={16} />
-                    <span className="text-sm">Configurações</span>
+                    <Button
+                      variant="ghost"
+                      className="w-full items-center justify-start gap-2 py-0"
+                    >
+                      <Settings size={16} />
+                      <span className="text-sm">Configurações</span>
+                    </Button>
                   </Link>
                 </li>
                 <li>
