@@ -214,7 +214,6 @@ export default function RegisterPage() {
               Criar minha conta
             </Button>
             <span className="flex w-full justify-center md:justify-start">
-              w
               <Link href="/auth/login" className="mb-4 text-white/70">
                 Já possui uma conta?{" "}
                 <span className="text-white/100"> Faça login </span>
