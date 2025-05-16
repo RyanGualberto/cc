@@ -1,8 +1,5 @@
 import { useTheme } from "next-themes";
-import Image from "next/image";
-import Logo from "~/assets/images/logo-without-bg.svg";
-import { type StaticImport } from "next/dist/shared/lib/get-img-props";
-import { LoaderCircle } from "lucide-react";
+import { LoaderCircle, Wallet } from "lucide-react";
 import Show from "../utils/show";
 
 const NotFound = ({ label }: { label: string }) => {
@@ -16,22 +13,8 @@ const NotFound = ({ label }: { label: string }) => {
         />
         <Show
           when={theme === "dark"}
-          component={
-            <Image
-              src={Logo as StaticImport}
-              alt="Logo"
-              width={180}
-              height={180}
-            />
-          }
-          fallback={
-            <Image
-              src={Logo as StaticImport}
-              alt="Logo"
-              width={180}
-              height={180}
-            />
-          }
+          component={<Wallet width={180} height={180} />}
+          fallback={<Wallet width={180} height={180} />}
         />
       </div>
       <h1 className="mt-4 text-2xl font-semibold">{label}</h1>

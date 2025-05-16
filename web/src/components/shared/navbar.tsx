@@ -1,11 +1,8 @@
 "use client";
-import Image from "next/image";
 import Link from "next/link";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
-import Logo from "~/assets/images/logo-with-lateral-text.svg";
-import { BellRing, LogOut, Settings, User } from "lucide-react";
+import { BellRing, LogOut, Settings, User, Wallet } from "lucide-react";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
-import { type StaticImport } from "next/dist/shared/lib/get-img-props";
 import { useUserContext } from "~/hooks/use-user-context";
 import {
   Select,
@@ -25,16 +22,12 @@ const Navbar: React.FC = () => {
   const { push } = useRouter();
 
   return (
-    <header className="flex flex-col gap-4 border-b px-8 py-4">
+    <header className="flex flex-col gap-4 border-b px-4 py-3 md:px-8 md:py-6">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <Link href={"/app/teams"}>
-            <Image
-              src={Logo as StaticImport}
-              alt="Logo"
-              width={130}
-              height={40}
-            />
+          <Link href={"/app/teams"} className="flex items-center gap-2 mr-4">
+            <Wallet width={28} height={28} />
+            <span className="text-xl font-bold">Recebee</span>
           </Link>
           {selectedTeam && (
             <Select
@@ -43,7 +36,7 @@ const Navbar: React.FC = () => {
                 push(`/app/${value}/dashboard`);
               }}
             >
-              <SelectTrigger className="hidden md:flex">
+              <SelectTrigger className="hidden md:flex min-w-32">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
