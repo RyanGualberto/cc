@@ -17,13 +17,15 @@ import { Loading } from "~/components/ui/loading";
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
-  const { selectedTeam, loadingTeams } = useUserContext();
+  const { selectedTeam, loadingTeams, teams } = useUserContext();
 
   if (loadingTeams) {
     return <Loading label="Carregando times..." />;
   }
 
   if (!selectedTeam) {
+    console.log(selectedTeam, "selectedTeam", loadingTeams, teams);
+    
     return <NotFound label="Time não encontrado" />;
   }
 

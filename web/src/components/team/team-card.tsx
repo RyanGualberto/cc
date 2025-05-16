@@ -5,6 +5,7 @@ import { type Team } from "~/types/team";
 import { Button } from "../ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
 import { useRouter } from "next/navigation";
+import { useUserContext } from "~/hooks/use-user-context";
 
 interface TeamCardProps {
   team: Required<Team>;
@@ -53,7 +54,7 @@ export function TeamCard({ team, viewMode = "grid" }: TeamCardProps) {
               <Button
                 variant="ghost"
                 size="icon"
-                onClick={() => router.push(`/app/teams/${team.id}`)}
+                onClick={() => router.push(`/app/${team.id}/dashboard`)}
               >
                 <ArrowRight className="h-4 w-4" />
               </Button>
@@ -72,7 +73,7 @@ export function TeamCard({ team, viewMode = "grid" }: TeamCardProps) {
           <Button
             variant="ghost"
             size="icon"
-            onClick={() => router.push(`/app/teams/${team.id}`)}
+            onClick={() => router.push(`/app/${team.id}/dashboard`)}
           >
             <ArrowRight className="h-4 w-4" />
           </Button>
