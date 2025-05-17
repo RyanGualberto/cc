@@ -77,7 +77,7 @@ const DeleteExpensePaymentMethodDialog: React.FC<{
 
   return (
     <AlertDialog open={open} onOpenChange={onOpenChange}>
-      <AlertDialogTrigger>
+      <AlertDialogTrigger asChild>
         <Button className="bg-red-500/10 text-red-500" size="icon">
           <Trash2 size={16} />
         </Button>

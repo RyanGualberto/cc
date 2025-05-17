@@ -10,7 +10,7 @@ import {
   UseGuards,
   Query,
 } from '@nestjs/common';
-import { ExpensesService } from './expenses.service';
+import { ExpensesService, MappedData } from './expenses.service';
 import { CreateExpenseDto } from './dto/create-expense.dto';
 import { Request } from 'express';
 import { UpdateExpenseDto } from './dto/update-expense.dto';
@@ -20,6 +20,19 @@ import { AuthGuard } from 'src/auth/auth.guard';
 @Controller('expenses')
 export class ExpensesController {
   constructor(private readonly expensesService: ExpensesService) {}
+
+  @Post(':teamId/import')
+  async import(
+    @Req() req: Request,
+    @Body() importExpenseDto: MappedData[],
+    @Param('teamId') teamId: string,
+  ) {
+    return await this.expensesService.import(
+      req.user.id,
+      teamId,
+      importExpenseDto,
+    );
+  }
 
   @Post()
   async create(

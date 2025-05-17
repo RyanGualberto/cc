@@ -1,3 +1,4 @@
+import { type MappedData } from "~/components/expense/import-expense-dialog";
 import apiClient from "~/config/api-client";
 import { type Expense } from "~/types/expense";
 
@@ -27,6 +28,24 @@ async function createByTeam(payload: CreateByTeamRequest) {
       paymentMethodId: paymentMethod,
     });
     return response;
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      throw new Error(error.message);
+    }
+  }
+}
+
+export interface ImportExpenseRequest {
+  teamId: string;
+  mappedData: MappedData[];
+}
+
+async function importExpense(params: ImportExpenseRequest) {
+  try {
+    const {teamId, ...payload} = params
+    const endpoint = `/expenses/${teamId}/import`;
+    const method = "post";
+    await apiClient[method]<void>(endpoint, payload.mappedData);
   } catch (error: unknown) {
     if (error instanceof Error) {
       throw new Error(error.message);
@@ -136,4 +155,5 @@ export const expenseRequest = {
   updateByTeamAndId,
   deleteByTeamAndId,
   deleteByTeamAndBatchId,
+  importExpense,
 };

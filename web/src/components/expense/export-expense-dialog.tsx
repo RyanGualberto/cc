@@ -34,13 +34,23 @@ export function ExportExpenseDialog({
 
   // Função auxiliar para converter dados para CSV
   const convertToCSV = (data: Expense[]) => {
-    const headers = ["Descrição", "Valor", "Data", "Categoria", "Status"];
+    const headers = [
+      "Título",
+      "Descrição",
+      "Valor",
+      "Data",
+      "Categoria",
+      "Status",
+      "Método de pagamento",
+    ];
     const rows = data.map((expense) => [
+      expense.title,
       expense.description,
       expense.amountInCents?.toString() ?? "0",
       new Date(expense.date).toLocaleDateString(),
       expense.category?.name ?? "Sem categoria",
       TRANSLATED_STATUSES[expense.status],
+      expense.paymentMethod?.name ?? "Sem método de pagamento",
     ]);
 
     return [headers.join(","), ...rows.map((row) => row.join(","))].join("\n");
@@ -65,7 +75,8 @@ export function ExportExpenseDialog({
         <DialogHeader>
           <DialogTitle>Exportar despesas</DialogTitle>
           <DialogDescription>
-            Exportar {expenses.length} despesa{expenses.length !== 1 ? "s" : ""} para CSV
+            Exportar {expenses.length} despesa{expenses.length !== 1 ? "s" : ""}{" "}
+            para CSV
           </DialogDescription>
         </DialogHeader>
 
@@ -74,11 +85,13 @@ export function ExportExpenseDialog({
             O arquivo CSV conterá as seguintes colunas:
           </p>
           <ul className="mt-2 list-inside list-disc text-sm text-muted-foreground">
+            <li>Título</li>
             <li>Descrição</li>
             <li>Valor</li>
             <li>Data</li>
             <li>Categoria</li>
             <li>Status</li>
+            <li>Método de pagamento</li>
           </ul>
         </div>
 
@@ -94,4 +107,4 @@ export function ExportExpenseDialog({
       </DialogContent>
     </Dialog>
   );
-} 
+}

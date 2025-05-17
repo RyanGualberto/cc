@@ -3,10 +3,129 @@ import { Injectable } from '@nestjs/common';
 import { CreateExpenseDto } from './dto/create-expense.dto';
 import { UpdateExpenseDto } from './dto/update-expense.dto';
 import { PrismaService } from 'src/config/prisma-service';
+import { ExpenseStatus } from '@prisma/client';
+
+export interface MappedData {
+  title: string;
+  amountInCents: number;
+  date: string;
+  paymentMethod: string;
+  category: string;
+  status: string;
+}
 
 @Injectable()
 export class ExpensesService {
   constructor(private readonly prismaService: PrismaService) {}
+
+  async import(userId: string, teamId: string, mappedData: MappedData[]) {
+    await this.validateIfUserIsPartFromTeam(userId, teamId);
+    // procura se tem categorias com o nome das categorias do mappedData, se não tem, cria elas.
+    // substitui a category, por categoryId
+    const categories = await this.prismaService.expenseCategory.findMany({
+      where: {
+        name: {
+          in: mappedData.map((data) => data.category),
+        },
+      },
+    });
+
+    const categoriesToCreate = mappedData.filter(
+      (data) => !categories.some((category) => category.name === data.category),
+    );
+
+    await this.prismaService.expenseCategory.createMany({
+      data: categoriesToCreate
+        .filter((data) => data.category)
+        .map((data) => ({
+          name: data.category,
+          teamId,
+        })),
+    });
+
+    const allCategories = await this.prismaService.expenseCategory.findMany({
+      where: {
+        name: {
+          in: mappedData.map((data) => data.category),
+        },
+      },
+    });
+
+    const categoriesMap = allCategories.reduce<Record<string, string>>(
+      (acc, category) => {
+        acc[category.name] = category.id;
+        return acc;
+      },
+      {},
+    );
+
+    const paymentMethods =
+      await this.prismaService.expensePaymentMethod.findMany({
+        where: {
+          name: {
+            in: mappedData.map((data) => data.paymentMethod),
+          },
+        },
+      });
+
+    const paymentMethodsMap = paymentMethods.reduce<Record<string, string>>(
+      (acc, paymentMethod) => {
+        acc[paymentMethod.name] = paymentMethod.id;
+        return acc;
+      },
+      {},
+    );
+
+    const paymentMethodsToCreate = mappedData.filter(
+      (data) =>
+        !paymentMethods.some(
+          (paymentMethod) => paymentMethod.name === data.paymentMethod,
+        ),
+    );
+
+    await this.prismaService.expensePaymentMethod.createMany({
+      data: paymentMethodsToCreate
+        .filter((data) => data.paymentMethod)
+        .map((data) => ({
+          name: data.paymentMethod,
+          teamId,
+        })),
+    });
+
+    const expenses = mappedData.map((data) => ({
+      ...data,
+      categoryId: categoriesMap[data.category],
+      expensePaymentMethodId: paymentMethodsMap[data.paymentMethod],
+    }));
+
+    const setStatus = (status: string) => {
+      if (status === 'PENDING') {
+        return ExpenseStatus.PENDING;
+      } else if (status === 'PAID') {
+        return ExpenseStatus.PAID;
+      } else if (status === 'OVERDUE') {
+        return ExpenseStatus.OVERDUE;
+      }
+
+      return ExpenseStatus.PENDING;
+    };
+
+    const createdExpenses = await this.prismaService.expense.createMany({
+      data: expenses.map((expense) => ({
+        amountInCents: expense.amountInCents,
+        title: expense.title,
+        status: setStatus(expense.status),
+        categoryId: expense.categoryId,
+        teamId: teamId,
+        date: expense.date,
+        recurrence: 'ONCE',
+        userId: userId,
+        expensePaymentMethodId: expense.expensePaymentMethodId,
+      })),
+    });
+
+    return createdExpenses;
+  }
   async create(userId: string, createExpenseDto: CreateExpenseDto) {
     await this.validateIfUserIsPartFromTeam(userId, createExpenseDto.teamId);
 

@@ -65,27 +65,31 @@ export function ImportExpenseDialog({
     const requiredColumns = Object.keys(REQUIRED_COLUMNS);
     const mappedColumns = Object.keys(columnMapping);
     const validMappedColumns = mappedColumns.filter(
-      (col) => columnMapping[col] !== "none",
+      (col) => columnMapping[col] && columnMapping[col] !== "none"
     );
-    const hasAllColumns = requiredColumns.every((col) =>
-      validMappedColumns.includes(col),
-    );
-    const hasUniqueValues =
-      new Set(Object.values(columnMapping).filter((v) => v !== "none")).size ===
-      validMappedColumns.length;
-
-    setIsValid(hasAllColumns && hasUniqueValues);
 
     const newErrors: Record<string, string> = {};
-    if (!hasAllColumns) {
+    
+    // Verifica se todas as colunas obrigatórias estão mapeadas
+    const hasAllRequiredColumns = requiredColumns.every((col) =>
+      validMappedColumns.includes(col)
+    );
+    
+    // Verifica valores únicos apenas entre mapeamentos válidos
+    const mappedValues = Object.values(columnMapping).filter(v => v && v !== "none");
+    const hasUniqueValues = new Set(mappedValues).size === mappedValues.length;
+
+    if (!hasAllRequiredColumns) {
       newErrors.columns = "Todas as colunas obrigatórias devem ser mapeadas";
     }
     if (!hasUniqueValues) {
-      newErrors.unique =
-        "Cada coluna do arquivo deve ser mapeada apenas uma vez";
+      newErrors.unique = "Cada coluna do arquivo deve ser mapeada apenas uma vez";
     }
+
     setErrors(newErrors);
+    setIsValid(hasAllRequiredColumns && hasUniqueValues);
   }, [columnMapping]);
+
   const [csvData, setCsvData] = useState<Array<string[]>>([]);
 
   const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -106,10 +110,15 @@ export function ImportExpenseDialog({
   };
 
   const handleColumnMap = (systemColumn: string, fileColumn: string) => {
-    setColumnMapping((prev) => ({
-      ...prev,
-      [systemColumn]: fileColumn,
-    }));
+    setColumnMapping((prev) => {
+      const newMapping = { ...prev };
+      if (fileColumn === "none") {
+        delete newMapping[systemColumn];
+      } else {
+        newMapping[systemColumn] = fileColumn;
+      }
+      return newMapping;
+    });
   };
   const handleImport = () => {
     const mappedData = csvData.map((row: string[]) => {
@@ -121,14 +130,24 @@ export function ImportExpenseDialog({
       return mappedRow;
     });
 
-    const formattedData = mappedData.map((row) => ({
-      title: row.title ?? "",
-      amountInCents: Number(row.amountInCents),
-      date: row.date ?? "",
-      paymentMethod: row.paymentMethod ?? "",
-      category: row.category ?? "",
-      status: row.status ?? "",
-    }));
+    const formattedData = mappedData.map((row) => {
+      // dd/mm/yyyy -> yyyy-mm-dd
+      const dateInCorrectFormat = (date: string) => {
+        const [day, month, year] = date.split("/");
+        return new Date(`${year}-${month}-${day}`).toISOString();
+      };
+
+      return {
+        title: row.title ?? "",
+        amountInCents: Number(row.amountInCents),
+        date: row.date
+          ? dateInCorrectFormat(row.date)
+          : new Date().toISOString(),
+        paymentMethod: row.paymentMethod ?? "",
+        category: row.category ?? "",
+        status: row.status ?? "",
+      };
+    });
 
     onImport(formattedData);
     onOpenChange(false);
@@ -144,7 +163,7 @@ export function ImportExpenseDialog({
   };
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <Dialog open={open} onOpenChange={onOpenChange} modal>
       <DialogContent className="w-fit sm:max-w-[600px]">
         <DialogHeader>
           <DialogTitle>Importar despesas</DialogTitle>

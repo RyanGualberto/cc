@@ -33,6 +33,7 @@ const ExpensesCard: React.FC<{
   const [rowSelection, setRowSelection] = React.useState<RowSelectionState>({});
   const [importDialogOpen, setImportDialogOpen] = React.useState(false);
   const [exportDialogOpen, setExportDialogOpen] = React.useState(false);
+  const [dropdownOpen, setDropdownOpen] = React.useState(false);
   const queryClient = useQueryClient();
 
   const {
@@ -60,9 +61,10 @@ const ExpensesCard: React.FC<{
   }, [date, team.id, queryClient]);
 
   const handleImportData = async (mappedData: MappedData[]) => {
-    // Aqui você implementaria a lógica para salvar os dados importados
-    console.log("Dados mapeados para importação:", mappedData);
-    // TODO: Implementar a chamada para a API
+    await expenseRequest.importExpense({
+      teamId: team.id,
+      mappedData,
+    });
   };
 
   return (
@@ -70,7 +72,7 @@ const ExpensesCard: React.FC<{
       <CardHeader className="flex flex-col items-center justify-between gap-4 md:flex-row">
         <CardTitle className="w-full">Despesas</CardTitle>
         <div className="flex items-center gap-2">
-          <DropdownMenu>
+          <DropdownMenu open={dropdownOpen} onOpenChange={setDropdownOpen}>
             <DropdownMenuTrigger asChild>
               <Button variant="outline" size="icon">
                 <MoreVertical className="h-4 w-4" />
@@ -78,16 +80,30 @@ const ExpensesCard: React.FC<{
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-              <DropdownMenuItem onClick={() => setExportDialogOpen(true)}>
+              <DropdownMenuItem
+                onClick={() => {
+                  setExportDialogOpen(true);
+                  setDropdownOpen(false);
+                }}
+              >
                 <FileDown className="mr-2 h-4 w-4" />
                 <span>Exportar dados</span>
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => setImportDialogOpen(true)}>
+              <DropdownMenuItem
+                onClick={() => {
+                  setImportDialogOpen(true);
+                  setDropdownOpen(false);
+                }}
+              >
                 <FileUp className="mr-2 h-4 w-4" />
                 <span>Importar dados</span>
               </DropdownMenuItem>
               <DropdownMenuSeparator />
-              <DropdownMenuItem>
+              <DropdownMenuItem
+                onClick={() => {
+                  setDropdownOpen(false);
+                }}
+              >
                 <FileText className="mr-2 h-4 w-4" />
                 <span>Gerar relatório</span>
               </DropdownMenuItem>
