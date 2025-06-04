@@ -45,7 +45,9 @@ export function DataTable<TData extends { id: string | number }, TValue>({
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [rowSelection, setRowSelection] = React.useState({});
-  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
+  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
+    [],
+  );
 
   const table = useReactTable({
     getRowId: (row, index) => row.id.toString() ?? index.toString(),
@@ -62,6 +64,10 @@ export function DataTable<TData extends { id: string | number }, TValue>({
     onColumnFiltersChange: setColumnFilters,
     enableColumnFilters: true,
     state: {
+      pagination: {
+        pageSize: 20,
+        pageIndex: 0,
+      },
       sorting,
       rowSelection: rowSelectionProp ?? rowSelection,
       columnFilters,
@@ -70,7 +76,9 @@ export function DataTable<TData extends { id: string | number }, TValue>({
 
   React.useEffect(() => {
     if (onFilteredRowsChange) {
-      const filteredRows = table.getFilteredRowModel().rows.map((row) => row.original);
+      const filteredRows = table
+        .getFilteredRowModel()
+        .rows.map((row) => row.original);
       onFilteredRowsChange(filteredRows);
     }
   }, [table.getFilteredRowModel().rows, onFilteredRowsChange]);

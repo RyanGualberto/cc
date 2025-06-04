@@ -117,6 +117,7 @@ const EditExpenseDialog: React.FC<{
       amountInCents: maskAmount(String(expense.amountInCents)),
       category: expense.category?.id ?? undefined,
       date: new Date(expense.date),
+      paymentMethod: expense.paymentMethod?.id ?? undefined,
     });
   }, [expense, form]);
 
