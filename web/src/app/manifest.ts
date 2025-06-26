@@ -5,7 +5,7 @@ export default function manifest(): MetadataRoute.Manifest {
     name: 'Recebee - Gerenciador de Receitas e Despesas',
     short_name: 'Recebee',
     description: 'Uma plataforma simples e intuitiva para gerenciar suas receitas e despesas.',
-    start_url: '/',
+    start_url: '/app/teams',
     display: 'standalone',
     background_color: '#0f172a',
     theme_color: '#0f172a',
