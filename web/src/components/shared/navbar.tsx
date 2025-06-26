@@ -19,7 +19,19 @@ import { Button } from "../ui/button";
 const Navbar: React.FC = () => {
   const { logout } = useAuth();
   const { user, selectedTeam, teams } = useUserContext();
+  const [team, setTeam] = React.useState<string | null>(null);
+  React.useEffect(() => {
+    if (selectedTeam) {
+      setTeam(selectedTeam.id);
+    }
+  }, [selectedTeam]);
   const { push } = useRouter();
+
+  React.useEffect(() => {
+    if (team) {
+      push(`/app/${team}/dashboard`);
+    }
+  }, [team, push]);
 
   return (
     <header className="flex flex-col gap-4 border-b px-4 py-3 md:px-8 md:py-6">
@@ -30,12 +42,7 @@ const Navbar: React.FC = () => {
             <span className="text-xl font-bold">Recebee</span>
           </Link>
           {selectedTeam && (
-            <Select
-              value={selectedTeam.id}
-              onValueChange={(value) => {
-                push(`/app/${value}/dashboard`);
-              }}
-            >
+            <Select value={team ?? undefined} onValueChange={setTeam}>
               <SelectTrigger className="hidden min-w-32 md:flex">
                 <SelectValue />
               </SelectTrigger>

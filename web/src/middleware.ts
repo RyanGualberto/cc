@@ -35,8 +35,7 @@ export default async function middleware(request: NextRequest) {
 
 export const config = {
   matcher: [
-    "/((?!api|_next/static|_next/image|.*\\.png$|\\.well-known/acme-challenge/).*)",
-    // tem que ignorar as imagens e o arquivo manifest.json
-    "/((?!api|_next/static|_next/image|.*\\.png$|.*\\.jpg$|.*\\.jpeg$|.*\\.svg$|.*\\.webp$|\\.ico$|\\.webmanifest$|\\.txt$|\\.json$|\\.css$|\\.js$|\\.map$|\\.woff2$|\\.woff$|\\.ttf$|\\.eot$|\\.otf$|\\.mp4$|\\.mp3$|\\.ogg$|\\.wav$|\\.flac$|\\.aac$|\\.webm$|\\.avif$|\\.gif$|\\.bmp$|\\.tiff$)/",
+    // Inclui todas as rotas exceto /api, /_next e arquivos estáticos
+    "/((?!api|_next|.*\\..*).*)",
   ],
 };
