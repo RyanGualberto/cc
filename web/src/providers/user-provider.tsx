@@ -14,6 +14,7 @@ interface IUserContext {
   selectedTeam: Team | undefined;
   refetchTeams: () => void;
   loadingTeams: boolean;
+  loadingUser?: boolean;
 }
 
 export const UserContext = createContext<IUserContext | undefined>(undefined);
@@ -28,7 +29,7 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
     },
     enabled: hasCookie("token") && Boolean(teamId),
   });
-  const { data: user } = useQuery({
+  const { data: user, isLoading } = useQuery({
     queryKey: ["whoami"],
     queryFn: async () => {
       return userRequest.whoami();
@@ -70,6 +71,7 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
         selectedTeam,
         refetchTeams,
         loadingTeams,
+        loadingUser: isLoading,
       }}
     >
       {children}

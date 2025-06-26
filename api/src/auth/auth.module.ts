@@ -12,7 +12,7 @@ import { MailModule } from '../mail/mail.module';
       global: true,
       useFactory: () => ({
         secret: process.env.JWT_SECRET,
-        signOptions: { expiresIn: '1d' },
+        signOptions: { expiresIn: '30d' },
       }),
     }),
     MailModule,

@@ -53,7 +53,7 @@ export default function Page() {
   }, [teams]);
 
   return (
-    <main className="flex h-full flex-1 flex-col gap-6 px-8 py-6">
+    <main className="flex h-full flex-1 flex-col gap-6 px-4 md:px-8 py-6">
       <header className="flex flex-col justify-between gap-3 md:flex-row">
         <div>
           <h2 className="text-xl font-semibold md:text-2xl">

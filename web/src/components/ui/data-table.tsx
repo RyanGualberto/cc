@@ -64,10 +64,6 @@ export function DataTable<TData extends { id: string | number }, TValue>({
     onColumnFiltersChange: setColumnFilters,
     enableColumnFilters: true,
     state: {
-      pagination: {
-        pageSize: 20,
-        pageIndex: 0,
-      },
       sorting,
       rowSelection: rowSelectionProp ?? rowSelection,
       columnFilters,

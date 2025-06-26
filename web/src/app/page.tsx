@@ -1,3 +1,4 @@
+'use server'
 import Header from "~/components/landing-page/header";
 import Footer from "~/components/landing-page/footer";
 import CallToAction from "~/components/landing-page/call-to-action";
@@ -7,7 +8,7 @@ import HowItWorks from "~/components/landing-page/how-it-works";
 import Features from "~/components/landing-page/features";
 import Hero from "~/components/landing-page/hero";
 
-export default function LandingPage() {
+export default async function LandingPage() {
   return (
     <div className="flex min-h-screen flex-col">
       <Header />

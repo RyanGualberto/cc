@@ -67,9 +67,6 @@ const RevenuesCard: React.FC<{
   }, [date, team.id, queryClient]);
 
   const handleExportData = () => {
-    // Aqui você implementaria a lógica de exportação
-    // Por exemplo, converter os dados para CSV e fazer o download
-
     const selectedData =
       Object.keys(rowSelection).length > 0
         ? filteredData.filter((_, index) => rowSelection[index])
@@ -194,7 +191,6 @@ const RevenuesCard: React.FC<{
         }
       />
 
-      {/* Diálogo de importação */}
       <Dialog open={importDialogOpen} onOpenChange={setImportDialogOpen}>
         <DialogContent className="sm:max-w-[425px]">
           <DialogHeader>
@@ -206,7 +202,6 @@ const RevenuesCard: React.FC<{
                 className="mt-1 block text-primary hover:underline"
                 onClick={(e) => {
                   e.preventDefault();
-                  // Aqui você poderia fornecer um modelo para download
                   alert("Download do modelo de importação");
                 }}
               >
