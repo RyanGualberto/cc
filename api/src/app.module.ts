@@ -13,6 +13,7 @@ import { ExpensesModule } from './expenses/expenses.module';
 import { RevenuesModule } from './revenues/revenues.module';
 import { TeamMembersModule } from './team-members/team-members.module';
 import { ExpensePaymentMethodsModule } from './expense-payment-methods/expense-payment-methods.module';
+import { CronModule } from './cron/cron.module';
 @Module({
   imports: [
     UsersModule,
@@ -43,6 +44,7 @@ import { ExpensePaymentMethodsModule } from './expense-payment-methods/expense-p
     RevenuesModule,
     TeamMembersModule,
     ExpensePaymentMethodsModule,
+    CronModule,
   ],
   controllers: [AppController],
   providers: [AppService],
