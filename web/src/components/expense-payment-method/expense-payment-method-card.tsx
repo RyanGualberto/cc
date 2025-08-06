@@ -8,7 +8,10 @@ import ExpensePaymentMethodTable from "./expense-payment-method-table";
 import { AddExpensePaymentMethodDialog } from "./add-expense-payment-method-dialog";
 import { Loading } from "../ui/loading";
 
-const ExpensePaymentMethodCard: React.FC<{ team: Team }> = ({ team }) => {
+const ExpensePaymentMethodCard: React.FC<{ team: Team; date: string }> = ({
+  team,
+  date,
+}) => {
   const {
     data: expensePaymentMethods,
     isPending,
@@ -18,6 +21,7 @@ const ExpensePaymentMethodCard: React.FC<{ team: Team }> = ({ team }) => {
     queryFn: async () =>
       await expensePaymentMethodsRequest.listByTeam({
         teamId: team.id,
+        date: date,
       }),
   });
 

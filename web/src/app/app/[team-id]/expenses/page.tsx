@@ -24,7 +24,7 @@ export default function Page() {
       <HeaderWithMonthPicker value={date} onChange={setDate} />
       <ExpensesCard date={date} team={selectedTeam} />
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-        <ExpensePaymentMethodCard team={selectedTeam} />
+        <ExpensePaymentMethodCard date={date} team={selectedTeam} />
         <ExpenseCategoryCard date={date} team={selectedTeam} />
       </div>
     </div>

@@ -8,6 +8,7 @@ import {
   Delete,
   Req,
   UseGuards,
+  Query,
 } from '@nestjs/common';
 import { ExpensePaymentMethodsService } from './expense-payment-methods.service';
 import { CreateExpensePaymentMethodDto } from './dto/create-expense-payment-method.dto';
@@ -36,8 +37,12 @@ export class ExpensePaymentMethodsController {
   }
 
   @Get('/teams/:teamId')
-  findOne(@Req() req: Request, @Param('teamId') teamId: string) {
-    return this.expensePaymentMethodsService.findAll(req.user.id, teamId);
+  findOne(
+    @Req() req: Request,
+    @Param('teamId') teamId: string,
+    @Query('date') date?: string,
+  ) {
+    return this.expensePaymentMethodsService.findAll(req.user.id, teamId, date);
   }
 
   @Patch('/teams/:teamId/:id')

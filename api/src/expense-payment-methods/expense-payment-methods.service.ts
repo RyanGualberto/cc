@@ -21,21 +21,36 @@ export class ExpensePaymentMethodsService {
     });
   }
 
-  async findAll(userId: string, teamId: string) {
+  async findAll(userId: string, teamId: string, date?: string) {
     await this.validateUserPermission(userId, teamId, 'MEMBER');
+
+    let startDate: Date | undefined;
+    let endDate: Date | undefined;
+
+    if (date) {
+      const month = date.split('/')[0].padStart(2, '0');
+      const year = date.split('/')[1].padStart(4, '0');
+      startDate = new Date(`${year}-${month}`);
+      endDate = new Date(startDate);
+      endDate.setMonth(endDate.getMonth() + 1);
+    }
 
     const expensePaymentMethods =
       await this.prismaService.expensePaymentMethod.findMany({
         where: {
-          OR: [
-            { teamId },
-            { teamId: null }, // This allows fetching global payment methods
-          ],
+          OR: [{ teamId }, { teamId: null }],
         },
         include: {
           _count: {
             select: {
-              expenses: true,
+              expenses: {
+                where: {
+                  date: {
+                    gte: startDate,
+                    lte: endDate,
+                  },
+                },
+              },
             },
           },
         },
