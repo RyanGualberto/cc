@@ -11,12 +11,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../ui/select";
-import { useRouter } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import React from "react";
 import { useAuth } from "~/hooks/use-auth";
 import { Button } from "../ui/button";
 
 const Navbar: React.FC = () => {
+  const params = useParams();
   const { logout } = useAuth();
   const { user, selectedTeam, teams } = useUserContext();
   const [team, setTeam] = React.useState<string | null>(null);
@@ -28,10 +29,10 @@ const Navbar: React.FC = () => {
   const { push } = useRouter();
 
   React.useEffect(() => {
-    if (team) {
+    if (team && !params["team-id"]) {
       push(`/app/${team}/dashboard`);
     }
-  }, [team, push]);
+  }, [team, push, params]);
 
   return (
     <header className="flex flex-col gap-4 border-b px-4 py-3 md:px-8 md:py-6">
