@@ -21,7 +21,7 @@ export class TeamsService {
   }
 
   async findAll(userId: string) {
-    return await this.prismaService.team.findMany({
+    const teamWithTeamMembers = await this.prismaService.team.findMany({
       where: {
         teamMembers: {
           some: {
@@ -32,6 +32,81 @@ export class TeamsService {
       include: {
         teamMembers: true,
       },
+    });
+
+    const currentMonth = new Date().getMonth() + 1;
+    const transactionsTotal = await Promise.all(
+      teamWithTeamMembers.map(async (team) => {
+        const expenses = await this.prismaService.expense.aggregate({
+          where: {
+            teamId: team.id,
+            date: {
+              gte: new Date(new Date().getFullYear(), currentMonth - 1, 1),
+              lt: new Date(new Date().getFullYear(), currentMonth, 1),
+            },
+          },
+          _sum: {
+            amountInCents: true,
+          },
+        });
+        const revenues = await this.prismaService.revenue.aggregate({
+          where: {
+            teamId: team.id,
+            date: {
+              gte: new Date(new Date().getFullYear(), currentMonth - 1, 1),
+              lt: new Date(new Date().getFullYear(), currentMonth, 1),
+            },
+          },
+          _sum: {
+            amountInCents: true,
+          },
+        });
+        const transactionsCount = await this.prismaService.$transaction([
+          this.prismaService.expense.count({
+            where: {
+              teamId: team.id,
+              date: {
+                gte: new Date(new Date().getFullYear(), currentMonth - 1, 1),
+                lt: new Date(new Date().getFullYear(), currentMonth, 1),
+              },
+            },
+          }),
+          this.prismaService.revenue.count({
+            where: {
+              teamId: team.id,
+              date: {
+                gte: new Date(new Date().getFullYear(), currentMonth - 1, 1),
+                lt: new Date(new Date().getFullYear(), currentMonth, 1),
+              },
+            },
+          }),
+        ]);
+        return {
+          teamId: team.id,
+          balance: revenues._sum.amountInCents - expenses._sum.amountInCents,
+          qtTransactions: transactionsCount[0] + transactionsCount[1],
+        };
+      }),
+    );
+
+    return teamWithTeamMembers.map((team) => {
+      const currentUserRole =
+        team.teamMembers.find((member) => member.userId === userId)?.role ||
+        null;
+
+      const transaction = transactionsTotal.find(
+        (t) => t.teamId === team.id,
+      ) || {
+        balance: 0,
+        qtTransactions: 0,
+      };
+
+      return {
+        ...team,
+        role: currentUserRole,
+        balance: transaction.balance,
+        qtTransactions: transaction.qtTransactions,
+      };
     });
   }
 
