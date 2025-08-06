@@ -8,6 +8,7 @@ import {
   Delete,
   Req,
   UseGuards,
+  Query,
 } from '@nestjs/common';
 import { ExpenseCategoriesService } from './expense-categories.service';
 import { CreateExpenseCategoryDto } from './dto/create-expense-category.dto';
@@ -36,8 +37,12 @@ export class ExpenseCategoriesController {
   }
 
   @Get('/teams/:teamId')
-  findOne(@Req() req: Request, @Param('teamId') teamId: string) {
-    return this.expenseCategoriesService.findAll(req.user.id, teamId);
+  findOne(
+    @Req() req: Request,
+    @Param('teamId') teamId: string,
+    @Query('date') date?: string,
+  ) {
+    return this.expenseCategoriesService.findAll(req.user.id, teamId, date);
   }
 
   @Patch('/teams/:teamId/:id')

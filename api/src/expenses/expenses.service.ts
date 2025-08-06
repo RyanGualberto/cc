@@ -186,18 +186,10 @@ export class ExpensesService {
     return createdExpenses;
   }
 
-  async findAll(
-    userId: string,
-    teamId: string,
-    date: string, // "mes/ano"
-  ) {
+  async findAll(userId: string, teamId: string, date: string) {
     await this.validateIfUserIsPartFromTeam(userId, teamId);
-    // se o mes for < 10, adicionar o zero a esquerda
-    if (date.split('/')[0].length < 2) {
-      date = `0${date}`;
-    }
-    const month = date.split('/')[0];
-    const year = date.split('/')[1];
+    const month = date.split('/')[0].padStart(2, '0');
+    const year = date.split('/')[1].padStart(4, '0');
     const startDate = new Date(`${year}-${month}`);
     const endDate = new Date(startDate);
     endDate.setMonth(endDate.getMonth() + 1);

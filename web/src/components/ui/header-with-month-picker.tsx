@@ -40,7 +40,7 @@ const HeaderWithMonthPicker: React.FC<{
   }, []);
 
   return (
-    <div className="flex sticky backdrop-blur-sm bg-white/90 z-50 top-0 md:static items-center justify-between gap-4">
+    <div className="flex sticky backdrop-blur-sm bg-background/90 z-50 top-0 md:static items-center justify-between gap-4">
       <Button onClick={() => onChange(previousDate(value))} variant="ghost">
         <ChevronLeft size={16} />
       </Button>

@@ -8,16 +8,20 @@ import ExpenseCategoryTable from "./expense-category-table";
 import { AddExpenseCategoryDialog } from "./add-expense-category-dialog";
 import { Loading } from "../ui/loading";
 
-const ExpenseCategoryCard: React.FC<{ team: Team }> = ({ team }) => {
+const ExpenseCategoryCard: React.FC<{ team: Team; date: string }> = ({
+  team,
+  date,
+}) => {
   const {
     data: expenseCategories,
     isPending,
     isError,
   } = useQuery({
-    queryKey: ["expense-categories", { teamId: team.id }],
+    queryKey: ["expense-categories", { teamId: team.id, date }],
     queryFn: async () =>
       await expenseCategoriesRequest.listByTeam({
         teamId: team.id,
+        date,
       }),
   });
 

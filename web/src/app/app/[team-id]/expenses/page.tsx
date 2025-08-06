@@ -23,9 +23,9 @@ export default function Page() {
     <div className="flex flex-col gap-4">
       <HeaderWithMonthPicker value={date} onChange={setDate} />
       <ExpensesCard date={date} team={selectedTeam} />
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
         <ExpensePaymentMethodCard team={selectedTeam} />
-        <ExpenseCategoryCard team={selectedTeam} />
+        <ExpenseCategoryCard date={date} team={selectedTeam} />
       </div>
     </div>
   );

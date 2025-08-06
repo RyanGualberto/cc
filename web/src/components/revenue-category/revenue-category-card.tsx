@@ -8,16 +8,20 @@ import RevenueCategoryTable from "./revenue-category-table";
 import { AddRevenueCategoryDialog } from "./add-revenue-category-dialog";
 import { Loading } from "../ui/loading";
 
-const RevenueCategoryCard: React.FC<{ team: Team }> = ({ team }) => {
+const RevenueCategoryCard: React.FC<{ team: Team; date: string }> = ({
+  team,
+  date,
+}) => {
   const {
     data: revenueCategories,
     isPending,
     isError,
   } = useQuery({
-    queryKey: ["revenue-categories", { teamId: team.id }],
+    queryKey: ["revenue-categories", { teamId: team.id, date }],
     queryFn: async () =>
       await revenueCategoriesRequest.listByTeam({
         teamId: team.id,
+        date
       }),
   });
 

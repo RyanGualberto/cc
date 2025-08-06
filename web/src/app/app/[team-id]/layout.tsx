@@ -62,7 +62,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         <div className="flex w-full justify-between">
           {navItems(selectedTeam.role).map((item) => (
             <Link
-              className={cn("flex flex-1 flex-col w-full h-12 justify-center items-center gap-2", {
+              className={cn("flex flex-1 flex-col w-full h-16 justify-center items-center gap-2 py-2", {
                 "bg-accent": pathname.startsWith(
                   `/app/${selectedTeam.id}${item.href}`,
                 ),
@@ -74,6 +74,9 @@ export default function Layout({ children }: { children: React.ReactNode }) {
               href={`/app/${selectedTeam.id}${item.href}`}
             >
               {item.icon}
+              <span className="text-xs">
+                { item.label }
+              </span>
             </Link>
           ))}
         </div>

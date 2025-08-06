@@ -21,8 +21,21 @@ export class ExpenseCategoriesService {
     });
   }
 
-  async findAll(userId: string, teamId: string) {
+  async findAll(userId: string, teamId: string, date?: string) {
     await this.validateUserPermission(userId, teamId, 'MEMBER');
+
+    let startDate: Date | undefined;
+    let endDate: Date | undefined;
+
+    if (date) {
+      console.log('here');
+
+      const month = date.split('/')[0].padStart(2, '0');
+      const year = date.split('/')[1].padStart(4, '0');
+      startDate = new Date(`${year}-${month}`);
+      endDate = new Date(startDate);
+      endDate.setMonth(endDate.getMonth() + 1);
+    }
 
     const expenseCategories = await this.prismaService.expenseCategory.findMany(
       {
@@ -32,7 +45,14 @@ export class ExpenseCategoriesService {
         include: {
           _count: {
             select: {
-              expenses: true,
+              expenses: {
+                where: {
+                  date: {
+                    gte: startDate,
+                    lte: endDate,
+                  },
+                },
+              },
             },
           },
         },

@@ -21,8 +21,19 @@ export class RevenueCategoriesService {
     });
   }
 
-  async findAll(userId: string, teamId: string) {
+  async findAll(userId: string, teamId: string, date?: string) {
     await this.validateUserPermission(userId, teamId, 'MEMBER');
+
+    let startDate: Date | undefined;
+    let endDate: Date | undefined;
+
+    if (date) {
+      const month = date.split('/')[0].padStart(2, '0');
+      const year = date.split('/')[1].padStart(4, '0');
+      startDate = new Date(`${year}-${month}`);
+      endDate = new Date(startDate);
+      endDate.setMonth(endDate.getMonth() + 1);
+    }
 
     const revenueCategories = await this.prismaService.revenueCategory.findMany(
       {
@@ -39,7 +50,7 @@ export class RevenueCategoriesService {
         include: {
           _count: {
             select: {
-              revenues: true,
+              revenues: { where: { date: { gte: startDate, lte: endDate } } },
             },
           },
         },

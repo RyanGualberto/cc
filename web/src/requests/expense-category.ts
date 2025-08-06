@@ -27,6 +27,7 @@ async function createByTeam(payload: CreateByTeamRequest) {
 
 export interface ListByTeamAndDateRequest {
   teamId: string;
+  date?: string;
 }
 
 async function listByTeam(params: ListByTeamAndDateRequest) {
@@ -34,8 +35,12 @@ async function listByTeam(params: ListByTeamAndDateRequest) {
     const endpoint = `/expense-categories/teams/${params.teamId}`;
     const method = "get";
 
-    const { data: response } =
-      await apiClient[method]<Array<ExpenseCategory>>(endpoint);
+    const { data: response } = await apiClient[method]<Array<ExpenseCategory>>(
+      endpoint,
+      {
+        params: { date: params.date },
+      },
+    );
     return response;
   } catch (error: unknown) {
     if (error instanceof Error) {

@@ -8,6 +8,7 @@ import {
   Delete,
   Req,
   UseGuards,
+  Query,
 } from '@nestjs/common';
 import { RevenueCategoriesService } from './revenue-categories.service';
 import { CreateRevenueCategoryDto } from './dto/create-revenue-category.dto';
@@ -36,8 +37,12 @@ export class RevenueCategoriesController {
   }
 
   @Get('/teams/:teamId')
-  findOne(@Req() req: Request, @Param('teamId') teamId: string) {
-    return this.revenueCategoriesService.findAll(req.user.id, teamId);
+  findOne(
+    @Req() req: Request,
+    @Param('teamId') teamId: string,
+    @Query('date') date?: string,
+  ) {
+    return this.revenueCategoriesService.findAll(req.user.id, teamId, date);
   }
 
   @Patch('/teams/:teamId/:id')

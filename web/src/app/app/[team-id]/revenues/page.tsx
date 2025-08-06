@@ -21,7 +21,7 @@ export default function Page() {
     <div className="flex flex-col gap-4">
       <HeaderWithMonthPicker value={date} onChange={setDate} />
       <RevenuesCard date={date} team={selectedTeam} />
-      <RevenueCategoryCard team={selectedTeam} />
+      <RevenueCategoryCard date={date} team={selectedTeam} />
     </div>
   );
 }

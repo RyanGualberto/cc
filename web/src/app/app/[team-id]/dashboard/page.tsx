@@ -28,15 +28,15 @@ export default function Page() {
       <HeaderWithMonthPicker value={date} onChange={setDate} />
       <FinancialChartsCard date={date} team={selectedTeam} />
 
-      <div className="flex flex-col gap-4 md:flex-row">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <RevenuesCard short date={date} team={selectedTeam} />
         <ExpensesCard short date={date} team={selectedTeam} />
       </div>
-      <div className="flex flex-col gap-4 md:flex-row">
-        <RevenueCategoryCard team={selectedTeam} />
-        <ExpenseCategoryCard team={selectedTeam} />
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <RevenueCategoryCard date={date}  team={selectedTeam} />
+        <ExpenseCategoryCard date={date}  team={selectedTeam} />
       </div>
-      <div className="flex flex-col gap-4 md:flex-row">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <TeamMembersCard team={selectedTeam} />
         <TeamInvitesCard team={selectedTeam} />
       </div>
