@@ -1,11 +1,11 @@
-import { Controller, Post } from '@nestjs/common';
+import { Controller, Get } from '@nestjs/common';
 import { CronService } from './cron.service';
 
 @Controller('cron')
 export class CronController {
   constructor(private readonly cron: CronService) {}
 
-  @Post('/daily-tasks')
+  @Get('/daily-tasks')
   async create() {
     await this.cron.processOverdueExpenses();
     await this.cron.notifyExpensesCloseToDue();
