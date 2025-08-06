@@ -67,6 +67,7 @@ export interface UpdateRevenueRequest {
     status: "PENDING" | "RECEIVED" | "OVERDUE";
     title: string;
     includeFuture?: boolean;
+    editSelection?: "just-this" | "include-all" | "include-future";
   };
   teamId: string;
   revenueId: string;

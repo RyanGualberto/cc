@@ -248,14 +248,27 @@ export class ExpensesService {
       },
     });
 
-    if (updateExpenseDto.includeFuture) {
+    if (
+      updateExpenseDto.editSelection &&
+      updateExpenseDto.editSelection !== 'just-this'
+    ) {
       const batchId = updatedExpense.batch;
+      let startDate: Date | undefined;
+      if (updateExpenseDto.editSelection === 'include-future') {
+        startDate = new Date(updatedExpense.date);
+      }
+
       return await this.prismaService.expense.updateMany({
         where: {
           batch: batchId,
           NOT: {
             id: expenseId,
           },
+          ...(startDate && {
+            date: {
+              gte: startDate,
+            },
+          }),
         },
         data: {
           amountInCents: updateExpenseDto.amountInCents,

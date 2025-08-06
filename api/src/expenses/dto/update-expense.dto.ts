@@ -8,5 +8,5 @@ export class UpdateExpenseDto {
   status: ExpenseStatus;
   title: string;
   paymentMethodId: string | null;
-  includeFuture?: boolean;
+  editSelection?: 'just-this' | 'include-all' | 'include-future';
 }

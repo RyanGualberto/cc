@@ -31,9 +31,9 @@ import Show from "../utils/show";
 import { revenueCategoriesRequest } from "~/requests/revenue-category";
 import { type Revenue } from "~/types/revenue";
 import { useUserContext } from "~/hooks/use-user-context";
-import { Switch } from "../ui/switch";
 import { Label } from "../ui/label";
 import { editRevenueSchema } from "~/schemas/edit-revenue-schema";
+import { RadioGroup, RadioGroupItem } from "../ui/radio-group";
 
 export const TRANSLATED_RECURRENCES = {
   ONCE: "Uma vez",
@@ -55,7 +55,9 @@ const EditRevenueDialog: React.FC<{
   const queryClient = useQueryClient();
   const { selectedTeam } = useUserContext();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [includeFuture, setDeleteAll] = useState(false);
+  const [editSelection, setEditSelection] = useState<
+    "just-this" | "include-all" | "include-future"
+  >("just-this");
   const hasMany = useMemo(
     () => revenue.recurrence !== "ONCE",
     [revenue.recurrence],
@@ -85,8 +87,10 @@ const EditRevenueDialog: React.FC<{
           description: data.description ?? null,
           title: data.title,
           status: data.status,
-          includeFuture: includeFuture,
           date: new Date(data.date).toISOString(),
+          ...(editSelection !== "just-this" && {
+            editSelection: editSelection,
+          }),
         },
         teamId: selectedTeam!.id,
       });
@@ -187,7 +191,7 @@ const EditRevenueDialog: React.FC<{
                 )}
               />
               <Show
-                when={!includeFuture}
+                when={editSelection === "just-this"}
                 component={
                   <FormField
                     control={form.control}
@@ -248,7 +252,7 @@ const EditRevenueDialog: React.FC<{
               )}
             />
             <Show
-              when={!includeFuture}
+              when={editSelection === "just-this"}
               component={
                 <FormField
                   control={form.control}
@@ -283,14 +287,29 @@ const EditRevenueDialog: React.FC<{
               when={hasMany}
               component={
                 <div className="flex items-center gap-2">
-                  <Switch
-                    checked={includeFuture}
-                    name="includeFuture"
-                    onCheckedChange={(checked) => setDeleteAll(checked)}
-                  />
-                  <Label htmlFor="includeFuture">
-                    Editar todas as recorrências
-                  </Label>
+                  <RadioGroup
+                    defaultValue="just-this"
+                    value={editSelection}
+                    onValueChange={(value) =>
+                      setEditSelection(value as typeof editSelection)
+                    }
+                  >
+                    <div className="flex items-center space-x-2">
+                      <RadioGroupItem value="just-this" id="just-this" />
+                      <Label htmlFor="just-this">Editar somente essa</Label>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <RadioGroupItem value="include-all" id="include-all" />
+                      <Label htmlFor="include-all">Editar todas</Label>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <RadioGroupItem
+                        value="include-future"
+                        id="include-future"
+                      />
+                      <Label htmlFor="include-future">Editar futuras</Label>
+                    </div>
+                  </RadioGroup>
                 </div>
               }
             />

@@ -7,5 +7,5 @@ export class UpdateRevenueDto {
   description: string | null;
   status: RevenueStatus;
   title: string;
-  includeFuture?: boolean;
+  editSelection?: 'just-this' | 'include-all' | 'include-future';
 }

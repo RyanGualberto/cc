@@ -87,8 +87,8 @@ export interface UpdateExpenseRequest {
     description: string | null;
     status: "PENDING" | "PAID" | "OVERDUE";
     title: string;
-    includeFuture?: boolean;
     paymentMethodId?: string | null;
+    editSelection?: "just-this" | "include-all" | "include-future";
   };
   teamId: string;
   expenseId: string;

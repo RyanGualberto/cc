@@ -128,14 +128,26 @@ export class RevenuesService {
       },
     });
 
-    if (updateRevenueDto.includeFuture) {
+    if (
+      updateRevenueDto.editSelection &&
+      updateRevenueDto.editSelection !== 'just-this'
+    ) {
       const batchId = updatedRevenue.batch;
+      let startDate: Date | undefined;
+      if (updateRevenueDto.editSelection === 'include-future') {
+        startDate = new Date(updatedRevenue.date);
+      }
       return await this.prismaService.revenue.updateMany({
         where: {
           batch: batchId,
           NOT: {
             id: revenueId,
           },
+          ...(startDate && {
+            date: {
+              gte: startDate,
+            },
+          }),
         },
         data: {
           amountInCents: updateRevenueDto.amountInCents,
