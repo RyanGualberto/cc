@@ -28,8 +28,6 @@ export class ExpenseCategoriesService {
     let endDate: Date | undefined;
 
     if (date) {
-      console.log('here');
-
       const month = date.split('/')[0].padStart(2, '0');
       const year = date.split('/')[1].padStart(4, '0');
       startDate = new Date(`${year}-${month}`);
