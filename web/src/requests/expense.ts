@@ -82,13 +82,13 @@ async function listByTeamAndDate(params: ListByTeamAndDateRequest) {
 export interface UpdateExpenseRequest {
   payload: {
     amountInCents: number;
-    categoryId: string | null;
+    categoryId?: string | null;
     date: string;
     description: string | null;
     status: "PENDING" | "PAID" | "OVERDUE";
     title: string;
     includeFuture?: boolean;
-    paymentMethodId: string | null;
+    paymentMethodId?: string | null;
   };
   teamId: string;
   expenseId: string;
