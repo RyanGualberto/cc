@@ -38,7 +38,7 @@ model Expense {
   expensePaymentMethodId String?
   until                  DateTime?
   batch                  String? // uuid
-  team                   Team                  @relation(fields: [teamId], references: [id])
+  team                   Team                  @relation(fields: [teamId], references: [id], onDelete: Cascade)
   teamId                 String
   user                   User?                 @relation(fields: [userId], references: [id], onDelete: SetNull)
   userId                 String?
@@ -92,7 +92,7 @@ model TeamMember {
 model TeamInvite {
   id        String   @id @default(cuid())
   email     String
-  team      Team     @relation(fields: [teamId], references: [id])
+  team      Team     @relation(fields: [teamId], references: [id], onDelete: Cascade)
   teamId    String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -135,7 +135,7 @@ model Revenue {
   status        RevenueStatus     @default(PENDING)
   until         DateTime?
   batch         String? // uuid
-  team          Team              @relation(fields: [teamId], references: [id])
+  team          Team              @relation(fields: [teamId], references: [id], onDelete: Cascade)
   teamId        String
   user          User?             @relation(fields: [userId], references: [id], onDelete: SetNull)
   userId        String?
