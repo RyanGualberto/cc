@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import RevenuesCard from "~/components/revenue/revenues-card";
 import { useUserContext } from "~/hooks/use-user-context";
 import { HeaderWithMonthPicker } from "~/components/ui/header-with-month-picker";
+import RevenueCategoryCard from "~/components/revenue-category/revenue-category-card";
 export default function Page() {
   const { selectedTeam } = useUserContext();
   const [date, setDate] = useState(
@@ -20,6 +21,7 @@ export default function Page() {
     <div className="flex flex-col gap-4">
       <HeaderWithMonthPicker value={date} onChange={setDate} />
       <RevenuesCard date={date} team={selectedTeam} />
+      <RevenueCategoryCard team={selectedTeam} />
     </div>
   );
 }

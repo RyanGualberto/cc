@@ -1,6 +1,5 @@
 "use client";
-
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useMemo, useRef } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import type { Team } from "~/types/team";
 import { Button } from "../ui/button";
@@ -14,7 +13,14 @@ import { AddRevenueDialog, TRANSLATED_STATUSES } from "./add-revenue-dialog";
 import { Loading } from "../ui/loading";
 import type { RowSelectionState } from "@tanstack/react-table";
 import type { Revenue } from "~/types/revenue";
-import { Upload, MoreVertical, FileDown, FileUp, FileText } from "lucide-react";
+import {
+  Upload,
+  MoreVertical,
+  FileDown,
+  FileUp,
+  FileText,
+  SquareArrowOutUpRight,
+} from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -39,6 +45,7 @@ const RevenuesCard: React.FC<{
   date: string;
 }> = ({ team, short = false, date }) => {
   const [rowSelection, setRowSelection] = React.useState<RowSelectionState>({});
+  const [month, year] = useMemo(() => date.split("/"), [date]);
   const queryClient = useQueryClient();
   const {
     data: revenues,
@@ -121,11 +128,21 @@ const RevenuesCard: React.FC<{
   return (
     <Card className="flex-1">
       <CardHeader className="flex flex-col items-center justify-between gap-4 md:flex-row">
-        <CardTitle className="w-full">Receitas</CardTitle>
+        <div>
+          <CardTitle className="w-full text-2xl">Receitas</CardTitle>
+          <h4 className="text-muted-foreground">
+            {new Date(
+              `${year}-${String(Number(month) + 1).padStart(2, "0")}`,
+            ).toLocaleDateString("pt-BR", {
+              month: "long",
+              year: "numeric",
+            })}
+          </h4>
+        </div>
         <div className="flex items-center gap-2">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="outline" size="icon">
+              <Button variant="outline" size="icon" className="aspect-square">
                 <MoreVertical className="h-4 w-4" />
                 <span className="sr-only">Opções de dados</span>
               </Button>
@@ -147,6 +164,21 @@ const RevenuesCard: React.FC<{
             </DropdownMenuContent>
           </DropdownMenu>
           <AddRevenueDialog team={team} />
+          <Show
+            when={short}
+            component={
+              <Button
+                className="aspect-square w-full"
+                variant="ghost"
+                size="icon"
+                asChild
+              >
+                <Link href={`/app/${team.id}/revenues`}>
+                  <SquareArrowOutUpRight className="h-4 w-4" />
+                </Link>
+              </Button>
+            }
+          />
         </div>
       </CardHeader>
       <Show
@@ -176,16 +208,6 @@ const RevenuesCard: React.FC<{
               short={short}
               data={revenues!}
               teamId={team.id}
-            />
-            <Show
-              component={
-                <Button className="w-full" variant="ghost" asChild>
-                  <Link href={`/app/${team.id}/revenues`}>
-                    Ver todas as receitas
-                  </Link>
-                </Button>
-              }
-              when={short}
             />
           </CardContent>
         }

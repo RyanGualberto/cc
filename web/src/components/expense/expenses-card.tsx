@@ -1,6 +1,5 @@
 "use client";
-
-import React, { useEffect } from "react";
+import React, { useEffect, useMemo } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import type { Team } from "~/types/team";
 import type { Expense } from "~/types/expense";
@@ -14,7 +13,13 @@ import Link from "next/link";
 import { AddExpenseDialog } from "./add-expense-dialog";
 import { Loading } from "../ui/loading";
 import type { RowSelectionState } from "@tanstack/react-table";
-import { MoreVertical, FileDown, FileUp, FileText } from "lucide-react";
+import {
+  MoreVertical,
+  FileDown,
+  FileUp,
+  FileText,
+  SquareArrowOutUpRight,
+} from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -30,6 +35,7 @@ const ExpensesCard: React.FC<{
   short?: boolean;
   date: string;
 }> = ({ team, short = false, date }) => {
+  const [month, year] = useMemo(() => date.split("/"), [date]);
   const [rowSelection, setRowSelection] = React.useState<RowSelectionState>({});
   const [importDialogOpen, setImportDialogOpen] = React.useState(false);
   const [exportDialogOpen, setExportDialogOpen] = React.useState(false);
@@ -70,11 +76,21 @@ const ExpensesCard: React.FC<{
   return (
     <Card className="flex-1">
       <CardHeader className="flex flex-col items-center justify-between gap-4 md:flex-row">
-        <CardTitle className="w-full">Despesas</CardTitle>
+        <div>
+          <CardTitle className="w-full text-2xl">Despesas</CardTitle>
+          <h4 className="text-muted-foreground">
+            {new Date(
+              `${year}-${String(Number(month) + 1).padStart(2, "0")}`,
+            ).toLocaleDateString("pt-BR", {
+              month: "long",
+              year: "numeric",
+            })}
+          </h4>
+        </div>
         <div className="flex items-center gap-2">
           <DropdownMenu open={dropdownOpen} onOpenChange={setDropdownOpen}>
             <DropdownMenuTrigger asChild>
-              <Button variant="outline" size="icon">
+              <Button variant="outline" size="icon" className="aspect-square">
                 <MoreVertical className="h-4 w-4" />
                 <span className="sr-only">Opções de dados</span>
               </Button>
@@ -110,6 +126,21 @@ const ExpensesCard: React.FC<{
             </DropdownMenuContent>
           </DropdownMenu>
           <AddExpenseDialog team={team} />
+          <Show
+            when={short}
+            component={
+              <Button
+                className="aspect-square w-full"
+                variant="ghost"
+                size="icon"
+                asChild
+              >
+                <Link href={`/app/${team.id}/expenses`}>
+                  <SquareArrowOutUpRight className="h-4 w-4" />
+                </Link>
+              </Button>
+            }
+          />
         </div>
       </CardHeader>
       <Show
@@ -139,16 +170,6 @@ const ExpensesCard: React.FC<{
               short={short}
               data={expenses!}
               teamId={team.id}
-            />
-            <Show
-              component={
-                <Button className="w-full" variant="ghost" asChild>
-                  <Link href={`/app/${team.id}/expenses`}>
-                    Ver todas as despesas
-                  </Link>
-                </Button>
-              }
-              when={short}
             />
           </CardContent>
         }

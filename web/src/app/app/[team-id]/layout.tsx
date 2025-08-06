@@ -3,7 +3,6 @@ import React from "react";
 import { useUserContext } from "~/hooks/use-user-context";
 import {
   Home,
-  List,
   Settings,
   TrendingDown,
   TrendingUp,
@@ -99,11 +98,6 @@ const navItems = (role: "MEMBER" | "ADMIN" | "OWNER") => {
       label: "Receitas",
       href: "/revenues",
       icon: <TrendingUp className="h-6 w-6 md:h-4 md:w-4" />,
-    },
-    {
-      label: "Categorias",
-      href: "/categories",
-      icon: <List className="h-6 w-6 md:h-4 md:w-4" />,
     },
     {
       label: "Membros",

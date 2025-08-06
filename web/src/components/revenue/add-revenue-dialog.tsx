@@ -133,7 +133,7 @@ const AddRevenueDialog: React.FC<{
               name="title"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Título</FormLabel>
+                  <FormLabel required>Título</FormLabel>
                   <Input
                     containerClassName="!bg-transparent border"
                     {...field}
@@ -162,7 +162,7 @@ const AddRevenueDialog: React.FC<{
                 name="amountInCents"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Valor</FormLabel>
+                    <FormLabel required>Valor</FormLabel>
                     <Input
                       containerClassName="!bg-transparent border"
                       {...field}
@@ -180,7 +180,7 @@ const AddRevenueDialog: React.FC<{
                 name="date"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Data </FormLabel>
+                    <FormLabel required>Data </FormLabel>
                     <DatePicker
                       date={field.value ? new Date(field.value) : null}
                       setDate={(value) => {
@@ -198,7 +198,7 @@ const AddRevenueDialog: React.FC<{
                 name="recurrence"
                 render={({ field }) => (
                   <FormItem className="w-full">
-                    <FormLabel>Recorrência</FormLabel>
+                    <FormLabel required>Recorrência</FormLabel>
                     <Select
                       value={field.value}
                       onValueChange={(value) => {
@@ -227,7 +227,7 @@ const AddRevenueDialog: React.FC<{
                     name="until"
                     render={({ field }) => (
                       <FormItem className="w-full">
-                        <FormLabel>Até</FormLabel>
+                        <FormLabel required>Até</FormLabel>
                         <DatePicker
                           date={field.value ? new Date(field.value) : null}
                           setDate={(value) => {
@@ -285,7 +285,7 @@ const AddRevenueDialog: React.FC<{
               name="status"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Status</FormLabel>
+                  <FormLabel required>Status</FormLabel>
                   <Select
                     value={field.value}
                     onValueChange={(value) => {
