@@ -70,27 +70,27 @@ export default function Page() {
   });
 
   return (
-    <div className="flex flex-1 gap-4 px-24">
-      <Tabs className="flex flex-1 gap-4" defaultValue="general">
+    <div className="flex flex-1 gap-4 md:px-24">
+      <Tabs className="flex flex-col md:flex-row flex-1 gap-4" defaultValue="general">
         <TabsList
-          className="flex h-fit min-w-36 flex-col gap-1.5 bg-transparent"
+          className="flex h-fit justify-start md:min-w-36 flex-row md:flex-col gap-1.5 bg-transparent"
           defaultValue={"general"}
         >
           <TabsTrigger
-            className="w-full justify-start py-2 text-left hover:bg-accent data-[state=active]:bg-accent"
+            className="w-fit md:w-full justify-start py-2 text-left hover:bg-accent data-[state=active]:bg-accent"
             value="general"
           >
             Geral
           </TabsTrigger>
           <TabsTrigger
-            className="w-full justify-start py-2 text-left hover:bg-accent data-[state=active]:bg-accent"
+            className="w-fit md:w-full justify-start py-2 text-left hover:bg-accent data-[state=active]:bg-accent"
             value="other"
           >
             Outros
           </TabsTrigger>
         </TabsList>
-        <Separator orientation="vertical" />
-        <div className="flex-1 px-6">
+        <Separator orientation="vertical" className="hidden md:block" />
+        <div className="flex-1 md:px-6">
           <TabsContent value="general" className="flex flex-1 flex-col">
             <h1 className="text-2xl font-semibold">Configurações Gerais</h1>
             <Card className="mt-4 w-full">
@@ -138,7 +138,7 @@ export default function Page() {
                     await deleteTeamAsync();
                   })}
                 >
-                  <CardHeader className="mb-0 !pb-0">
+                  <CardHeader className="mb-2 md:mb-0 !pb-0">
                     <CardTitle>Excluir Espaço Financeiro</CardTitle>
                   </CardHeader>
                   <CardContent>
@@ -152,6 +152,7 @@ export default function Page() {
                             placeholder="Digite 'EXCLUIR' para confirmar"
                             className="input mt-2"
                           />
+                          <FormMessage />
                           <FormDescription>
                             Para excluir este espaço financeiro, digite
                             &ldquo;EXCLUIR&rdquo; no campo acima.
@@ -160,7 +161,7 @@ export default function Page() {
                       )}
                     />
                   </CardContent>
-                  <CardFooter className="flex justify-end bg-destructive/20 p-0">
+                  <CardFooter className="flex justify-end bg-destructive/20 py-2 px-4">
                     <Button
                       disabled={
                         confirmdeleteForm.watch("confirm") !== "EXCLUIR"
