@@ -84,9 +84,9 @@ export default function Page() {
           </TabsTrigger>
           <TabsTrigger
             className="w-fit md:w-full justify-start py-2 text-left hover:bg-accent data-[state=active]:bg-accent"
-            value="other"
+            value="permissions"
           >
-            Outros
+            Permissões
           </TabsTrigger>
         </TabsList>
         <Separator orientation="vertical" className="hidden md:block" />
