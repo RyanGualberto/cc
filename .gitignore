@@ -4,3 +4,4 @@
 api/db
 api/dist
 api/coverage
+.vercel
