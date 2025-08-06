@@ -40,6 +40,7 @@ export const TRANSLATED_RECURRENCES = {
   DAILY: "Diário",
   WEEKLY: "Semanal",
   MONTHLY: "Mensal",
+  FIFTH_WORKING_DAY: "Quinto dia útil",
 };
 
 export const TRANSLATED_STATUSES = {

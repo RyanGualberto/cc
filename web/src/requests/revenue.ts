@@ -6,7 +6,7 @@ export interface CreateByTeamRequest {
   description?: string;
   amountInCents: number;
   date: string;
-  recurrence: "MONTHLY" | "WEEKLY" | "DAILY" | "ONCE";
+  recurrence: "FIFTH_WORKING_DAY" | "MONTHLY" | "WEEKLY" | "DAILY" | "ONCE";
   status: "PENDING" | "RECEIVED" | "OVERDUE";
   title: string;
   category: string | undefined;
@@ -61,7 +61,7 @@ async function listByTeamAndDate(params: ListByTeamAndDateRequest) {
 export interface UpdateRevenueRequest {
   payload: {
     amountInCents: number;
-    categoryId: string | null;
+    categoryId?: string | null;
     date: string;
     description: string | null;
     status: "PENDING" | "RECEIVED" | "OVERDUE";

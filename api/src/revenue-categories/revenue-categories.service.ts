@@ -27,7 +27,14 @@ export class RevenueCategoriesService {
     const revenueCategories = await this.prismaService.revenueCategory.findMany(
       {
         where: {
-          teamId,
+          OR: [
+            {
+              teamId,
+            },
+            {
+              teamId: null,
+            },
+          ],
         },
         include: {
           _count: {

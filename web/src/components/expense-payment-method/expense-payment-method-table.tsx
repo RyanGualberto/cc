@@ -31,13 +31,17 @@ const ExpensePaymentMethodTable: React.FC<{
             <TableCell>{expensePaymentMethod.name}</TableCell>
             <TableCell>{expensePaymentMethod._count?.expenses}</TableCell>
             <TableCell className="flex items-center gap-2">
-              <EditExpensePaymentMethodDialog
-                team={team}
-                expensePaymentMethod={expensePaymentMethod}
-              />
-              <DeleteExpensePaymentMethodDialog
-                expensePaymentMethod={expensePaymentMethod}
-              />
+              {expensePaymentMethod.teamId ? (
+                <>
+                  <EditExpensePaymentMethodDialog
+                    team={team}
+                    expensePaymentMethod={expensePaymentMethod}
+                  />
+                  <DeleteExpensePaymentMethodDialog
+                    expensePaymentMethod={expensePaymentMethod}
+                  />
+                </>
+              ) : null}
             </TableCell>
           </TableRow>
         ))}

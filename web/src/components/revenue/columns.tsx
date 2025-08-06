@@ -1,4 +1,8 @@
-import { type Column, type FilterFnOption, type ColumnDef } from "@tanstack/react-table";
+import {
+  type Column,
+  type FilterFnOption,
+  type ColumnDef,
+} from "@tanstack/react-table";
 import { cn } from "~/lib/utils";
 import { type Revenue } from "~/types/revenue";
 import { Button } from "../ui/button";
@@ -112,21 +116,6 @@ export const columns = (short: boolean): ColumnDef<Revenue>[] => [
     },
     accessorFn: (row) => TRANSLATED_STATUSES[row.status],
   },
-  {
-    accessorKey: "category",
-    header: ({ column }) => (
-      <div className="flex items-center gap-2">
-        Categoria
-        <ColumnOptions column={column} />
-      </div>
-    ),
-    filterFn: "arrIncludesSome",
-    cell: ({ row }) => {
-      const category = row.original.category;
-      return category?.name ?? "N/A";
-    },
-    accessorFn: (row) => row.category?.name ?? "N/A",
-  },
   ...(!short
     ? [
         {
@@ -138,11 +127,27 @@ export const columns = (short: boolean): ColumnDef<Revenue>[] => [
             </div>
           ),
           filterFn: "arrIncludesSome" as FilterFnOption<Revenue> | undefined,
-          accessorFn: (row: Revenue) => TRANSLATED_RECURRENCES[row.recurrence] ?? "N/A",
+          accessorFn: (row: Revenue) =>
+            TRANSLATED_RECURRENCES[row.recurrence] ?? "N/A",
           cell: ({ row }: { row: { original: Revenue } }) => {
             const recurrence = row.original.recurrence;
             return TRANSLATED_RECURRENCES[recurrence];
           },
+        },
+        {
+          accessorKey: "category",
+          header: ({ column }: { column: Column<Revenue> }) => (
+            <div className="flex items-center gap-2">
+              Categoria
+              <ColumnOptions column={column} />
+            </div>
+          ),
+          filterFn: "arrIncludesSome" as FilterFnOption<Revenue> | undefined,
+          cell: ({ row }: { row: { original: Revenue } }) => {
+            const category = row.original.category;
+            return category?.name ?? "N/A";
+          },
+          accessorFn: (row: Revenue) => row.category?.name ?? "N/A",
         },
         {
           accessorKey: "actions",
@@ -152,7 +157,15 @@ export const columns = (short: boolean): ColumnDef<Revenue>[] => [
           },
         },
       ]
-    : []),
+    : [
+        {
+          accessorKey: "actions",
+          header: "Ações",
+          cell: ({ row }: { row: { original: Revenue } }) => {
+            return <EditCell revenue={row.original} />;
+          },
+        },
+      ]),
 ];
 
 const StatusCell: React.FC<{
@@ -229,7 +242,6 @@ const DateCell: React.FC<{
     </span>
   );
 };
-
 
 const EditCell: React.FC<{ revenue: Revenue }> = ({ revenue }) => {
   return (

@@ -116,21 +116,6 @@ export const columns = (short: boolean): ColumnDef<Expense>[] => [
     },
     accessorFn: (row) => TRANSLATED_STATUSES[row.status],
   },
-  {
-    accessorKey: "category",
-    header: ({ column }) => (
-      <div className="flex items-center gap-2">
-        Categoria
-        <ColumnOptions column={column} />
-      </div>
-    ),
-    filterFn: "arrIncludesSome",
-    cell: ({ row }) => {
-      const category = row.original.category;
-      return category?.name ?? "N/A";
-    },
-    accessorFn: (row: Expense) => row.category?.name ?? "N/A",
-  },
   ...(!short
     ? [
         {
@@ -148,6 +133,21 @@ export const columns = (short: boolean): ColumnDef<Expense>[] => [
             const recurrence = row.original.recurrence;
             return TRANSLATED_RECURRENCES[recurrence];
           },
+        },
+        {
+          accessorKey: "category",
+          header: ({ column }: { column: Column<Expense> }) => (
+            <div className="flex items-center gap-2">
+              Categoria
+              <ColumnOptions column={column} />
+            </div>
+          ),
+          filterFn: "arrIncludesSome" as FilterFnOption<Expense> | undefined,
+          cell: ({ row }: { row: { original: Expense } }) => {
+            const category = row.original.category;
+            return category?.name ?? "N/A";
+          },
+          accessorFn: (row: Expense) => row.category?.name ?? "N/A",
         },
         {
           accessorKey: "paymentMethod",
@@ -172,7 +172,15 @@ export const columns = (short: boolean): ColumnDef<Expense>[] => [
           },
         },
       ]
-    : []),
+    : [
+       {
+          accessorKey: "actions",
+          header: "Ações",
+          cell: ({ row }: { row: { original: Expense } }) => {
+            return <EditCell expense={row.original} />;
+          },
+        },
+    ]),
 ];
 
 const StatusCell: React.FC<{

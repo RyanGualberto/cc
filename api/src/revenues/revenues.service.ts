@@ -201,10 +201,36 @@ export class RevenuesService {
       case 'MONTHLY':
         next.setMonth(next.getMonth() + 1);
         break;
+      case 'FIFTH_WORKING_DAY': {
+        return this.getFifthBusinessDayOfNextMonth(date);
+      }
       default:
         next.setDate(next.getDate() + 1);
         break;
     }
     return next;
+  }
+
+  private getFifthBusinessDayOfNextMonth(date: Date): Date {
+    const year = date.getFullYear();
+    const month = date.getMonth() + 1; // Próximo mês
+
+    const firstDayNextMonth = new Date(year, month, 1);
+
+    let businessDayCount = 0;
+    const currentDate = new Date(firstDayNextMonth);
+
+    while (businessDayCount < 5) {
+      const dayOfWeek = currentDate.getDay(); // 0 = Domingo, 6 = Sábado
+      if (dayOfWeek !== 0 && dayOfWeek !== 6) {
+        businessDayCount++;
+      }
+
+      if (businessDayCount < 5) {
+        currentDate.setDate(currentDate.getDate() + 1);
+      }
+    }
+
+    return currentDate;
   }
 }

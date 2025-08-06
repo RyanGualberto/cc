@@ -7,7 +7,7 @@ export interface CreateByTeamRequest {
   description?: string;
   amountInCents: number;
   date: string;
-  recurrence: "MONTHLY" | "WEEKLY" | "DAILY" | "ONCE";
+  recurrence: "FIFTH_WORKING_DAY" | "MONTHLY" | "WEEKLY" | "DAILY" | "ONCE";
   status: "PENDING" | "PAID" | "OVERDUE";
   title: string;
   category: string | undefined;

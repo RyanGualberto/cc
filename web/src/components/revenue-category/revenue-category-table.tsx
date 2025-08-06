@@ -31,11 +31,17 @@ const RevenueCategoryTable: React.FC<{
             <TableCell>{revenueCategory.name}</TableCell>
             <TableCell>{revenueCategory._count?.revenues}</TableCell>
             <TableCell className="flex items-center gap-2">
-              <EditRevenueCategoryDialog
-                team={team}
-                revenueCategory={revenueCategory}
-              />
-              <DeleteRevenueCategoryDialog revenueCategory={revenueCategory} />
+              {revenueCategory.teamId ? (
+                <>
+                  <EditRevenueCategoryDialog
+                    team={team}
+                    revenueCategory={revenueCategory}
+                  />
+                  <DeleteRevenueCategoryDialog
+                    revenueCategory={revenueCategory}
+                  />
+                </>
+              ) : null}
             </TableCell>
           </TableRow>
         ))}

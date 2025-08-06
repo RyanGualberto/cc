@@ -19,6 +19,6 @@ export const editRevenueSchema = z.object({
   }),
   category: z.string({
     message: "Categoria inválida",
-  }),
+  }).optional(),
   includeFuture: z.boolean().optional(),
 });

@@ -27,7 +27,7 @@ export class ExpenseCategoriesService {
     const expenseCategories = await this.prismaService.expenseCategory.findMany(
       {
         where: {
-          teamId,
+          OR: [{ teamId }, { teamId: null }],
         },
         include: {
           _count: {

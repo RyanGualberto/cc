@@ -31,11 +31,17 @@ const ExpenseCategoryTable: React.FC<{
             <TableCell>{expenseCategory.name}</TableCell>
             <TableCell>{expenseCategory._count?.expenses}</TableCell>
             <TableCell className="flex items-center gap-2">
-              <EditExpenseCategoryDialog
-                team={team}
-                expenseCategory={expenseCategory}
-              />
-              <DeleteExpenseCategoryDialog expenseCategory={expenseCategory} />
+              {expenseCategory.teamId ? (
+                <>
+                  <EditExpenseCategoryDialog
+                    team={team}
+                    expenseCategory={expenseCategory}
+                  />
+                  <DeleteExpenseCategoryDialog
+                    expenseCategory={expenseCategory}
+                  />
+                </>
+              ) : null}
             </TableCell>
           </TableRow>
         ))}

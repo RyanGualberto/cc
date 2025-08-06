@@ -27,7 +27,10 @@ export class ExpensePaymentMethodsService {
     const expensePaymentMethods =
       await this.prismaService.expensePaymentMethod.findMany({
         where: {
-          teamId,
+          OR: [
+            { teamId },
+            { teamId: null }, // This allows fetching global payment methods
+          ],
         },
         include: {
           _count: {

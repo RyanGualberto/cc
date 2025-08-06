@@ -1,6 +1,5 @@
 generator client {
-  provider      = "prisma-client-js"
-  binaryTargets = ["native", "linux-arm64-openssl-3.0.x"]
+  provider = "prisma-client-js"
 }
 
 datasource db {
@@ -53,8 +52,8 @@ model Expense {
 
 model ExpensePaymentMethod {
   id       String    @id @default(cuid())
-  team     Team      @relation(fields: [teamId], references: [id])
-  teamId   String
+  team     Team?     @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  teamId   String?
   name     String
   expenses Expense[]
 
@@ -106,8 +105,8 @@ model ExpenseCategory {
   id        String    @id @default(cuid())
   name      String
   expenses  Expense[]
-  Team      Team      @relation(fields: [teamId], references: [id])
-  teamId    String
+  Team      Team?     @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  teamId    String?
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
 
@@ -118,8 +117,8 @@ model RevenueCategory {
   id        String    @id @default(cuid())
   name      String
   revenues  Revenue[]
-  Team      Team      @relation(fields: [teamId], references: [id])
-  teamId    String
+  Team      Team?     @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  teamId    String?
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
 
@@ -155,6 +154,7 @@ enum RevenueStatus {
 }
 
 enum RevenueRecurrence {
+  FIFTH_WORKING_DAY
   MONTHLY
   WEEKLY
   DAILY

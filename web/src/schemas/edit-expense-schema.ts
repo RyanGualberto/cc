@@ -19,9 +19,9 @@ export const editExpenseSchema = z.object({
   }),
   category: z.string({
     message: "Categoria inválida",
-  }),
+  }).optional(),
   paymentMethod: z.string({
     message: "Método de pagamento inválido",
-  }),
+  }).optional(),
   includeFuture: z.boolean().optional(),
 });
