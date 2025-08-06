@@ -11,28 +11,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../ui/select";
-import { useParams, useRouter } from "next/navigation";
-import React from "react";
 import { useAuth } from "~/hooks/use-auth";
 import { Button } from "../ui/button";
 
 const Navbar: React.FC = () => {
-  const params = useParams();
   const { logout } = useAuth();
-  const { user, selectedTeam, teams } = useUserContext();
-  const [team, setTeam] = React.useState<string | null>(null);
-  React.useEffect(() => {
-    if (selectedTeam) {
-      setTeam(selectedTeam.id);
-    }
-  }, [selectedTeam]);
-  const { push } = useRouter();
-
-  React.useEffect(() => {
-    if (team && !params["team-id"]) {
-      push(`/app/${team}/dashboard`);
-    }
-  }, [team, push, params]);
+  const { user, selectedTeam, setTeam, teams } = useUserContext();
 
   return (
     <header className="flex flex-col gap-4 border-b px-4 py-3 md:px-8 md:py-6">
@@ -43,7 +27,10 @@ const Navbar: React.FC = () => {
             <span className="text-xl font-bold">Recebee</span>
           </Link>
           {selectedTeam && (
-            <Select value={team ?? undefined} onValueChange={setTeam}>
+            <Select
+              value={selectedTeam.id ?? undefined}
+              onValueChange={setTeam}
+            >
               <SelectTrigger className="hidden min-w-32 md:flex">
                 <SelectValue />
               </SelectTrigger>
@@ -133,12 +120,7 @@ const Navbar: React.FC = () => {
         </nav>
       </div>
       {selectedTeam && (
-        <Select
-          value={selectedTeam.id}
-          onValueChange={(value) => {
-            push(`/app/${value}/dashboard`);
-          }}
-        >
+        <Select value={selectedTeam.id} onValueChange={setTeam}>
           <SelectTrigger className="flex md:hidden">
             <SelectValue />
           </SelectTrigger>

@@ -1,7 +1,7 @@
 "use client";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { hasCookie } from "cookies-next";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { createContext, useCallback, useEffect } from "react";
 import { teamRequests } from "~/requests/team";
 import { userRequest } from "~/requests/user";
@@ -15,11 +15,13 @@ interface IUserContext {
   refetchTeams: () => void;
   loadingTeams: boolean;
   loadingUser?: boolean;
+  setTeam: (teamId: string) => Promise<void>;
 }
 
 export const UserContext = createContext<IUserContext | undefined>(undefined);
 
 export const UserProvider = ({ children }: { children: React.ReactNode }) => {
+  const router = useRouter();
   const queryClient = useQueryClient();
   const { ["team-id"]: teamId } = useParams<{ "team-id": string }>();
   const { data: selectedTeam } = useQuery({
@@ -44,6 +46,14 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
     },
     enabled: hasCookie("token"),
   });
+
+  const setTeam = useCallback(
+    async (teamId: string) => {
+      router.push(`/app/${teamId}/dashboard`);
+      await queryClient.invalidateQueries({ queryKey: ["selectedTeam"] });
+    },
+    [queryClient, router],
+  );
 
   const refetchTeams = useCallback(() => {
     queryClient.invalidateQueries({ queryKey: ["teams"] }).catch((error) => {
@@ -72,6 +82,7 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
         refetchTeams,
         loadingTeams,
         loadingUser: isLoading,
+        setTeam,
       }}
     >
       {children}
