@@ -292,8 +292,8 @@ export default function FinancialChartsCard({
             <TabsList className="mb-4">
               <TabsTrigger value="comparison">Comparativo</TabsTrigger>
               <TabsTrigger value="categories">Categorias</TabsTrigger>
-              <TabsTrigger value="trend">Tendência</TabsTrigger>
-              <TabsTrigger value="timeline">Linha do Tempo</TabsTrigger>
+              <TabsTrigger value="trend">Tendência (Em breve)</TabsTrigger>
+              <TabsTrigger value="timeline">Linha do Tempo (Beta)</TabsTrigger>
             </TabsList>
             <TabsContent value="comparison" className="space-y-4">
               <h3 className="text-lg font-medium">Comparativo Financeiro</h3>
