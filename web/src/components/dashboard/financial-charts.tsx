@@ -9,7 +9,7 @@ import {
   XAxis,
   YAxis,
   CartesianGrid,
-  Tooltip,
+  Tooltip as ChartTooltip,
   Legend,
   ResponsiveContainer,
   PieChart,
@@ -25,6 +25,17 @@ import { revenueRequest } from "~/requests/revenue";
 import { type Team } from "~/types/team";
 import { Loading } from "../ui/loading";
 import { formatCurrency } from "~/helpers/formatCurrency";
+import {
+  type GetTimeLineResponse,
+  teamDashboardRequest,
+} from "~/requests/team-dashboard";
+import { useIsMobile } from "~/hooks/use-is-mobile";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "../ui/tooltip";
 
 interface MonthlyDataItem {
   name: string;
@@ -53,6 +64,21 @@ const COLORS = [
   "#FFC658",
   "#8DD1E1",
 ];
+
+const daysByMonth: Record<number, number> = {
+  0: 31,
+  1: 28,
+  2: 31,
+  3: 30,
+  4: 31,
+  5: 31,
+  6: 31,
+  7: 31,
+  8: 30,
+  9: 31,
+  10: 30,
+  11: 31,
+};
 
 const CustomTooltip = ({
   active,
@@ -88,6 +114,7 @@ export default function FinancialChartsCard({
   team,
   date,
 }: FinancialChartsCardProps) {
+  const isMobile = useIsMobile();
   const {
     data: expenses,
     isPending: expensesPending,
@@ -96,6 +123,14 @@ export default function FinancialChartsCard({
     queryKey: ["expenses", { teamId: team.id, date }],
     queryFn: async () =>
       await expenseRequest.listByTeamAndDate({
+        teamId: team.id,
+        date,
+      }),
+  });
+  const { data: timelineTransactions } = useQuery({
+    queryKey: ["timelineTransactions", { teamId: team.id, date }],
+    queryFn: async () =>
+      await teamDashboardRequest.getTimeline({
         teamId: team.id,
         date,
       }),
@@ -183,6 +218,62 @@ export default function FinancialChartsCard({
     }
   }, [expenses, revenues]);
 
+  const [timelineRevenues, setTimelineRevenues] = useState<
+    (GetTimeLineResponse["revenues"][number] & {
+      position: number;
+      amountInCents: number;
+    })[]
+  >([]);
+  const [timelineExpenses, setTimelineExpenses] = useState<
+    (GetTimeLineResponse["expenses"][number] & {
+      position: number;
+      amountInCents: number;
+    })[]
+  >([]);
+
+  useEffect(() => {
+    if (timelineTransactions) {
+      const month = date.split("/")[0];
+      const daysInMonth: number = daysByMonth[Number(month ?? 0)] ?? 31;
+
+      const expenses = timelineTransactions.expenses.map((item) => {
+        const itemDate = new Date(item.date);
+        const day = itemDate.getDate();
+
+        const position = (day / daysInMonth) * 100; // percentual de altura
+
+        return {
+          ...item,
+          position,
+          amountInCents: item.expenses.reduce(
+            (sum, expense) => sum + expense.amountInCents,
+            0,
+          ),
+        };
+      });
+
+      setTimelineExpenses(expenses);
+
+      const revenues = timelineTransactions.revenues.map((item) => {
+        const itemDate = new Date(item.date);
+        const day = itemDate.getDate();
+
+        const position = (day / daysInMonth) * 100; // percentual de altura
+
+        return {
+          ...item,
+          position,
+          amountInCents: item.revenues.reduce(
+            (sum, revenue) => sum + revenue.amountInCents,
+            0,
+          ),
+        };
+      });
+
+      setTimelineRevenues(revenues);
+    }
+  }, [timelineTransactions, date]);
+
   const isPending = expensesPending || revenuesPending;
   const isError = expensesError || revenuesError;
 
@@ -202,6 +293,7 @@ export default function FinancialChartsCard({
               <TabsTrigger value="comparison">Comparativo</TabsTrigger>
               <TabsTrigger value="categories">Categorias</TabsTrigger>
               <TabsTrigger value="trend">Tendência</TabsTrigger>
+              <TabsTrigger value="timeline">Linha do Tempo</TabsTrigger>
             </TabsList>
             <TabsContent value="comparison" className="space-y-4">
               <h3 className="text-lg font-medium">Comparativo Financeiro</h3>
@@ -221,7 +313,7 @@ export default function FinancialChartsCard({
                     <YAxis
                       tickFormatter={(value) => formatCurrency(value as number)}
                     />
-                    <Tooltip content={<CustomTooltip />} />
+                    <ChartTooltip content={<CustomTooltip />} />
                     <Legend />
                     <Bar dataKey="value" name="Valor" fill="#8884d8" />
                   </BarChart>
@@ -254,7 +346,7 @@ export default function FinancialChartsCard({
                         />
                       ))}
                     </Pie>
-                    <Tooltip
+                    <ChartTooltip
                       formatter={(value) => formatCurrency(value as number)}
                     />
                     <Legend />
@@ -284,7 +376,7 @@ export default function FinancialChartsCard({
                         `R$${value.toLocaleString()}`
                       }
                     />
-                    <Tooltip content={<CustomTooltip />} />
+                    <ChartTooltip content={<CustomTooltip />} />
                     <Legend />
                     <Line
                       type="monotone"
@@ -306,6 +398,91 @@ export default function FinancialChartsCard({
                     />
                   </LineChart>
                 </ResponsiveContainer>
+              </div>
+            </TabsContent>
+            <TabsContent value="timeline" className="space-y-4">
+              <h3 className="text-lg font-medium">Linha Financeira - {date}</h3>
+              <div className="py-12">
+                <div className="relative mx-auto flex h-[500px] w-[2px] bg-muted md:h-[2px] md:w-full">
+                  {timelineRevenues?.map((item, index) => {
+                    return (
+                      <TooltipProvider key={index}>
+                        <Tooltip>
+                          <TooltipTrigger
+                            className="absolute flex items-center"
+                            style={{
+                              left: isMobile ? "100%" : `${item.position}%`,
+                              top: isMobile ? `${item.position}%` : "-40px",
+                            }}
+                          >
+                            <div
+                              className={`flex flex-row items-center gap-2 text-xs md:flex-col-reverse`}
+                            >
+                              <span
+                                className={`h-0.5 w-3 bg-green-500 md:h-3  md:w-0.5`}
+                              ></span>
+                              <span>
+                                {formatCurrency(item.amountInCents / 100)}
+                              </span>
+                            </div>
+                          </TooltipTrigger>
+                          <TooltipContent>
+                            <span>
+                              {new Date(item.date).toLocaleDateString("pt-BR")}
+                            </span>
+                            <ul>
+                              {item.revenues.map((revenue, idx) => (
+                                <li key={idx} className="text-sm">
+                                  {revenue.title} -{" "}
+                                  {formatCurrency(revenue.amountInCents / 100)}
+                                </li>
+                              ))}
+                            </ul>
+                          </TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
+                    );
+                  })}
+                  {timelineExpenses?.map((item, index) => {
+                    return (
+                      <TooltipProvider key={index}>
+                        <Tooltip>
+                          <TooltipTrigger
+                            className="absolute flex items-center"
+                            style={{
+                              right: isMobile ? "100%" : `${item.position}%`,
+                              top: isMobile ? `${item.position}%` : "8px",
+                            }}
+                          >
+                            <div
+                              className={`flex flex-row-reverse items-center gap-2 text-xs md:flex-col`}
+                            >
+                              <span
+                                className={`h-0.5 w-3 bg-red-500 md:h-3  md:w-0.5`}
+                              ></span>
+                              <span>
+                                {formatCurrency(item.amountInCents / 100)}
+                              </span>
+                            </div>
+                          </TooltipTrigger>
+                          <TooltipContent>
+                            <span>
+                              {new Date(item.date).toLocaleDateString("pt-BR")}
+                            </span>
+                            <ul>
+                              {item.expenses.map((expense, idx) => (
+                                <li key={idx} className="text-sm">
+                                  {expense.title} -{" "}
+                                  {formatCurrency(expense.amountInCents / 100)}
+                                </li>
+                              ))}
+                            </ul>
+                          </TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
+                    );
+                  })}
+                </div>
               </div>
             </TabsContent>
           </Tabs>

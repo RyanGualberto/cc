@@ -14,6 +14,7 @@ import { RevenuesModule } from './revenues/revenues.module';
 import { TeamMembersModule } from './team-members/team-members.module';
 import { ExpensePaymentMethodsModule } from './expense-payment-methods/expense-payment-methods.module';
 import { CronModule } from './cron/cron.module';
+import { TeamDashboardModule } from './team-dashboard/team-dashboard.module';
 @Module({
   imports: [
     UsersModule,
@@ -45,6 +46,7 @@ import { CronModule } from './cron/cron.module';
     TeamMembersModule,
     ExpensePaymentMethodsModule,
     CronModule,
+    TeamDashboardModule,
   ],
   controllers: [AppController],
   providers: [AppService],
