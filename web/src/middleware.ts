@@ -2,10 +2,10 @@ import { type NextRequest, NextResponse } from "next/server";
 import AuthMiddleware from "~/middlewares/auth-middleware";
 
 const middlewareSelector = (path: string) => {
-  if (["/auth/login", "/auth/register", "/auth/forgot-password", "/"].includes(path)) {
-    return [];
+  if (path.startsWith("/app")) {
+    return [AuthMiddleware];
   }
-  return [AuthMiddleware];
+  return [];
 };
 
 type CustomMiddlewareResponse = {

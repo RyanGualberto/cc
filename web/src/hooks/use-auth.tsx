@@ -62,8 +62,14 @@ export const useAuth = () => {
 
   const logout = useCallback(() => {
     deleteCookie("token");
-    router.push("/auth/login");
-  }, [router]);
+    void queryClient.invalidateQueries({
+      queryKey: ["teams"],
+    });
+    void queryClient.invalidateQueries({
+      queryKey: ["whoami"],
+    });
+    router.refresh();
+  }, [router, queryClient]);
 
   return {
     login,

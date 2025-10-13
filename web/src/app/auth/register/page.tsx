@@ -23,6 +23,7 @@ import Link from "next/link";
 import { RegisterSchema } from "~/schemas/RegisterSchema";
 import maskPhone from "~/helpers/maskPhone";
 import { useAuth } from "~/hooks/use-auth";
+import { signIn } from "next-auth/react";
 
 export default function RegisterPage() {
   const { register } = useAuth();
@@ -288,6 +289,7 @@ export default function RegisterPage() {
                     variant="outline"
                     className="h-10 text-xs"
                     type="button"
+                    onClick={() => void signIn('google', { callbackUrl: '/auth/oauth-callback' })}
                   >
                     <svg className="mr-2 h-4 w-4" viewBox="0 0 24 24">
                       <path

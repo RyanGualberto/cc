@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { User } from '@prisma/client';
-import * as bcrypt from 'bcrypt';
+import * as bcrypt from 'bcryptjs';
 import * as crypto from 'crypto';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -60,6 +60,15 @@ export class UsersService {
   async findByCpf(cpf: string): Promise<User | null> {
     const record = await this.prisma.user.findUnique({
       where: { cpf: cpf },
+    });
+    if (!record) return null;
+
+    return record;
+  }
+
+  async findByEmail(email: string): Promise<User | null> {
+    const record = await this.prisma.user.findUnique({
+      where: { email },
     });
     if (!record) return null;
 

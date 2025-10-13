@@ -2,7 +2,7 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { CreateUserDto } from '../users/dto/create-user.dto';
 import { LoginAuthDto } from './dto/login-auth.dto';
-import * as bcrypt from 'bcrypt';
+import * as bcrypt from 'bcryptjs';
 import * as crypto from 'crypto';
 import { UsersService } from '../users/users.service';
 import { User } from '@prisma/client';
@@ -24,7 +24,7 @@ export class AuthService {
       lastName: createUserDto.lastName,
       cpf: createUserDto.cpf,
       email: createUserDto.email,
-      password: createUserDto.password,
+      password: createUserDto.password || '',
       phone: createUserDto.phone,
     });
 
@@ -104,6 +104,32 @@ export class AuthService {
     });
 
     return { message: 'Senha redefinida com sucesso.' };
+  }
+
+  async oauth(payload: {
+    email: string;
+    firstName?: string;
+    lastName?: string;
+  }) {
+    const { email, firstName = '', lastName = '' } = payload;
+
+    const user: User | null = await this.usersService.findByEmail(email);
+
+    if (user) {
+      // usuário já existe -> retornar token
+      return {
+        ...user,
+        token: await this.generateToken(user),
+      };
+    }
+
+    // usuário não existe -> sinalizar que é necessário completar o perfil
+    return {
+      needsProfileCompletion: true,
+      email,
+      firstName: firstName || email.split('@')[0],
+      lastName: lastName || '',
+    };
   }
 
   private async generateToken(user: User) {

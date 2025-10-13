@@ -6,8 +6,10 @@ import { Button } from "~/components/ui/button";
 import { Separator } from "~/components/ui/separator";
 import { LogOut } from "lucide-react";
 import { useUserContext } from "~/hooks/use-user-context";
+import { useAuth } from "~/hooks/use-auth";
 
 export default function ProfilePage() {
+  const { logout } = useAuth();
   const { user } = useUserContext();
 
   return (
@@ -67,7 +69,7 @@ export default function ProfilePage() {
               <div>
                 <Button
                   variant="destructive"
-                  // onClick={() => void signOut()}
+                  onClick={logout}
                   className="gap-2"
                 >
                   <LogOut className="h-4 w-4" />

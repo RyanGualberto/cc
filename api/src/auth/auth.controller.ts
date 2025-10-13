@@ -69,4 +69,19 @@ export class AuthController {
   ) {
     return await this.authService.resetPassword(token, newPassword);
   }
+
+  @Post('oauth')
+  @HttpCode(200)
+  async oauth(
+    @Body() body: { email: string; firstName?: string; lastName?: string },
+  ) {
+    return await this.authService.oauth(body);
+  }
+
+  @Post('oauth/complete')
+  @HttpCode(201)
+  async oauthComplete(@Body() body: CreateUserDto) {
+    // body must include firstName, lastName, cpf, phone, email, password
+    return await this.authService.register(body);
+  }
 }

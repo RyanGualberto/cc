@@ -1,4 +1,3 @@
-import axios from "axios";
 import { cookies } from "next/headers";
 import { type NextRequest, NextResponse } from "next/server";
 
@@ -26,19 +25,21 @@ const AuthMiddleware = async (request: NextRequest, response: NextResponse) => {
   }
 
   try {
-    const whoamiRequest = await axios.get(
-      `${process.env.NEXT_PUBLIC_API_URL}/auth/me`,
+    const whoamiRequest = await fetch(
+      `${process.env.NEXT_PUBLIC_SERVER_API_URL}/auth/me`,
       {
         headers: {
+          "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
       },
     );
+    console.log(whoamiRequest.status);
+    
 
-    if (
-      String(whoamiRequest.status).startsWith("4") ||
-      String(whoamiRequest.status).startsWith("5")
-    ) {
+    if (String(whoamiRequest.status) !== "200") {
+      console.log(await whoamiRequest.json());
+
       return sendToLogin(request);
     }
 
@@ -47,6 +48,8 @@ const AuthMiddleware = async (request: NextRequest, response: NextResponse) => {
       halt: false,
     };
   } catch (error) {
+    console.log(error);
+
     return sendToLogin(request);
   }
 };
