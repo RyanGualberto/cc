@@ -288,8 +288,8 @@ export default function FinancialChartsCard({
         {isPending && <Loading />}
         {isError && <div>Erro ao carregar dados financeiros</div>}
         {!isPending && !isError && (
-          <Tabs defaultValue="comparison" className="w-full">
-            <TabsList className="mb-4">
+          <Tabs defaultValue="comparison" className="w-full ">
+            <TabsList className="mb-4 justify-start max-w-full overflow-x-scroll">
               <TabsTrigger value="comparison">Comparativo</TabsTrigger>
               <TabsTrigger value="categories">Categorias</TabsTrigger>
               <TabsTrigger value="trend">Tendência (Em breve)</TabsTrigger>
