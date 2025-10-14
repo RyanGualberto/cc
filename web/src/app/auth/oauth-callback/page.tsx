@@ -51,6 +51,8 @@ export default function OAuthCallbackPage() {
     async function exchange() {
       try {
         const session = await getSession();
+        console.log(session);
+        
         if (!session?.user?.email) {
           setError("Não foi possível obter sessão do provedor.");
           return;

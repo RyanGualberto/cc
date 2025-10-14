@@ -11,13 +11,13 @@ export default function Footer() {
           <span>Recebee</span>
         </div>
         <div className="flex flex-col items-center gap-4 px-8 md:flex-row md:gap-6">
-          <Link href="#" className="text-sm font-medium hover:underline">
+          <Link href="/terms-of-service" className="text-sm font-medium hover:underline">
             Termos de Serviço
           </Link>
-          <Link href="#" className="text-sm font-medium hover:underline">
+          <Link href="/privacy-policy" className="text-sm font-medium hover:underline">
             Política de Privacidade
           </Link>
-          <Link href="#" className="text-sm font-medium hover:underline">
+          <Link href="/support" className="text-sm font-medium hover:underline">
             Suporte
           </Link>
         </div>

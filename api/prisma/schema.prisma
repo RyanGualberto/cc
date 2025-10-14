@@ -19,6 +19,17 @@ model User {
   updatedAt    DateTime     @updatedAt
   resetToken   String?
   resetExpires DateTime?
+
+  provider       String?  // "google, facebook"
+  googleId       String?  @unique
+
+  // Tokens Google Calendar
+  googleAccessToken  String?
+  googleRefreshToken String?
+  googleTokenExpiry  DateTime?
+  googleScope        String?
+  googleTokenType    String?
+
   expenses     Expense[]
   teamMembers  TeamMember[]
   Revenue      Revenue[]
