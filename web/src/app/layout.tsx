@@ -1,4 +1,4 @@
-import "~/styles/globals.css";
+import "/styles/globals.css";
 
 import { GeistSans } from "geist/font/sans";
 import TanstackProvider from "~/providers/TanstackProvider";
@@ -9,6 +9,9 @@ export const metadata = {
   title: "ReceBee",
   description: "ReceBee is a finance manangement plataform.",
   icons: [{ rel: "icon", url: "/favicon.ico" }],
+   verification: {
+    google: "bIERxHWkh_upDwSJpsb3bpQyK8WS13Y4NYnPWFz-Ykc",
+  },
 };
 
 export default function RootLayout({
